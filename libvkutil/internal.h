@@ -65,4 +65,4 @@ VKUTIL_API void LoadVulkanLibrary(void);
 VKUTIL_API void LoadInstanceExtensionsAndLayers(void);
 VKUTIL_API u32  AddExtensions(const char** list, const bool* req, i32 from, i32 to);
 VKUTIL_API u32  AddLayers(const char** list, const bool* req);
-VKUTIL_API void LoadInstanceFunctions(void);
+VKUTIL_API void LoadInstanceFunctions(const bool* ext);
