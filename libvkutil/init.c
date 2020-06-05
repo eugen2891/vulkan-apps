@@ -33,7 +33,7 @@ void vkUtilInitialize(const VkUtilInitOptions* pOptions)
         vkCreateInstance = (PFN_vkCreateInstance)vkGetInstanceProcAddr(VK_NULL_HANDLE, "vkCreateInstance");
         TEST(vkCreateInstance);
         VKTEST(vkCreateInstance(&info, options.vulkanAlloc, &gVkInstance));
-        LoadInstanceFunctions();
+        LoadInstanceFunctions(options.vulkanExtension);
         gVkAlloc = options.vulkanAlloc;
     }
 }
