@@ -32,21 +32,6 @@ PFN_vkSetDebugUtilsObjectNameEXT              vkSetDebugUtilsObjectNameEXT      
 PFN_vkSetDebugUtilsObjectTagEXT               vkSetDebugUtilsObjectTagEXT               = NULL;
 PFN_vkSubmitDebugUtilsMessageEXT              vkSubmitDebugUtilsMessageEXT              = NULL;
 
-/*
-    vkDebugUtilsMessengerCallbackEXT
-    vkCmdBeginDebugUtilsLabelEXT
-    vkCmdEndDebugUtilsLabelEXT
-    vkCmdInsertDebugUtilsLabelEXT
-    vkCreateDebugUtilsMessengerEXT
-    vkDestroyDebugUtilsMessengerEXT
-    vkQueueBeginDebugUtilsLabelEXT
-    vkQueueEndDebugUtilsLabelEXT
-    vkQueueInsertDebugUtilsLabelEXT
-    vkSetDebugUtilsObjectNameEXT
-    vkSetDebugUtilsObjectTagEXT
-    vkSubmitDebugUtilsMessageEXT
-*/
-
 #define LOAD(n) do{ n = (PFN_##n)vkGetInstanceProcAddr(gVkInstance, #n); TEST(n) }while(0)
 
 void LoadInstanceFunctions(const bool* ext)
@@ -66,7 +51,18 @@ void LoadInstanceFunctions(const bool* ext)
     }
     if (ext[VKUTIL_EXT_DEBUG_UTILS])
     {
-
+        LOAD(vkDebugUtilsMessengerCallbackEXT);
+        LOAD(vkCmdBeginDebugUtilsLabelEXT);
+        LOAD(vkCmdEndDebugUtilsLabelEXT);
+        LOAD(vkCmdInsertDebugUtilsLabelEXT);
+        LOAD(vkCreateDebugUtilsMessengerEXT);
+        LOAD(vkDestroyDebugUtilsMessengerEXT);
+        LOAD(vkQueueBeginDebugUtilsLabelEXT);
+        LOAD(vkQueueEndDebugUtilsLabelEXT);
+        LOAD(vkQueueInsertDebugUtilsLabelEXT);
+        LOAD(vkSetDebugUtilsObjectNameEXT);
+        LOAD(vkSetDebugUtilsObjectTagEXT);
+        LOAD(vkSubmitDebugUtilsMessageEXT);
     }
 }
 
