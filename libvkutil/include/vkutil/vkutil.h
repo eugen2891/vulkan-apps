@@ -107,4 +107,5 @@ VKUTIL_API PFN_vkSetDebugUtilsObjectTagEXT               vkSetDebugUtilsObjectTa
 VKUTIL_API PFN_vkSubmitDebugUtilsMessageEXT              vkSubmitDebugUtilsMessageEXT;
 
 VKUTIL_API void vkUtilInitialize(const VkUtilInitOptions* pOptions);
+VKUTIL_API bool vkUtilIsWindowClosed(void);
 VKUTIL_API void vkUtilFinalize(void);
