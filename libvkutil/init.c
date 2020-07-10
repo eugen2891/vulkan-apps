@@ -35,11 +35,14 @@ void vkUtilInitialize(const VkUtilInitOptions* pOptions)
         VKTEST(vkCreateInstance(&info, options.vulkanAlloc, &gVkInstance));
         LoadInstanceFunctions(options.vulkanExtension);
         gVkAlloc = options.vulkanAlloc;
+        CreateSurface(&options);
     }
+    gVkOptions = options;
 }
 
 void vkUtilFinalize(void)
 {
+    DestroySurface();
     vkDestroyInstance(gVkInstance, gVkAlloc);
 }
 
@@ -66,17 +69,3 @@ void ApplyDefaults(VkUtilInitOptions* pOptions)
         pOptions->vulkanExtension[VKUTIL_KHR_SWAPCHAIN] = true;
     }
 }
-
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-
-extern int main(int agrc, const char* argv[]);
-
-int WINAPI WinMain(HINSTANCE hInst, HINSTANCE prev, LPSTR cmd, int show)
-{
-    char name[256] = { 0 };
-    const char* argv[] = { name };
-    GetModuleFileName(NULL, name, sizeof(name));
-    return main(1, argv);
-}
-
-#endif

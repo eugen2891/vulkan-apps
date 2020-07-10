@@ -4,6 +4,12 @@
 
 #include "config.h"
 
+#if defined(__STDC_VERSION__) && (__STDC_VERSION__ == 201112)
+#include <stdalign.h>
+#else
+#define alignas(B) __declspec(align( B ))
+#endif
+
 enum
 {
     VKUTIL_LUNARG_VALIDATION = VKUTIL_NUM_LAYERS,
@@ -57,8 +63,10 @@ typedef struct VkUtilExtensionInfo
 VKUTIL_API VkUtilLayerInfo        gVkLayer[];
 VKUTIL_API VkUtilExtensionInfo    gVkExtension[];
 
+VKUTIL_API VkUtilInitOptions      gVkOptions;
 VKUTIL_API VkAllocationCallbacks* gVkAlloc;
 VKUTIL_API VkInstance             gVkInstance;
+VKUTIL_API VkSurfaceKHR           gVkSurface;
 
 VKUTIL_API u32  FNV1A_U32(const char* str);
 VKUTIL_API void LoadVulkanLibrary(void);
@@ -66,3 +74,5 @@ VKUTIL_API void LoadInstanceExtensionsAndLayers(void);
 VKUTIL_API u32  AddExtensions(const char** list, const bool* req, i32 from, i32 to);
 VKUTIL_API u32  AddLayers(const char** list, const bool* req);
 VKUTIL_API void LoadInstanceFunctions(const bool* ext);
+VKUTIL_API void CreateSurface(const VkUtilInitOptions* opts);
+VKUTIL_API void DestroySurface();

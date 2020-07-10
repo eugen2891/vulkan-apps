@@ -1,7 +1,9 @@
 #include "internal.h"
 
+VkUtilInitOptions      gVkOptions  = { 0 };
 VkAllocationCallbacks* gVkAlloc    = NULL;
 VkInstance             gVkInstance = VK_NULL_HANDLE;
+VkSurfaceKHR           gVkSurface  = VK_NULL_HANDLE;
 
 PFN_vkGetInstanceProcAddr                     vkGetInstanceProcAddr                     = NULL;
 PFN_vkEnumerateInstanceExtensionProperties    vkEnumerateInstanceExtensionProperties    = NULL;

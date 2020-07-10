@@ -4,11 +4,13 @@
     <ClInclude Include="config.h" />
     <ClInclude Include="internal.h" />
     <ClInclude Include="include\vkutil\vkutil.h" />
+    <ClInclude Include="vmath.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="extensions.c" />
     <ClCompile Include="functions.c" />
     <ClCompile Include="init.c" />
     <ClCompile Include="library.c" />
+    <ClCompile Include="win32.c" />
   </ItemGroup>
 </Project>
