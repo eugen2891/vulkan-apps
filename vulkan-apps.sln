@@ -3,7 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.902
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libvkutil", "libvkutil\libvkutil.vcxproj", "{3BC768E2-DD76-4208-A054-AE084A08D3DD}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "vkhelper", "vkhelper", "{9A9B380B-C1BA-4269-8793-3F3F5BBB26AF}"
+	ProjectSection(SolutionItems) = preProject
+		vkhelper\vkhelper.inl = vkhelper\vkhelper.inl
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "image_gather", "image_gather\image_gather.vcxproj", "{4E960CF3-E66E-4F3E-B31B-167E1A03E443}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3rd_party", "3rd_party", "{056D44CD-EFF3-41E0-8C81-8F9FDBDB247F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glfw", "3rd_party\glfw.vcxproj", "{F8E6C234-8EDA-4512-BFBC-897BFC1FBA35}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,17 +22,28 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3BC768E2-DD76-4208-A054-AE084A08D3DD}.Debug|x64.ActiveCfg = Debug|x64
-		{3BC768E2-DD76-4208-A054-AE084A08D3DD}.Debug|x64.Build.0 = Debug|x64
-		{3BC768E2-DD76-4208-A054-AE084A08D3DD}.Debug|x86.ActiveCfg = Debug|Win32
-		{3BC768E2-DD76-4208-A054-AE084A08D3DD}.Debug|x86.Build.0 = Debug|Win32
-		{3BC768E2-DD76-4208-A054-AE084A08D3DD}.Release|x64.ActiveCfg = Release|x64
-		{3BC768E2-DD76-4208-A054-AE084A08D3DD}.Release|x64.Build.0 = Release|x64
-		{3BC768E2-DD76-4208-A054-AE084A08D3DD}.Release|x86.ActiveCfg = Release|Win32
-		{3BC768E2-DD76-4208-A054-AE084A08D3DD}.Release|x86.Build.0 = Release|Win32
+		{4E960CF3-E66E-4F3E-B31B-167E1A03E443}.Debug|x64.ActiveCfg = Debug|x64
+		{4E960CF3-E66E-4F3E-B31B-167E1A03E443}.Debug|x64.Build.0 = Debug|x64
+		{4E960CF3-E66E-4F3E-B31B-167E1A03E443}.Debug|x86.ActiveCfg = Debug|Win32
+		{4E960CF3-E66E-4F3E-B31B-167E1A03E443}.Debug|x86.Build.0 = Debug|Win32
+		{4E960CF3-E66E-4F3E-B31B-167E1A03E443}.Release|x64.ActiveCfg = Release|x64
+		{4E960CF3-E66E-4F3E-B31B-167E1A03E443}.Release|x64.Build.0 = Release|x64
+		{4E960CF3-E66E-4F3E-B31B-167E1A03E443}.Release|x86.ActiveCfg = Release|Win32
+		{4E960CF3-E66E-4F3E-B31B-167E1A03E443}.Release|x86.Build.0 = Release|Win32
+		{F8E6C234-8EDA-4512-BFBC-897BFC1FBA35}.Debug|x64.ActiveCfg = Debug|x64
+		{F8E6C234-8EDA-4512-BFBC-897BFC1FBA35}.Debug|x64.Build.0 = Debug|x64
+		{F8E6C234-8EDA-4512-BFBC-897BFC1FBA35}.Debug|x86.ActiveCfg = Debug|Win32
+		{F8E6C234-8EDA-4512-BFBC-897BFC1FBA35}.Debug|x86.Build.0 = Debug|Win32
+		{F8E6C234-8EDA-4512-BFBC-897BFC1FBA35}.Release|x64.ActiveCfg = Release|x64
+		{F8E6C234-8EDA-4512-BFBC-897BFC1FBA35}.Release|x64.Build.0 = Release|x64
+		{F8E6C234-8EDA-4512-BFBC-897BFC1FBA35}.Release|x86.ActiveCfg = Release|Win32
+		{F8E6C234-8EDA-4512-BFBC-897BFC1FBA35}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F8E6C234-8EDA-4512-BFBC-897BFC1FBA35} = {056D44CD-EFF3-41E0-8C81-8F9FDBDB247F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E3EC2C67-4EE3-4752-A7F8-6A032A705F16}
