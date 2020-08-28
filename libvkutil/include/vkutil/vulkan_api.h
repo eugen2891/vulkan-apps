@@ -1,0 +1,174 @@
+#pragma once
+
+#if defined(_WIN32)
+#define VK_USE_PLATFORM_WIN32_KHR
+#endif
+
+#define VK_NO_PROTOTYPES
+#include <vulkan/vulkan.h>
+
+#if defined(VKAPI_VER_1_2)
+#define VKAPI_VERSION VK_API_VERSION_1_2
+#elif defined(VKAPI_VER_1_1)
+#define VKAPI_VERSION VK_API_VERSION_1_1
+#else
+#define VKAPI_VERSION VK_API_VERSION_1_0
+#endif
+
+#if defined(_WIN32)
+#define VKAPI_NATIVE_SURFACE_EXT_NAME VK_KHR_WIN32_SURFACE_EXTENSION_NAME
+#endif
+
+#if !defined(VKAPI_INL)
+#define VKAPI extern
+#else
+#define VKAPI
+#endif
+
+/* VK_VERSION_1_0 */
+VKAPI PFN_vkCreateInstance vkCreateInstance;
+VKAPI PFN_vkDestroyInstance vkDestroyInstance;
+VKAPI PFN_vkEnumeratePhysicalDevices vkEnumeratePhysicalDevices;
+VKAPI PFN_vkGetPhysicalDeviceFeatures vkGetPhysicalDeviceFeatures;
+VKAPI PFN_vkGetPhysicalDeviceFormatProperties vkGetPhysicalDeviceFormatProperties;
+VKAPI PFN_vkGetPhysicalDeviceImageFormatProperties vkGetPhysicalDeviceImageFormatProperties;
+VKAPI PFN_vkGetPhysicalDeviceProperties vkGetPhysicalDeviceProperties;
+VKAPI PFN_vkGetPhysicalDeviceQueueFamilyProperties vkGetPhysicalDeviceQueueFamilyProperties;
+VKAPI PFN_vkGetPhysicalDeviceMemoryProperties vkGetPhysicalDeviceMemoryProperties;
+VKAPI PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
+VKAPI PFN_vkGetDeviceProcAddr vkGetDeviceProcAddr;
+VKAPI PFN_vkCreateDevice vkCreateDevice;
+VKAPI PFN_vkDestroyDevice vkDestroyDevice;
+VKAPI PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties;
+VKAPI PFN_vkEnumerateDeviceExtensionProperties vkEnumerateDeviceExtensionProperties;
+VKAPI PFN_vkEnumerateInstanceLayerProperties vkEnumerateInstanceLayerProperties;
+VKAPI PFN_vkEnumerateDeviceLayerProperties vkEnumerateDeviceLayerProperties;
+VKAPI PFN_vkGetDeviceQueue vkGetDeviceQueue;
+VKAPI PFN_vkQueueSubmit vkQueueSubmit;
+VKAPI PFN_vkQueueWaitIdle vkQueueWaitIdle;
+VKAPI PFN_vkDeviceWaitIdle vkDeviceWaitIdle;
+VKAPI PFN_vkAllocateMemory vkAllocateMemory;
+VKAPI PFN_vkFreeMemory vkFreeMemory;
+VKAPI PFN_vkMapMemory vkMapMemory;
+VKAPI PFN_vkUnmapMemory vkUnmapMemory;
+VKAPI PFN_vkFlushMappedMemoryRanges vkFlushMappedMemoryRanges;
+VKAPI PFN_vkInvalidateMappedMemoryRanges vkInvalidateMappedMemoryRanges;
+VKAPI PFN_vkGetDeviceMemoryCommitment vkGetDeviceMemoryCommitment;
+VKAPI PFN_vkBindBufferMemory vkBindBufferMemory;
+VKAPI PFN_vkBindImageMemory vkBindImageMemory;
+VKAPI PFN_vkGetBufferMemoryRequirements vkGetBufferMemoryRequirements;
+VKAPI PFN_vkGetImageMemoryRequirements vkGetImageMemoryRequirements;
+VKAPI PFN_vkGetImageSparseMemoryRequirements vkGetImageSparseMemoryRequirements;
+VKAPI PFN_vkGetPhysicalDeviceSparseImageFormatProperties vkGetPhysicalDeviceSparseImageFormatProperties;
+VKAPI PFN_vkQueueBindSparse vkQueueBindSparse;
+VKAPI PFN_vkCreateFence vkCreateFence;
+VKAPI PFN_vkDestroyFence vkDestroyFence;
+VKAPI PFN_vkResetFences vkResetFences;
+VKAPI PFN_vkGetFenceStatus vkGetFenceStatus;
+VKAPI PFN_vkWaitForFences vkWaitForFences;
+VKAPI PFN_vkCreateSemaphore vkCreateSemaphore;
+VKAPI PFN_vkDestroySemaphore vkDestroySemaphore;
+VKAPI PFN_vkCreateEvent vkCreateEvent;
+VKAPI PFN_vkDestroyEvent vkDestroyEvent;
+VKAPI PFN_vkGetEventStatus vkGetEventStatus;
+VKAPI PFN_vkSetEvent vkSetEvent;
+VKAPI PFN_vkResetEvent vkResetEvent;
+VKAPI PFN_vkCreateQueryPool vkCreateQueryPool;
+VKAPI PFN_vkDestroyQueryPool vkDestroyQueryPool;
+VKAPI PFN_vkGetQueryPoolResults vkGetQueryPoolResults;
+VKAPI PFN_vkCreateBuffer vkCreateBuffer;
+VKAPI PFN_vkDestroyBuffer vkDestroyBuffer;
+VKAPI PFN_vkCreateBufferView vkCreateBufferView;
+VKAPI PFN_vkDestroyBufferView vkDestroyBufferView;
+VKAPI PFN_vkCreateImage vkCreateImage;
+VKAPI PFN_vkDestroyImage vkDestroyImage;
+VKAPI PFN_vkGetImageSubresourceLayout vkGetImageSubresourceLayout;
+VKAPI PFN_vkCreateImageView vkCreateImageView;
+VKAPI PFN_vkDestroyImageView vkDestroyImageView;
+VKAPI PFN_vkCreateShaderModule vkCreateShaderModule;
+VKAPI PFN_vkDestroyShaderModule vkDestroyShaderModule;
+VKAPI PFN_vkCreatePipelineCache vkCreatePipelineCache;
+VKAPI PFN_vkDestroyPipelineCache vkDestroyPipelineCache;
+VKAPI PFN_vkGetPipelineCacheData vkGetPipelineCacheData;
+VKAPI PFN_vkMergePipelineCaches vkMergePipelineCaches;
+VKAPI PFN_vkCreateGraphicsPipelines vkCreateGraphicsPipelines;
+VKAPI PFN_vkCreateComputePipelines vkCreateComputePipelines;
+VKAPI PFN_vkDestroyPipeline vkDestroyPipeline;
+VKAPI PFN_vkCreatePipelineLayout vkCreatePipelineLayout;
+VKAPI PFN_vkDestroyPipelineLayout vkDestroyPipelineLayout;
+VKAPI PFN_vkCreateSampler vkCreateSampler;
+VKAPI PFN_vkDestroySampler vkDestroySampler;
+VKAPI PFN_vkCreateDescriptorSetLayout vkCreateDescriptorSetLayout;
+VKAPI PFN_vkDestroyDescriptorSetLayout vkDestroyDescriptorSetLayout;
+VKAPI PFN_vkCreateDescriptorPool vkCreateDescriptorPool;
+VKAPI PFN_vkDestroyDescriptorPool vkDestroyDescriptorPool;
+VKAPI PFN_vkResetDescriptorPool vkResetDescriptorPool;
+VKAPI PFN_vkAllocateDescriptorSets vkAllocateDescriptorSets;
+VKAPI PFN_vkFreeDescriptorSets vkFreeDescriptorSets;
+VKAPI PFN_vkUpdateDescriptorSets vkUpdateDescriptorSets;
+VKAPI PFN_vkCreateFramebuffer vkCreateFramebuffer;
+VKAPI PFN_vkDestroyFramebuffer vkDestroyFramebuffer;
+VKAPI PFN_vkCreateRenderPass vkCreateRenderPass;
+VKAPI PFN_vkDestroyRenderPass vkDestroyRenderPass;
+VKAPI PFN_vkGetRenderAreaGranularity vkGetRenderAreaGranularity;
+VKAPI PFN_vkCreateCommandPool vkCreateCommandPool;
+VKAPI PFN_vkDestroyCommandPool vkDestroyCommandPool;
+VKAPI PFN_vkResetCommandPool vkResetCommandPool;
+VKAPI PFN_vkAllocateCommandBuffers vkAllocateCommandBuffers;
+VKAPI PFN_vkFreeCommandBuffers vkFreeCommandBuffers;
+VKAPI PFN_vkBeginCommandBuffer vkBeginCommandBuffer;
+VKAPI PFN_vkEndCommandBuffer vkEndCommandBuffer;
+VKAPI PFN_vkResetCommandBuffer vkResetCommandBuffer;
+VKAPI PFN_vkCmdBindPipeline vkCmdBindPipeline;
+VKAPI PFN_vkCmdSetViewport vkCmdSetViewport;
+VKAPI PFN_vkCmdSetScissor vkCmdSetScissor;
+VKAPI PFN_vkCmdSetLineWidth vkCmdSetLineWidth;
+VKAPI PFN_vkCmdSetDepthBias vkCmdSetDepthBias;
+VKAPI PFN_vkCmdSetBlendConstants vkCmdSetBlendConstants;
+VKAPI PFN_vkCmdSetDepthBounds vkCmdSetDepthBounds;
+VKAPI PFN_vkCmdSetStencilCompareMask vkCmdSetStencilCompareMask;
+VKAPI PFN_vkCmdSetStencilWriteMask vkCmdSetStencilWriteMask;
+VKAPI PFN_vkCmdSetStencilReference vkCmdSetStencilReference;
+VKAPI PFN_vkCmdBindDescriptorSets vkCmdBindDescriptorSets;
+VKAPI PFN_vkCmdBindIndexBuffer vkCmdBindIndexBuffer;
+VKAPI PFN_vkCmdBindVertexBuffers vkCmdBindVertexBuffers;
+VKAPI PFN_vkCmdDraw vkCmdDraw;
+VKAPI PFN_vkCmdDrawIndexed vkCmdDrawIndexed;
+VKAPI PFN_vkCmdDrawIndirect vkCmdDrawIndirect;
+VKAPI PFN_vkCmdDrawIndexedIndirect vkCmdDrawIndexedIndirect;
+VKAPI PFN_vkCmdDispatch vkCmdDispatch;
+VKAPI PFN_vkCmdDispatchIndirect vkCmdDispatchIndirect;
+VKAPI PFN_vkCmdCopyBuffer vkCmdCopyBuffer;
+VKAPI PFN_vkCmdCopyImage vkCmdCopyImage;
+VKAPI PFN_vkCmdBlitImage vkCmdBlitImage;
+VKAPI PFN_vkCmdCopyBufferToImage vkCmdCopyBufferToImage;
+VKAPI PFN_vkCmdCopyImageToBuffer vkCmdCopyImageToBuffer;
+VKAPI PFN_vkCmdUpdateBuffer vkCmdUpdateBuffer;
+VKAPI PFN_vkCmdFillBuffer vkCmdFillBuffer;
+VKAPI PFN_vkCmdClearColorImage vkCmdClearColorImage;
+VKAPI PFN_vkCmdClearDepthStencilImage vkCmdClearDepthStencilImage;
+VKAPI PFN_vkCmdClearAttachments vkCmdClearAttachments;
+VKAPI PFN_vkCmdResolveImage vkCmdResolveImage;
+VKAPI PFN_vkCmdSetEvent vkCmdSetEvent;
+VKAPI PFN_vkCmdResetEvent vkCmdResetEvent;
+VKAPI PFN_vkCmdWaitEvents vkCmdWaitEvents;
+VKAPI PFN_vkCmdPipelineBarrier vkCmdPipelineBarrier;
+VKAPI PFN_vkCmdBeginQuery vkCmdBeginQuery;
+VKAPI PFN_vkCmdEndQuery vkCmdEndQuery;
+VKAPI PFN_vkCmdResetQueryPool vkCmdResetQueryPool;
+VKAPI PFN_vkCmdWriteTimestamp vkCmdWriteTimestamp;
+VKAPI PFN_vkCmdCopyQueryPoolResults vkCmdCopyQueryPoolResults;
+VKAPI PFN_vkCmdPushConstants vkCmdPushConstants;
+VKAPI PFN_vkCmdBeginRenderPass vkCmdBeginRenderPass;
+VKAPI PFN_vkCmdNextSubpass vkCmdNextSubpass;
+VKAPI PFN_vkCmdEndRenderPass vkCmdEndRenderPass;
+VKAPI PFN_vkCmdExecuteCommands vkCmdExecuteCommands;
+/* VK_VERSION_1_0 */
+
+/* VK_KHR_surface */
+VKAPI PFN_vkDestroySurfaceKHR vkDestroySurfaceKHR;
+VKAPI PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR;
+VKAPI PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR vkGetPhysicalDeviceSurfaceCapabilitiesKHR;
+VKAPI PFN_vkGetPhysicalDeviceSurfaceFormatsKHR vkGetPhysicalDeviceSurfaceFormatsKHR;
+VKAPI PFN_vkGetPhysicalDeviceSurfacePresentModesKHR vkGetPhysicalDeviceSurfacePresentModesKHR;
+/* VK_KHR_surface */
