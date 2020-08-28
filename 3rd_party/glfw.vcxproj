@@ -20,7 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glfw\deps\glad_gl.c" />
-    <ClCompile Include="glfw\deps\glad_vulkan.c" />
     <ClCompile Include="glfw\src\context.c" />
     <ClCompile Include="glfw\src\egl_context.c" />
     <ClCompile Include="glfw\src\init.c" />
@@ -39,9 +38,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glfw\deps\glad\gl.h" />
-    <ClInclude Include="glfw\deps\glad\khrplatform.h" />
-    <ClInclude Include="glfw\deps\glad\vk_platform.h" />
-    <ClInclude Include="glfw\deps\glad\vulkan.h" />
     <ClInclude Include="glfw\include\GLFW\glfw3.h" />
     <ClInclude Include="glfw\include\GLFW\glfw3native.h" />
     <ClInclude Include="glfw\src\egl_context.h" />
@@ -106,24 +102,24 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)bin\$(PlatformShortName)\$(Configuration)\3rd_party\$(ProjectName)\</OutDir>
+    <OutDir>$(SolutionDir)build_$(PlatformShortName)\$(Configuration)\3rd_party\$(ProjectName)\</OutDir>
     <IntDir>$(OutDir)tmp\</IntDir>
-    <TargetName>$(ProjectName)d</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)bin\$(PlatformShortName)\$(Configuration)\3rd_party\$(ProjectName)\</OutDir>
+    <OutDir>$(SolutionDir)build_$(PlatformShortName)\$(Configuration)\3rd_party\$(ProjectName)\</OutDir>
     <IntDir>$(OutDir)tmp\</IntDir>
-    <TargetName>$(ProjectName)d</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)bin\$(PlatformShortName)\$(Configuration)\3rd_party\$(ProjectName)\</OutDir>
+    <OutDir>$(SolutionDir)build_$(PlatformShortName)\$(Configuration)\3rd_party\$(ProjectName)\</OutDir>
     <IntDir>$(OutDir)tmp\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)bin\$(PlatformShortName)\$(Configuration)\3rd_party\$(ProjectName)\</OutDir>
+    <OutDir>$(SolutionDir)build_$(PlatformShortName)\$(Configuration)\3rd_party\$(ProjectName)\</OutDir>
     <IntDir>$(OutDir)tmp\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
