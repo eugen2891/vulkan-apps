@@ -18,19 +18,6 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="config.h" />
-    <ClInclude Include="include\vkutil\vkutil.h" />
-    <ClInclude Include="internal.h" />
-    <ClInclude Include="vmath.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="extensions.c" />
-    <ClCompile Include="functions.c" />
-    <ClCompile Include="init.c" />
-    <ClCompile Include="library.c" />
-    <ClCompile Include="win32.c" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{3BC768E2-DD76-4208-A054-AE084A08D3DD}</ProjectGuid>
