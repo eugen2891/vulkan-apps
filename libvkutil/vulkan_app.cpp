@@ -127,6 +127,7 @@ bool VulkanApp::createDeviceAndSwapchain(GLFWwindow* window)
         vkEnumeratePhysicalDevices(pAppImpl->vkInstance, &numPhDev, pPhDev);
         for (uint32_t i = 0; i < numPhDev; i++)
         {
+            memStack.pushFrame();
             switch (pAppImpl->canUsePhysicalDevice(pPhDev[i]))
             {
             case PHDEV_BEST_FIT:
@@ -139,6 +140,7 @@ bool VulkanApp::createDeviceAndSwapchain(GLFWwindow* window)
             default:
                 break;
             }
+            memStack.popFrame();
         }
         memStack.popFrame();
         if (bestFit == VK_NULL_HANDLE && fallback == VK_NULL_HANDLE)
@@ -179,6 +181,28 @@ void VulkanApp::addValidationLayers(TArray<const char*>& list)
 
 VulkanApp::PhDevUsability VulkanApp::canUsePhysicalDevice(VkPhysicalDevice phDev)
 {
+    uint32_t numQueueFamilies = 0;
+    VkBool32 canPresent = VK_FALSE;
+    VkPhysicalDeviceProperties props;
+    vkGetPhysicalDeviceProperties(phDev, &props);
+    if (props.deviceType != VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU && props.deviceType != VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
+        return PHDEV_UNUSABLE;
+    vkGetPhysicalDeviceQueueFamilyProperties(phDev, &numQueueFamilies, nullptr);
+    if (numQueueFamilies == 0)
+        return PHDEV_UNUSABLE;
+    VkQueueFamilyProperties* qfProps = memStack.allocStack<VkQueueFamilyProperties>(numQueueFamilies);
+    vkGetPhysicalDeviceQueueFamilyProperties(phDev, &numQueueFamilies, qfProps);
+    for (uint32_t i = 0; i < numQueueFamilies; i++)
+    {
+        if (vkGetPhysicalDeviceSurfaceSupportKHR(phDev, i, surface, &canPresent) != VK_SUCCESS)
+            return PHDEV_UNUSABLE;
+        else if (canPresent == VK_TRUE)
+            break;
+    }
+    if (canPresent != VK_TRUE)
+        return PHDEV_UNUSABLE;
+    if (props.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU)
+        return PHDEV_FALLBACK;
     return PHDEV_BEST_FIT;
 }
 
