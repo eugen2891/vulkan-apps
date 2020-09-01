@@ -15,6 +15,14 @@ public:
         return static_cast<T*>(allocStack(sizeof(T) * num));
     }
 
+    template <typename T>
+    T* allocLinear(uint32_t num)
+    {
+        if (!num)
+            return nullptr;
+        return static_cast<T*>(allocLinear(sizeof(T) * num));
+    }
+
     void* allocStack(size_t bytes);
     void* allocLinear(size_t bytes);
     void pushFrame();
