@@ -172,6 +172,7 @@ bool VulkanApp::createDeviceAndSwapchain(GLFWwindow* window)
             return false;
         pAppImpl->vkPhDev = (bestFit == VK_NULL_HANDLE) ? fallback : bestFit;
     }
+    vkGetPhysicalDeviceMemoryProperties(pAppImpl->vkPhDev, &pAppImpl->memoryProperties);
     vkGetPhysicalDeviceQueueFamilyProperties(pAppImpl->vkPhDev, &pAppImpl->numDevQueues, nullptr);
     pAppImpl->pDeviceQueue = memStack.allocLinear<DeviceQueue>(pAppImpl->numDevQueues);
     memStack.pushFrame();
@@ -502,6 +503,24 @@ VulkanApp::PhDevUsability VulkanApp::canUsePhysicalDevice(VkPhysicalDevice phDev
     if (props.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU)
         return PHDEV_FALLBACK;
     return PHDEV_BEST_FIT;
+}
+
+VkDeviceMemory VulkanApp::gpuMemAlloc(const VkMemoryRequirements& reqs, VkMemoryPropertyFlags flags)
+{
+    VkDeviceMemory retVal = VK_NULL_HANDLE;
+    for (uint32_t i = 0; i < memoryProperties.memoryTypeCount; i++)
+    {
+        const VkMemoryType& memType = memoryProperties.memoryTypes[i];
+        if ((memType.propertyFlags & flags) == flags)
+        {
+            VkMemoryAllocateInfo info = { VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO };
+            info.allocationSize = reqs.size;
+            info.memoryTypeIndex = i;
+            vkAllocateMemory(vkDevice, &info, getAllocator(), &retVal);
+            break;
+        }
+    }
+    return retVal;
 }
 
 void VulkanApp::addDeviceExtensions(TArray<const char*>& list)

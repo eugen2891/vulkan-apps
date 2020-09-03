@@ -3,7 +3,6 @@
 #if !defined(VKAPP_IMPL)
 #if defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN
-#define _CRT_SECURE_NO_WARNINGS
 #include <windows.h>
 #pragma comment(lib, "kernel32")
 #pragma comment(lib, "user32"  )
@@ -23,11 +22,20 @@ typedef struct GLFWwindow GLFWwindow;
 #include <GLFW/glfw3.h>
 #endif
 
+/* Minimum 1MB internal stack memory */
 #if !defined(VKAPI_TMP_MEM) || (VKAPI_TMP_MEM < 1048576)
 #if defined(VKAPI_TMP_MEM)
 #undef VKAPI_TMP_MEM
 #endif
 #define VKAPI_TMP_MEM 1048576
+#endif
+
+/* Minimum 8MB upload buffer */
+#if !defined(VKAPI_UPLOAD_BUFFER) || (VKAPI_UPLOAD_BUFFER < 8388608)
+#if defined(VKAPI_UPLOAD_BUFFER)
+#undef VKAPI_UPLOAD_BUFFER
+#endif
+#define VKAPI_UPLOAD_BUFFER 8388608
 #endif
 
 template <typename T> struct TArray;
@@ -53,6 +61,7 @@ protected:
     virtual void addInstanceExtensions(TArray<const char*>& list);
     virtual void addValidationLayers(TArray<const char*>& list);
     virtual PhDevUsability canUsePhysicalDevice(VkPhysicalDevice phDev);
+    VkDeviceMemory gpuMemAlloc(const VkMemoryRequirements& reqs, VkMemoryPropertyFlags flags);
     virtual void addDeviceExtensions(TArray<const char*>& list);
     virtual VkSurfaceFormatKHR getSurfaceFormat();
     virtual VkPresentModeKHR getPresentMode();
@@ -88,6 +97,8 @@ private:
     DeviceQueue*     pDeviceQueue        = nullptr;
     VkImage*         pSwapchainImage     = nullptr;
     VkImageView*     pSwapchainImageView = nullptr;
+
+    VkPhysicalDeviceMemoryProperties memoryProperties;
 
     uint32_t numDevQueues  = UINT32_MAX;
     uint32_t graphicsQueue = UINT32_MAX;
