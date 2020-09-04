@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="include\vkutil\mem_stack.h" />
     <ClInclude Include="include\vkutil\vulkan_api.h" />
+    <ClInclude Include="include\vkutil\vulkan_app.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\vkutil\vulkan_app.inl" />
