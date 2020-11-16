@@ -11,6 +11,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glfw", "3rd_party\glfw.vcxp
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libvkutil", "libvkutil\libvkutil.vcxproj", "{3BC768E2-DD76-4208-A054-AE084A08D3DD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sbrenderer", "sbrenderer\sbrenderer.vcxproj", "{FA49B2D5-F85F-4D74-8F55-1D6F2DD6393B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vulkaninfo", "vulkaninfo\vulkaninfo.vcxproj", "{9B1721BE-CA48-45B8-B124-35A47CED551D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -43,6 +47,22 @@ Global
 		{3BC768E2-DD76-4208-A054-AE084A08D3DD}.Release|x64.Build.0 = Release|x64
 		{3BC768E2-DD76-4208-A054-AE084A08D3DD}.Release|x86.ActiveCfg = Release|Win32
 		{3BC768E2-DD76-4208-A054-AE084A08D3DD}.Release|x86.Build.0 = Release|Win32
+		{FA49B2D5-F85F-4D74-8F55-1D6F2DD6393B}.Debug|x64.ActiveCfg = Debug|x64
+		{FA49B2D5-F85F-4D74-8F55-1D6F2DD6393B}.Debug|x64.Build.0 = Debug|x64
+		{FA49B2D5-F85F-4D74-8F55-1D6F2DD6393B}.Debug|x86.ActiveCfg = Debug|Win32
+		{FA49B2D5-F85F-4D74-8F55-1D6F2DD6393B}.Debug|x86.Build.0 = Debug|Win32
+		{FA49B2D5-F85F-4D74-8F55-1D6F2DD6393B}.Release|x64.ActiveCfg = Release|x64
+		{FA49B2D5-F85F-4D74-8F55-1D6F2DD6393B}.Release|x64.Build.0 = Release|x64
+		{FA49B2D5-F85F-4D74-8F55-1D6F2DD6393B}.Release|x86.ActiveCfg = Release|Win32
+		{FA49B2D5-F85F-4D74-8F55-1D6F2DD6393B}.Release|x86.Build.0 = Release|Win32
+		{9B1721BE-CA48-45B8-B124-35A47CED551D}.Debug|x64.ActiveCfg = Debug|x64
+		{9B1721BE-CA48-45B8-B124-35A47CED551D}.Debug|x64.Build.0 = Debug|x64
+		{9B1721BE-CA48-45B8-B124-35A47CED551D}.Debug|x86.ActiveCfg = Debug|Win32
+		{9B1721BE-CA48-45B8-B124-35A47CED551D}.Debug|x86.Build.0 = Debug|Win32
+		{9B1721BE-CA48-45B8-B124-35A47CED551D}.Release|x64.ActiveCfg = Release|x64
+		{9B1721BE-CA48-45B8-B124-35A47CED551D}.Release|x64.Build.0 = Release|x64
+		{9B1721BE-CA48-45B8-B124-35A47CED551D}.Release|x86.ActiveCfg = Release|Win32
+		{9B1721BE-CA48-45B8-B124-35A47CED551D}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
