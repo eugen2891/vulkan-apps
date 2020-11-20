@@ -4,11 +4,13 @@
     <ClCompile Include="vulkanapi.cpp" />
     <ClCompile Include="vulkangui.cpp" />
     <ClCompile Include="vulkanaux.cpp" />
+    <ClCompile Include="vkutil.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vulkanapi.h" />
     <ClInclude Include="vulkangui.h" />
     <ClInclude Include="vulkanaux.h" />
     <ClInclude Include="vulkantpl.h" />
+    <ClInclude Include="vkutil.h" />
   </ItemGroup>
 </Project>

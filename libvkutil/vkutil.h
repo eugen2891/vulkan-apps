@@ -207,7 +207,6 @@ extern PFN_vkGetDeviceMemoryOpaqueCaptureAddress vkGetDeviceMemoryOpaqueCaptureA
 #endif
 /* VK_VERSION_1_2 */
 
-
 /* VK_KHR_surface */
 extern PFN_vkDestroySurfaceKHR vkDestroySurfaceKHR;
 extern PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR;
@@ -230,131 +229,32 @@ extern PFN_vkAcquireNextImage2KHR vkAcquireNextImage2KHR;
 #endif
 /* VK_KHR_swapchain */
 
-#if _DEBUG
-#define FAIL_RETURN() { __debugbreak(); return; }
-#define FAIL_RETVAL(v) { __debugbreak(); return v; }
-#else
-#define FAIL_RETURN() return;
-#define FAIL_RETVAL(v) return v;
-#endif
+void vkUtilInitialize(const char* pAppName, VkAllocationCallbacks* pMAlloc, bool validation);
 
-#include "vulkantpl.h"
+void vkUtilCreateDevice(void* pWindowHandle, bool depthBuffer);
 
-struct GLFWwindow;
-typedef GLFWwindow* Window;
+bool vkUtilGetBufferMemoryInfo(VkBuffer buffer, bool cpuWrite, bool cpuRead, VkMemoryAllocateInfo* pOut);
 
-class VulkanAPI
-{
+bool vkUtilGetImageMemoryInfo(VkImage image, bool cpuWrite, bool cpuRead, VkMemoryAllocateInfo* pOut);
 
-    VkAllocationCallbacks* m_pMAlloc;
-    VkPhysicalDevice* m_pPhysicalDevice;
-    VkQueueFamilyProperties** m_ppQueueFamilyProperties;
-    uint32_t* m_pNumQueueFamilies;
-    VkInstance m_instance;
-    VkDevice m_device;
-    VkSurfaceKHR m_surface;
-    VkSwapchainKHR m_swapchain;
-    VkQueue m_queue;
+VkCommandBuffer vkUtilGetCommandBuffer();
 
-    VkImage* m_pSwapchainImage;
-    VkImageView* m_pSwapchainImageView;
-    VkFramebuffer* m_pSwapchainFramebuffer;
+VkFramebuffer vkUtilGetFramebuffer();
 
-    VkImage m_colorImage;
-    VkImage m_depthImage;
-    VkDeviceMemory m_colorImageMemory;
-    VkDeviceMemory m_depthImageMemory;
-    VkImageView m_colorImageView;
-    VkImageView m_depthImageView;
+VkFormat vkUtilGetColorBufferFormat();
 
-    VkDescriptorPool m_descriptorPool;
-    VkDescriptorSetLayout m_descriptorSetLayout;
-    VkDescriptorSet m_finalColorDescriptorSet;
-    VkShaderModule m_finalColorVS;
-    VkShaderModule m_finalColorFS;
-    VkRenderPass m_finalColorPass;
-    VkPipeline m_finalColorPipeline;
-    VkPipelineLayout m_finalColorPipelineLayout;
-    VkCommandPool m_commandPool;
+VkFormat vkUtilGetDepthBufferFormat();
 
-    VkExtent3D m_screenSize;
-    uint32_t m_numPhysicalDevices;
-    uint32_t m_physicalDevice;
-    uint32_t m_queueFamily;
-    uint32_t m_swapchainSize;
-    VkResult m_lastResult;
-    VkClearColorValue m_clearColor;
-    VkViewport m_viewport;
-    VkRect2D m_scissor;
-    bool m_swapchainReset;
+uint32_t vkUtilGetViewWidth();
 
-    struct FrameData
-    {
-        VkCommandBuffer commandBuffer;
-        VkSemaphore imageReady, submitDone;
-        VkFence fence;
-        FrameData* pNext;
-    };
+uint32_t vkUtilGetViewHeight();
 
-    TRingQueue<FrameData> m_frameData;
+VkDevice vkUtilGetDevice();
 
-    static VulkanAPI* m_pVkApi;
+bool vkUtilHasError();
 
-public:
+void vkUtilBeginFrame();
 
-    VulkanAPI(const char* pAppName, bool validation);
-    static const VulkanAPI* GetInstance() { return m_pVkApi; }
-    bool GetAllocInfo(VkImage image, bool cpuWrite, bool cpuRead, VkMemoryAllocateInfo& out);
-    const VkAllocationCallbacks* GetMAlloc() const;
-    bool CreateDeviceAndSwapchain(Window window);
-    VkCommandBuffer GetCommandBuffer() const;
-    VkImageView GetColorRenderTarget() const;
-    VkImageView GetDepthRenderTarget() const;
-    VkDevice GetDevice() const;
-    VkExtent2D GetScreenSize() const;
-    bool HasError() const;
-    ~VulkanAPI();
-    void BeginFrame();
-    void EndFrame();
+void vkUtilEndFrame();
 
-private:
-
-    bool CreateSwapchainResources();
-    void DestroySwapchainResources();
-
-};
-
-inline bool VulkanAPI::HasError() const
-{
-    return (m_lastResult != VK_SUCCESS);
-}
-
-inline VkDevice VulkanAPI::GetDevice() const
-{
-    return m_device;
-}
-
-inline VkExtent2D VulkanAPI::GetScreenSize() const
-{
-    return m_scissor.extent;
-}
-
-inline const VkAllocationCallbacks* VulkanAPI::GetMAlloc() const
-{
-    return m_pMAlloc;
-}
-
-inline VkCommandBuffer VulkanAPI::GetCommandBuffer() const
-{
-    return m_frameData.Get()->commandBuffer;
-}
-
-inline VkImageView VulkanAPI::GetColorRenderTarget() const
-{
-    return m_colorImageView;
-}
-
-inline VkImageView VulkanAPI::GetDepthRenderTarget() const
-{
-    return m_depthImageView;
-}
+void vkUtilFinalize();
