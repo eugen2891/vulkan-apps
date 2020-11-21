@@ -682,7 +682,7 @@ void vkUtilCreateDevice(void* pWindowHandle, bool depthBuffer)
             LOAD(vkGetPhysicalDevicePresentRectanglesKHR);
             LOAD(vkAcquireNextImage2KHR);
 #endif
-#if (VKAPI_VERSION >= VK_API_VERSION_1_2)
+#if defined(VK_API_VERSION_1_2) && (VKAPI_VERSION >= VK_API_VERSION_1_2)
             LOAD(vkCmdDrawIndirectCount);
             LOAD(vkCmdDrawIndexedIndirectCount);
             LOAD(vkCreateRenderPass2);
@@ -1134,7 +1134,7 @@ PFN_vkGetDescriptorSetLayoutSupport vkGetDescriptorSetLayoutSupport = nullptr;
 
 
 /* VK_VERSION_1_2 */
-#if (VKAPI_VERSION >= VK_API_VERSION_1_2)
+#if defined(VK_API_VERSION_1_2) && (VKAPI_VERSION >= VK_API_VERSION_1_2)
 PFN_vkCmdDrawIndirectCount vkCmdDrawIndirectCount = nullptr;
 PFN_vkCmdDrawIndexedIndirectCount vkCmdDrawIndexedIndirectCount = nullptr;
 PFN_vkCreateRenderPass2 vkCreateRenderPass2 = nullptr;

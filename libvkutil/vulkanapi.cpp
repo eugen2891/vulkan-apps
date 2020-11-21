@@ -584,7 +584,7 @@ bool VulkanAPI::CreateDeviceAndSwapchain(Window window)
             LOAD(vkGetPhysicalDevicePresentRectanglesKHR);
             LOAD(vkAcquireNextImage2KHR);
 #endif
-#if (VKAPI_VERSION >= VK_API_VERSION_1_2)
+#if defined(VK_API_VERSION_1_2) && (VKAPI_VERSION >= VK_API_VERSION_1_2)
             LOAD(vkCmdDrawIndirectCount);
             LOAD(vkCmdDrawIndexedIndirectCount);
             LOAD(vkCreateRenderPass2);

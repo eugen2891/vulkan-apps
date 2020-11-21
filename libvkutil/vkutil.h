@@ -190,7 +190,7 @@ extern PFN_vkGetDescriptorSetLayoutSupport vkGetDescriptorSetLayoutSupport;
 
 
 /* VK_VERSION_1_2 */
-#if (VKAPI_VERSION >= VK_API_VERSION_1_2)
+#if defined(VK_API_VERSION_1_2) && (VKAPI_VERSION >= VK_API_VERSION_1_2)
 extern PFN_vkCmdDrawIndirectCount vkCmdDrawIndirectCount;
 extern PFN_vkCmdDrawIndexedIndirectCount vkCmdDrawIndexedIndirectCount;
 extern PFN_vkCreateRenderPass2 vkCreateRenderPass2;
