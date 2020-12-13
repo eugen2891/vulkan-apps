@@ -24,12 +24,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="geometry.cpp" />
     <ClCompile Include="vkutil.cpp" />
     <ClCompile Include="vulkanapi.cpp" />
     <ClCompile Include="vulkanaux.cpp" />
     <ClCompile Include="vulkangui.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="vecmath.h" />
+    <ClInclude Include="vkplatform.h" />
     <ClInclude Include="vkutil.h" />
     <ClInclude Include="vulkanapi.h" />
     <ClInclude Include="vulkanaux.h" />

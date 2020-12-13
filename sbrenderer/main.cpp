@@ -3,6 +3,7 @@
 #include "renderer.h"
 
 #include <vkutil.h>
+#include <vecmath.h>
 
 #include <GLFW/glfw3.h>
 
@@ -20,7 +21,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         GLFWwindow* pWindow = glfwCreateWindow(WIN_W, WIN_H, APP_NAME, nullptr, nullptr);
         glfwSetWindowSizeLimits(pWindow, WIN_W, WIN_H, GLFW_DONT_CARE, GLFW_DONT_CARE);
-        vkUtilCreateDevice(pWindow, false);
+        vkUtilCreateDevice(pWindow, false /*VKUTIL_COMMAND_CONTEXT | VKUTIL_DEPTH_STENCIL_BUFFER*/);
         if (!vkUtilHasError())
         {
             sb::Initialize();

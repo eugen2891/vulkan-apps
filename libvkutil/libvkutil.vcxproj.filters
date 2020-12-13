@@ -5,6 +5,7 @@
     <ClCompile Include="vulkangui.cpp" />
     <ClCompile Include="vulkanaux.cpp" />
     <ClCompile Include="vkutil.cpp" />
+    <ClCompile Include="geometry.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vulkanapi.h" />
@@ -12,5 +13,7 @@
     <ClInclude Include="vulkanaux.h" />
     <ClInclude Include="vulkantpl.h" />
     <ClInclude Include="vkutil.h" />
+    <ClInclude Include="vkplatform.h" />
+    <ClInclude Include="vecmath.h" />
   </ItemGroup>
 </Project>

@@ -1,9 +1,6 @@
 #pragma once
 
-#if defined(_WIN32)
-struct IUnknown;
-#define VK_USE_PLATFORM_WIN32_KHR
-#endif
+#include "vkplatform.h"
 
 #define VK_NO_PROTOTYPES
 #include <vulkan/vulkan.h>
@@ -15,6 +12,25 @@ struct IUnknown;
 #else
 #define VKAPI_VERSION VK_API_VERSION_1_0
 #endif
+
+#define VKUTIL_COMMAND_CONTEXT      1
+#define VKUTIL_DEPTH_STENCIL_BUFFER 2
+
+#if (VKUTIL_DEBUG)
+#define JOIN__IMPL(x, y) x##y
+#define JOIN__(x,y) JOIN__IMPL(x,y)
+#define VKCHK(call) \
+    bool JOIN__(vkchk, __LINE__) = true; \
+    { \
+        VkResult _vkuResult_ = ( call ); \
+        if (_vkuResult_ != VK_SUCCESS) DBGBREAK(); \
+    } \
+    if ( !JOIN__(vkchk, __LINE__) )
+#define VKCHK_RTRN(call) \
+    VKCHK( call ) return
+#else
+#define VKCHK_RTRN(call) ( call )
+#endif;
 
 /* VK_VERSION_1_0 */
 extern PFN_vkCreateInstance vkCreateInstance;
@@ -231,11 +247,13 @@ extern PFN_vkAcquireNextImage2KHR vkAcquireNextImage2KHR;
 
 void vkUtilInitialize(const char* pAppName, VkAllocationCallbacks* pMAlloc, bool validation);
 
-void vkUtilCreateDevice(void* pWindowHandle, bool depthBuffer);
-
 bool vkUtilGetBufferMemoryInfo(VkBuffer buffer, bool cpuWrite, bool cpuRead, VkMemoryAllocateInfo* pOut);
 
 bool vkUtilGetImageMemoryInfo(VkImage image, bool cpuWrite, bool cpuRead, VkMemoryAllocateInfo* pOut);
+
+void vkUtilCreateDevice(void* pWindowHandle, bool depthBuffer);
+
+void vkUtilSetError(VkResult result, const char* pErrorMsg);
 
 VkCommandBuffer vkUtilGetCommandBuffer();
 

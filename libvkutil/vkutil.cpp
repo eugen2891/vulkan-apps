@@ -1,3 +1,7 @@
+#if (_DEBUG)
+#define VKUTIL_DEBUG 1
+#endif
+
 #include "vkutil.h"
 
 #if !defined(WITHOUT_GLFW)
@@ -435,6 +439,54 @@ void vkUtilInitialize(const char* pAppName, VkAllocationCallbacks* pMAlloc, bool
 #undef LOAD
 }
 
+bool vkUtilGetBufferMemoryInfo(VkBuffer buffer, bool cpuWrite, bool cpuRead, VkMemoryAllocateInfo* pOut)
+{
+    VkMemoryRequirements memReq;
+    VkMemoryPropertyFlags flags = 0;
+    vkGetBufferMemoryRequirements(g_device, buffer, &memReq);
+    if (cpuWrite || cpuRead)
+        flags |= VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+    if (cpuRead)
+        flags |= VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
+    if (flags == 0)
+        flags |= VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+    for (uint32_t i = 0; i < g_memProps.memoryTypeCount; i++)
+    {
+        const VkMemoryType& type = g_memProps.memoryTypes[i];
+        if ((memReq.memoryTypeBits & (1 << i)) && ((type.propertyFlags & flags) == flags))
+        {
+            pOut->memoryTypeIndex = i;
+            pOut->allocationSize = memReq.size;
+            return true;
+        }
+    }
+    FAIL_RETVAL(false)
+}
+
+bool vkUtilGetImageMemoryInfo(VkImage image, bool cpuWrite, bool cpuRead, VkMemoryAllocateInfo* pOut)
+{
+    VkMemoryRequirements memReq;
+    VkMemoryPropertyFlags flags = 0;
+    vkGetImageMemoryRequirements(g_device, image, &memReq);
+    if (cpuWrite || cpuRead)
+        flags |= VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+    if (cpuRead)
+        flags |= VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
+    if (flags == 0)
+        flags |= VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+    for (uint32_t i = 0; i < g_memProps.memoryTypeCount; i++)
+    {
+        const VkMemoryType& type = g_memProps.memoryTypes[i];
+        if ((memReq.memoryTypeBits & (1 << i)) && ((type.propertyFlags & flags) == flags))
+        {
+            pOut->memoryTypeIndex = i;
+            pOut->allocationSize = memReq.size;
+            return true;
+        }
+    }
+    FAIL_RETVAL(false)
+}
+
 void vkUtilCreateDevice(void* pWindowHandle, bool depthBuffer)
 
 {
@@ -749,52 +801,9 @@ void vkUtilCreateDevice(void* pWindowHandle, bool depthBuffer)
         FAIL_RETURN();
 }
 
-bool vkUtilGetBufferMemoryInfo(VkBuffer buffer, bool cpuWrite, bool cpuRead, VkMemoryAllocateInfo* pOut)
+void vkUtilSetError(VkResult result, const char*)
 {
-    VkMemoryRequirements memReq;
-    VkMemoryPropertyFlags flags = 0;
-    vkGetBufferMemoryRequirements(g_device, buffer, &memReq);
-    if (cpuWrite || cpuRead)
-        flags |= VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
-    if (cpuRead)
-        flags |= VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
-    if (flags == 0)
-        flags |= VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-    for (uint32_t i = 0; i < g_memProps.memoryTypeCount; i++)
-    {
-        const VkMemoryType& type = g_memProps.memoryTypes[i];
-        if ((memReq.memoryTypeBits & (1 << i)) && ((type.propertyFlags & flags) == flags))
-        {
-            pOut->memoryTypeIndex = i;
-            pOut->allocationSize = memReq.size;
-            return true;
-        }
-    }
-    FAIL_RETVAL(false)
-}
-
-bool vkUtilGetImageMemoryInfo(VkImage image, bool cpuWrite, bool cpuRead, VkMemoryAllocateInfo* pOut)
-{
-    VkMemoryRequirements memReq;
-    VkMemoryPropertyFlags flags = 0;
-    vkGetImageMemoryRequirements(g_device, image, &memReq);
-    if (cpuWrite || cpuRead)
-        flags |= VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
-    if (cpuRead)
-        flags |= VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
-    if (flags == 0)
-        flags |= VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-    for (uint32_t i = 0; i < g_memProps.memoryTypeCount; i++)
-    {
-        const VkMemoryType& type = g_memProps.memoryTypes[i];
-        if ((memReq.memoryTypeBits & (1 << i)) && ((type.propertyFlags & flags) == flags))
-        {
-            pOut->memoryTypeIndex = i;
-            pOut->allocationSize = memReq.size;
-            return true;
-        }
-    }
-    FAIL_RETVAL(false)
+    g_lastResult = result;
 }
 
 VkCommandBuffer vkUtilGetCommandBuffer()
@@ -857,12 +866,8 @@ bool vkUtilHasError()
 void vkUtilBeginFrame()
 {
     const FrameData& frameData = *g_pCurrentFrame;
-    g_lastResult = vkWaitForFences(g_device, 1, &frameData.fence, VK_TRUE, UINT64_MAX);
-    if (g_lastResult != VK_SUCCESS)
-        FAIL_RETURN();
-    g_lastResult = vkResetFences(g_device, 1, &frameData.fence);
-    if (g_lastResult != VK_SUCCESS)
-        FAIL_RETURN();
+    VKCHK_RTRN(vkWaitForFences(g_device, 1, &frameData.fence, VK_TRUE, UINT64_MAX));
+    VKCHK_RTRN(vkResetFences(g_device, 1, &frameData.fence));
     g_lastResult = vkResetCommandBuffer(frameData.commandBuffer, 0);
     if (g_lastResult != VK_SUCCESS)
         FAIL_RETURN();
