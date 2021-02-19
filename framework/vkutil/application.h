@@ -14,6 +14,8 @@ void DestroyApplication(vkutil::Application*);
 namespace vkutil
 {
 
+    struct IHLSLCompiler;
+
     class Application : public Functions
     {
 
@@ -57,6 +59,8 @@ namespace vkutil
         VkSwapchainKHR m_vkSwapchain = VK_NULL_HANDLE;
         VkImageView* m_pSwapchainImageView = nullptr;
         VkCommandBuffer m_vkCommandBuffer = VK_NULL_HANDLE;
+
+        IHLSLCompiler* m_pHLSLCompiler = nullptr;
         
         VkFormat m_swapchainFormat = VK_FORMAT_B8G8R8A8_UNORM;
         VkColorSpaceKHR m_swapchainColorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;

@@ -1,5 +1,7 @@
 #include "application.h"
 
+#include "shaderutil.h"
+
 #include <new>
 
 #include <stdio.h>
@@ -49,6 +51,9 @@ bool vkutil::Application::Initialize(void* pWindow)
         return false;
     if (!SetupCommandContext())
         return false;
+    m_pHLSLCompiler = IHLSLCompiler::Get();
+    if (!m_pHLSLCompiler->Initialize(m_vkDevice, m_pVkAlloc))
+        return false;    
     return OnInitialized();
 }
 
@@ -69,6 +74,7 @@ void vkutil::Application::Finalize()
     vkDestroyDevice(m_vkDevice, m_pVkAlloc);
     vkDestroySurfaceKHR(m_vkInstance, m_vkSurface, m_pVkAlloc);
     vkDestroyInstance(m_vkInstance, m_pVkAlloc);
+    IHLSLCompiler::Get()->Finalize();
     delete[] m_pSwapchainImageView;
     delete[] m_pCommandBufferFence;
     delete[] m_pSubmitDoneSem;

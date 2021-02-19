@@ -9,9 +9,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vkutil", "framework\vkutil\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "clearscreen", "source\clearscreen\clearscreen.vcxproj", "{7B75F081-169C-4909-897A-F2F11BAF86CD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hlsltoy", "source\hlsltoy\hlsltoy.vcxproj", "{3146239D-36A5-4E56-AA07-FCA6DB950B7D}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		framework\vkutil\vkutil.vcxitems*{12b27dd9-054c-4d26-8bc3-719e97ced9e0}*SharedItemsImports = 9
+		framework\vkutil\vkutil.vcxitems*{3146239d-36a5-4e56-aa07-fca6db950b7d}*SharedItemsImports = 4
 		framework\vkutil\vkutil.vcxitems*{7b75f081-169c-4909-897a-f2f11baf86cd}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +32,14 @@ Global
 		{7B75F081-169C-4909-897A-F2F11BAF86CD}.Release|x64.Build.0 = Release|x64
 		{7B75F081-169C-4909-897A-F2F11BAF86CD}.Release|x86.ActiveCfg = Release|Win32
 		{7B75F081-169C-4909-897A-F2F11BAF86CD}.Release|x86.Build.0 = Release|Win32
+		{3146239D-36A5-4E56-AA07-FCA6DB950B7D}.Debug|x64.ActiveCfg = Debug|x64
+		{3146239D-36A5-4E56-AA07-FCA6DB950B7D}.Debug|x64.Build.0 = Debug|x64
+		{3146239D-36A5-4E56-AA07-FCA6DB950B7D}.Debug|x86.ActiveCfg = Debug|Win32
+		{3146239D-36A5-4E56-AA07-FCA6DB950B7D}.Debug|x86.Build.0 = Debug|Win32
+		{3146239D-36A5-4E56-AA07-FCA6DB950B7D}.Release|x64.ActiveCfg = Release|x64
+		{3146239D-36A5-4E56-AA07-FCA6DB950B7D}.Release|x64.Build.0 = Release|x64
+		{3146239D-36A5-4E56-AA07-FCA6DB950B7D}.Release|x86.ActiveCfg = Release|Win32
+		{3146239D-36A5-4E56-AA07-FCA6DB950B7D}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
