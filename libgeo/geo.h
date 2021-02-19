@@ -2,7 +2,8 @@
 
 typedef enum geo_result_t
 {
-    GEO_RESULT_OK
+    GEO_RESULT_OK,
+    GEO_RESULT_FAIL
 } geo_result_t;
 
 typedef enum geo_init_flags_t
@@ -29,6 +30,8 @@ typedef struct geo_scene_t* geo_scene_t;
 typedef struct geo_instance_t* geo_instance_t;
 
 geo_result_t geo_initialize(geo_init_flags_t flags);
+
+void geo_finalize(void);
 
 void geo_begin_frame(void);
 
