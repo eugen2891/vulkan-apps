@@ -17,12 +17,14 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)application.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)functions.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)framework.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)pipeline.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)shaderutil.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)application.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)dxcompiler.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)functions.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)pipeline.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)win32impl.cpp" />
   </ItemGroup>
 </Project>

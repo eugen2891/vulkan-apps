@@ -3,12 +3,6 @@
 namespace vkutil
 {
 
-    enum ShaderStage
-    {
-        VERTEX_SHADER,
-        FRAGMENT_SHADER
-    };
-
     struct HLSLCode
     {
         const char* pCode;

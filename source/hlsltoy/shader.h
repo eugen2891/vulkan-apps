@@ -1,32 +1,53 @@
 #pragma once
 
-#include <stdint.h>
+#include <vkutil/framework.h>
 
 class Shader
 {
 
 public:
 
+
     Shader();
 
-    const char* GetVertexShader() const;
+    VkShaderModule GetVertexShader() const;
 
-    uint32_t GetVeretexShaderSize() const;
+    VkShaderModule GetFragmentShader() const;
+
+    bool HasFragmentShaderChanged();
+
+    bool CompileModules();
+
+    ~Shader();
 
 private:
 
+    static const size_t PAYLOAD_MAX = 65536;
+
+    VkShaderModule m_vertexShader = VK_NULL_HANDLE;
+    VkShaderModule m_fragmentShader = VK_NULL_HANDLE;
     char* m_pVsCode = nullptr;
+    char* m_pFsCode = nullptr;
+    char* m_pFsMain = nullptr;
     size_t m_vsCodeSize = 0;
     size_t m_fsBaseSize = 0;
+    bool m_hasChanged = true;
 
 };
 
-inline const char* Shader::GetVertexShader() const
+inline VkShaderModule Shader::GetVertexShader() const
 {
-    return m_pVsCode;
+    return m_vertexShader;
 }
 
-inline uint32_t Shader::GetVeretexShaderSize() const
+inline VkShaderModule Shader::GetFragmentShader() const
 {
-    return m_vsCodeSize & UINT32_MAX;
+    return m_fragmentShader;
+}
+
+inline bool Shader::HasFragmentShaderChanged()
+{
+    bool retVal = m_hasChanged;
+    m_hasChanged = false;
+    return retVal;
 }

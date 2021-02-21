@@ -34,6 +34,13 @@ constexpr uint32_t CountOf(T(&)[N]) { return N; }
 namespace vkutil
 {
 
+    enum ShaderStage
+    {
+        VERTEX_SHADER,        
+        FRAGMENT_SHADER,
+        MAX_SHADER_STAGES
+    };
+
     bool CheckResult(VkResult result, const char* pFile, int lineNo);
 
 }
