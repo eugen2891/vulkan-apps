@@ -2,8 +2,6 @@
 
 #include "shaderutil.h"
 
-#include <new>
-
 #include <stdio.h>
 
 bool vkutil::Application::Initialize(void* pWindow)
@@ -196,7 +194,7 @@ bool vkutil::Application::SelectPhysicalDevice(VkPhysicalDeviceType type)
     VKUTIL_CHECK_RETURN(vkEnumeratePhysicalDevices(m_vkInstance, &numPhysicalDevices, pPhysicalDevice), false);
     if (numPhysicalDevices)
     {
-        pPhysicalDevice = new (std::nothrow) VkPhysicalDevice[numPhysicalDevices];
+        pPhysicalDevice = new(std::nothrow) VkPhysicalDevice[numPhysicalDevices];
         VKUTIL_CHECK_RETURN(vkEnumeratePhysicalDevices(m_vkInstance, &numPhysicalDevices, pPhysicalDevice), false);
         for (uint32_t i = 0; i < numPhysicalDevices; i++)
         {
@@ -210,7 +208,7 @@ bool vkutil::Application::SelectPhysicalDevice(VkPhysicalDeviceType type)
             vkGetPhysicalDeviceQueueFamilyProperties(phDevice, &numQueueFamilies, pQueueFamily);
             if (numQueueFamilies)
             {
-                pQueueFamily = new (std::nothrow) VkQueueFamilyProperties[numQueueFamilies];
+                pQueueFamily = new(std::nothrow) VkQueueFamilyProperties[numQueueFamilies];
                 vkGetPhysicalDeviceQueueFamilyProperties(phDevice, &numQueueFamilies, pQueueFamily);
                 for (uint32_t j = 0; j < numQueueFamilies; j++)
                 {
@@ -265,7 +263,7 @@ bool vkutil::Application::DetectSwapchainFormat(VkSwapchainCreateInfoKHR& info)
     if (numSurfaceFormats)
     {
         uint32_t formatIdx = UINT32_MAX;
-        pSurfaceFormat = new (std::nothrow) VkSurfaceFormatKHR[numSurfaceFormats];
+        pSurfaceFormat = new(std::nothrow) VkSurfaceFormatKHR[numSurfaceFormats];
         vkGetPhysicalDeviceSurfaceFormatsKHR(m_vkPhysicalDevice, m_vkSurface, &numSurfaceFormats, pSurfaceFormat);
         for (uint32_t i = 0; i < numSurfaceFormats; i++)
         {
@@ -296,7 +294,7 @@ bool vkutil::Application::DetectPresentMode(VkSwapchainCreateInfoKHR& info)
     if (numPresentModes)
     {
         uint32_t modeIdx = UINT32_MAX;
-        pPresentMode = new (std::nothrow) VkPresentModeKHR[numPresentModes];
+        pPresentMode = new(std::nothrow) VkPresentModeKHR[numPresentModes];
         vkGetPhysicalDeviceSurfacePresentModesKHR(m_vkPhysicalDevice, m_vkSurface, &numPresentModes, pPresentMode);
         for (uint32_t i = 0; i < numPresentModes; i++)
         {
@@ -330,8 +328,8 @@ bool vkutil::Application::CreateOrUpdateSwapchain()
         VKUTIL_CHECK_RETURN(vkGetSwapchainImagesKHR(m_vkDevice, m_vkSwapchain, &m_numSwapchainFrames, pSwapchainImage), false);
         if (m_numSwapchainFrames)
         {
-            pSwapchainImage = new (std::nothrow) VkImage[m_numSwapchainFrames];
-            m_pSwapchainImageView = new (std::nothrow) VkImageView[m_numSwapchainFrames];
+            pSwapchainImage = new(std::nothrow) VkImage[m_numSwapchainFrames];
+            m_pSwapchainImageView = new(std::nothrow) VkImageView[m_numSwapchainFrames];
             vkGetSwapchainImagesKHR(m_vkDevice, m_vkSwapchain, &m_numSwapchainFrames, pSwapchainImage);
             for (uint32_t i = 0; i < m_numSwapchainFrames; i++)
             {
@@ -362,7 +360,7 @@ bool vkutil::Application::SetupCommandContext()
             VKUTIL_CHECK_RETURN(vkCreateCommandPool(m_vkDevice, &info, m_pVkAlloc, &m_vkCommandPool), false);
         }
         { 
-            m_pCommandBuffer = new (std::nothrow) VkCommandBuffer[m_numSwapchainFrames];
+            m_pCommandBuffer = new(std::nothrow) VkCommandBuffer[m_numSwapchainFrames];
             VkCommandBufferAllocateInfo info{ VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO };
             info.commandPool = m_vkCommandPool;
             info.commandBufferCount = m_numSwapchainFrames;
@@ -370,9 +368,9 @@ bool vkutil::Application::SetupCommandContext()
             VKUTIL_CHECK_RETURN(vkAllocateCommandBuffers(m_vkDevice, &info, m_pCommandBuffer), false);
         }
         {
-            m_pImageReadySem = new (std::nothrow) VkSemaphore[m_swapchainFormat];
-            m_pSubmitDoneSem = new (std::nothrow) VkSemaphore[m_swapchainFormat];
-            m_pCommandBufferFence = new (std::nothrow) VkFence[m_swapchainFormat];
+            m_pImageReadySem = new(std::nothrow) VkSemaphore[m_swapchainFormat];
+            m_pSubmitDoneSem = new(std::nothrow) VkSemaphore[m_swapchainFormat];
+            m_pCommandBufferFence = new(std::nothrow) VkFence[m_swapchainFormat];
             VkSemaphoreCreateInfo sInfo{ VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO };
             VkFenceCreateInfo fInfo{ VK_STRUCTURE_TYPE_FENCE_CREATE_INFO };
             fInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;

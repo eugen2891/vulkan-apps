@@ -1,5 +1,3 @@
-#include <new>
-
 #include <vkutil/application.h>
 
 class ClearScreen : public vkutil::Application
@@ -32,7 +30,7 @@ class ClearScreen : public vkutil::Application
             VKUTIL_CHECK_RETURN(vkCreateRenderPass(m_vkDevice, &info, m_pVkAlloc, &m_renderPass), false);
         }
         {
-            m_pFramebuffer = new (std::nothrow) VkFramebuffer[m_numSwapchainFrames];
+            m_pFramebuffer = new(std::nothrow) VkFramebuffer[m_numSwapchainFrames];
             VkFramebufferCreateInfo info{ VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO };
             info.renderPass = m_renderPass;
             info.attachmentCount = 1;
@@ -73,7 +71,7 @@ class ClearScreen : public vkutil::Application
 
 };
 
-vkutil::Application* CreateApplication()
+vkutil::Application* CreateApplication(int, const char**)
 {
-    return new (std::nothrow) ClearScreen();
+    return new(std::nothrow) ClearScreen();
 }

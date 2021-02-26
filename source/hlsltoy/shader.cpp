@@ -1,10 +1,9 @@
 #include "shader.h"
 
-#include <new>
-
 #include <stdio.h>
 #include <string.h>
 
+#include <vkutil/framework.h>
 #include <vkutil/shaderutil.h>
 
 static const char* INTERP_BLOCK = 
@@ -17,13 +16,16 @@ static const char* INTERP_BLOCK =
 static const char* BUILTIN_CONST =
 "[[vk::push_constant]] struct\n"
 "{\n"
-"    float elapsedTime;\n"
-"    float elapsedTimeRcp;\n"
-"    float deltaTime;\n"
-"    float deltaTimeRcp;\n"
-"    float2 viewSize;\n"
-"    float2 viewSizeRcp;\n"
-"} G;\n\n"
+"    float4 vec0;\n"
+"    float4 vec1;\n"
+"} G_;\n\n"
+"#define g_ElapsedTime    (G_.vec0.x )\n"
+"#define g_ElapsedTimeRCP (G_.vec0.y )\n"
+"#define g_DeltaTime      (G_.vec0.z )\n"
+"#define g_DeltaTimeRCP   (G_.vec0.w )\n"
+"#define g_ViewSize       (G_.vec1.xy)\n"
+"#define g_ViewSizeRCP    (G_.vec1.zw)\n"
+"\n"
 ;
 
 static const char* VERTEX_SHADER =
@@ -50,7 +52,7 @@ static const char* DEFAULT_PAYLOAD =
 #if 0
 "    return float4(1.f, 1.f, 1.f, 1.f);"
 #else
-"    float3 color = 0.5f + 0.5f * cos(G.elapsedTime + uv.xyx + float3(0.f, 2.f, 4.f));\n"
+"    float3 color = 0.5f + 0.5f * cos(g_ElapsedTime + uv.xyx + float3(0.f, 2.f, 4.f));\n"
 "    return float4(color, 1.f);\n"
 #endif
 "}";
@@ -63,11 +65,20 @@ static const char* FRAGMENT_SHADER =
 "}\n\n";
 
 Shader::Shader()
+    : m_vertexShader(VK_NULL_HANDLE)
+    , m_fragmentShader(VK_NULL_HANDLE)
+    , m_pPayloadFile(nullptr)
+    , m_pVsCode(nullptr)
+    , m_pFsCode(nullptr)
+    , m_pPayload(nullptr)
+    , m_vsCodeSize(0)
+    , m_fsBaseSize(0)
+    ,m_hasChanged(true)
 {
     m_vsCodeSize = strlen(INTERP_BLOCK) + strlen(VERTEX_SHADER);
     m_fsBaseSize = strlen(INTERP_BLOCK) + strlen(BUILTIN_CONST) + strlen(FRAGMENT_SHADER);
-    m_pFsCode = new (std::nothrow) char[m_fsBaseSize + PAYLOAD_MAX + 1];
-    m_pVsCode = new (std::nothrow) char[m_vsCodeSize + 1];
+    m_pFsCode = new(std::nothrow)char[m_fsBaseSize + PAYLOAD_MAX + 1];
+    m_pVsCode = new(std::nothrow)char[m_vsCodeSize + 1];
     sprintf(m_pVsCode, "%s%s", INTERP_BLOCK, VERTEX_SHADER);
 }
 
@@ -83,15 +94,17 @@ bool Shader::CompileModules()
             return false;
     }
     {
-        if (!m_pFsMain)
-        {
-            m_pFsMain = new (std::nothrow) char[PAYLOAD_MAX + 1];
-            strcpy(m_pFsMain, DEFAULT_PAYLOAD);
+        if (m_pPayloadFile && !m_pPayload)
+            m_pPayload = vkutil::LoadFileAsString(m_pPayloadFile);
+        if (!m_pPayload)
+        {            
+            m_pPayload = new(std::nothrow)char[PAYLOAD_MAX + 1];
+            strcpy(m_pPayload, DEFAULT_PAYLOAD);
         }        
-        sprintf(m_pFsCode, "%s%s%s%s", INTERP_BLOCK, BUILTIN_CONST, m_pFsMain, FRAGMENT_SHADER);
+        sprintf(m_pFsCode, "%s%s%s%s", INTERP_BLOCK, BUILTIN_CONST, m_pPayload, FRAGMENT_SHADER);
         vkutil::HLSLCode code;
         code.pCode = m_pFsCode;
-        code.codeSize = (m_fsBaseSize + strlen(m_pFsMain)) & UINT32_MAX;
+        code.codeSize = (m_fsBaseSize + strlen(m_pPayload)) & UINT32_MAX;
         code.stage = vkutil::FRAGMENT_SHADER;
         if (!vkutil::IHLSLCompiler::Get()->Compile(code, &m_fragmentShader))
             return false;
@@ -102,7 +115,7 @@ bool Shader::CompileModules()
 
 Shader::~Shader()
 {
-    delete[] m_pFsMain;
+    delete[] m_pPayload;
     delete[] m_pFsCode;
     delete[] m_pVsCode;
 }

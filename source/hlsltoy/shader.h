@@ -10,6 +10,8 @@ public:
 
     Shader();
 
+    void SetPayloadFile(const char* pFile);
+
     VkShaderModule GetVertexShader() const;
 
     VkShaderModule GetFragmentShader() const;
@@ -24,14 +26,15 @@ private:
 
     static const size_t PAYLOAD_MAX = 65536;
 
-    VkShaderModule m_vertexShader = VK_NULL_HANDLE;
-    VkShaderModule m_fragmentShader = VK_NULL_HANDLE;
-    char* m_pVsCode = nullptr;
-    char* m_pFsCode = nullptr;
-    char* m_pFsMain = nullptr;
-    size_t m_vsCodeSize = 0;
-    size_t m_fsBaseSize = 0;
-    bool m_hasChanged = true;
+    VkShaderModule m_vertexShader;
+    VkShaderModule m_fragmentShader;
+    const char* m_pPayloadFile;
+    char* m_pVsCode;
+    char* m_pFsCode;
+    char* m_pPayload;
+    size_t m_vsCodeSize;
+    size_t m_fsBaseSize;
+    bool m_hasChanged;
 
 };
 
@@ -50,4 +53,9 @@ inline bool Shader::HasFragmentShaderChanged()
     bool retVal = m_hasChanged;
     m_hasChanged = false;
     return retVal;
+}
+
+inline void Shader::SetPayloadFile(const char* pFile)
+{
+    m_pPayloadFile = pFile;
 }

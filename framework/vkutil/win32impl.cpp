@@ -3,11 +3,16 @@
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
 
 #include <stdio.h>
+#include <ctype.h>
 
 #include <windows.h>
 
 #pragma comment(lib, "kernel32")
 #pragma comment(lib, "user32")
+
+#if !defined(VKUTIL_MAX_ARGC)
+#define VKUTIL_MAX_ARGC 32
+#endif
 
 static LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -54,8 +59,42 @@ bool vkutil::CheckResult(VkResult result, const char* pFile, int lineNo)
     return true;
 }
 
+static int MakeArguments(char* pString, const char* (&args)[VKUTIL_MAX_ARGC])
+{
+    int numArgs = 0;
+    char* pChr = pString;
+    char* pStr = nullptr;
+    bool inString = false;
+    while (true)
+    {
+        if (!*pChr || isspace(*pChr))
+        {
+            if (inString)
+            {
+                args[numArgs] = pStr;
+                ++numArgs;
+                pStr = nullptr;
+                inString = false;
+            }
+            if (!*pChr)
+                break;
+            *pChr = 0;
+        }
+        else if (!inString)
+        {
+            pStr = pChr;
+            inString = true;
+        }        
+        ++pChr;
+    }
+    return numArgs;
+}
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
+    const char* argv[VKUTIL_MAX_ARGC]{};
+    int argc = MakeArguments(lpCmdLine, argv);
+
     HMODULE vkDLL = LoadLibrary("vulkan-1");
     if (!vkDLL)
         return -1;
@@ -64,7 +103,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         return -1;
 
     static const char* pWndClss = "VKUTIL_WNDCLSS";
-    vkutil::Application* pApp = CreateApplication();
+    vkutil::Application* pApp = CreateApplication(argc, &argv[0]);
     if (!pApp)
         return -1;
     

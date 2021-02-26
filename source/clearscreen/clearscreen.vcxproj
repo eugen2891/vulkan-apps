@@ -94,7 +94,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)framework\;$(VULKAN_SDK)\Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <UseFullPaths>false</UseFullPaths>
-      <PreprocessorDefinitions>VKUTIL_VALIDATION=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>VKUTIL_VALIDATION=1;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp14</LanguageStandard>
       <ExceptionHandling>false</ExceptionHandling>
       <EnableModules>false</EnableModules>
@@ -113,7 +113,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)framework\;$(VULKAN_SDK)\Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <UseFullPaths>false</UseFullPaths>
-      <PreprocessorDefinitions>VKUTIL_VALIDATION=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>VKUTIL_VALIDATION=1;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp14</LanguageStandard>
       <ExceptionHandling>false</ExceptionHandling>
       <EnableModules>false</EnableModules>
@@ -134,7 +134,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)framework\;$(VULKAN_SDK)\Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <UseFullPaths>false</UseFullPaths>
-      <PreprocessorDefinitions>VKUTIL_VALIDATION=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>VKUTIL_VALIDATION=1;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp14</LanguageStandard>
       <ExceptionHandling>false</ExceptionHandling>
       <EnableModules>false</EnableModules>
@@ -157,7 +157,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)framework\;$(VULKAN_SDK)\Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <UseFullPaths>false</UseFullPaths>
-      <PreprocessorDefinitions>VKUTIL_VALIDATION=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>VKUTIL_VALIDATION=1;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp14</LanguageStandard>
       <ExceptionHandling>false</ExceptionHandling>
       <EnableModules>false</EnableModules>

@@ -1,7 +1,5 @@
 #include "pipeline.h"
 
-#include <new>
-
 #include <string.h>
 
 vkutil::GraphicsPipelineState::GraphicsPipelineState(uint32_t stageMask, uint32_t numViews, uint32_t numColorRTs, uint32_t numVAttrs, uint32_t numVBuffers)
@@ -31,12 +29,12 @@ vkutil::GraphicsPipelineState::GraphicsPipelineState(uint32_t stageMask, uint32_
 
     if (numVAttrs)
     {
-        pVertexAttr = new (std::nothrow) VkVertexInputAttributeDescription[numVAttrs];
+        pVertexAttr = new(std::nothrow) VkVertexInputAttributeDescription[numVAttrs];
         memset(pVertexAttr, 0, sizeof(VkVertexInputAttributeDescription) * numVAttrs);
     }
     if (numVBuffers)
     {
-        pVertexBuffer = new (std::nothrow) VkVertexInputBindingDescription[numVBuffers];
+        pVertexBuffer = new(std::nothrow) VkVertexInputBindingDescription[numVBuffers];
         memset(pVertexBuffer, 0, sizeof(VkVertexInputBindingDescription) * numVBuffers);
     }
     vsInputState.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -60,8 +58,8 @@ vkutil::GraphicsPipelineState::GraphicsPipelineState(uint32_t stageMask, uint32_
 
     if (numViews)
     {
-        pViewport = new (std::nothrow) VkViewport[numViews];
-        pScissorRect = new (std::nothrow) VkRect2D[numViews];
+        pViewport = new(std::nothrow) VkViewport[numViews];
+        pScissorRect = new(std::nothrow) VkRect2D[numViews];
         memset(pViewport, 0, sizeof(VkViewport) * numViews);
         memset(pScissorRect, 0, sizeof(VkRect2D) * numViews);
     }
@@ -89,7 +87,7 @@ vkutil::GraphicsPipelineState::GraphicsPipelineState(uint32_t stageMask, uint32_
 
     if (numColorRTs)
     {
-        pColorTarget = new (std::nothrow) VkPipelineColorBlendAttachmentState[numColorRTs];
+        pColorTarget = new(std::nothrow) VkPipelineColorBlendAttachmentState[numColorRTs];
         memset(pColorTarget, 0, sizeof(VkPipelineColorBlendAttachmentState) * numColorRTs);
     }
     colorBlend.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;

@@ -1,5 +1,3 @@
-#include <new>
-
 #include <vkutil/application.h>
 #include <vkutil/shaderutil.h>
 #include <vkutil/pipeline.h>
@@ -7,7 +5,7 @@
 #include "shader.h"
 
 class HLSLToy : public vkutil::Application
-{    
+{
 
     Shader m_shader;
     VkFramebuffer* m_pFramebuffer = nullptr;
@@ -16,7 +14,7 @@ class HLSLToy : public vkutil::Application
     VkPipelineLayout m_pipelineLayout = VK_NULL_HANDLE;
     VkPipeline m_pipeline = VK_NULL_HANDLE;
 
-    struct 
+    struct
     {
         float elapsedTime;
         float elapsedTimeRcp;
@@ -27,6 +25,23 @@ class HLSLToy : public vkutil::Application
         float viewWidthRcp;
         float viewHeightRcp;
     } m_builtinConst;
+
+    void ProcessArguments(int argc, const char** argv)
+    {
+        for (int i = 0; i < argc; i++)
+        {
+            if (*argv[i] == '-')
+            {
+                char option = argv[i][1];
+                switch (option)
+                {
+                case 'I':
+                    m_shader.SetPayloadFile(argv[++i]);
+                    break;
+                }
+            }
+        }
+    }
 
     bool OnInitialized()
     {
@@ -52,7 +67,7 @@ class HLSLToy : public vkutil::Application
             VKUTIL_CHECK_RETURN(vkCreateRenderPass(m_vkDevice, &info, m_pVkAlloc, &m_renderPass), false);
         }
         {
-            m_pFramebuffer = new (std::nothrow) VkFramebuffer[m_numSwapchainFrames];
+            m_pFramebuffer = new(std::nothrow)VkFramebuffer[m_numSwapchainFrames];
             VkFramebufferCreateInfo info{ VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO };
             info.renderPass = m_renderPass;
             info.attachmentCount = 1;
@@ -76,7 +91,7 @@ class HLSLToy : public vkutil::Application
             VKUTIL_CHECK_RETURN(vkCreatePipelineLayout(m_vkDevice, &info, m_pVkAlloc, &m_pipelineLayout), false);
 
         }
-        m_pGfxState = new (std::nothrow) vkutil::GraphicsPipelineState(VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 1, 1, 0, 0);
+        m_pGfxState = new(std::nothrow)vkutil::GraphicsPipelineState(VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 1, 1, 0, 0);
         if (!m_shader.CompileModules())
             return false;
         m_pGfxState->pColorTarget[0].colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
@@ -104,7 +119,7 @@ class HLSLToy : public vkutil::Application
     }
 
     bool RenderFrame(uint32_t contextIdx)
-    {        
+    {
         VkClearValue clearValue{};
         VkRenderPassBeginInfo passBeginInfo{ VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO };
         passBeginInfo.framebuffer = m_pFramebuffer[GetSwapchainImageIndex()];
@@ -147,8 +162,9 @@ class HLSLToy : public vkutil::Application
 
 public:
 
-    HLSLToy()
+    HLSLToy(int argc, const char** argv)
     {
+        ProcessArguments(argc, argv);
         m_pAppName = "HLSLToy";
         m_windowW = 1280;
         m_windowH = 800;
@@ -156,7 +172,7 @@ public:
 
 };
 
-vkutil::Application* CreateApplication()
+vkutil::Application* CreateApplication(int argc, const char** argv)
 {
-    return new (std::nothrow) HLSLToy();
+    return new(std::nothrow)HLSLToy(argc, argv);
 }

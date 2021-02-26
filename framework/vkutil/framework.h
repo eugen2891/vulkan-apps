@@ -1,5 +1,7 @@
 #pragma once
 
+#include <new>
+
 #include <stdint.h>
 
 #define VK_NO_PROTOTYPES
@@ -42,6 +44,8 @@ namespace vkutil
     };
 
     bool CheckResult(VkResult result, const char* pFile, int lineNo);
+
+    char* LoadFileAsString(const char* pFileName, size_t* pSize = nullptr);
 
 }
 

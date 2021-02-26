@@ -7,7 +7,7 @@ namespace vkutil
     class Application;
 }
 
-vkutil::Application* CreateApplication();
+vkutil::Application* CreateApplication(int argc = 0, const char** argv = nullptr);
 
 void DestroyApplication(vkutil::Application*);
 
