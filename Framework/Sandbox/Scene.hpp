@@ -1,9 +1,12 @@
 #pragma once
 
 #include "LuaState.hpp"
+#include "DataDefs.hpp"
 
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
+
+#include "../Utilities/Array.hpp"
 
 namespace sandbox
 {
@@ -22,7 +25,7 @@ public:
 	explicit Scene(const char* fileName = nullptr);
 	void initialize();
 	void finalize();
-	glm::mat4 cameraMatrix(float aspectRatio) const;
+	void updateProjection(float aspectRatio);
 	Scene& perspective(const glm::vec3& from, const glm::vec3& to, const glm::vec3& up, float fovY);
 	Scene& rotate(float angle, const glm::vec3& axis);
 	Scene& translate(const glm::vec3& offs);
@@ -46,7 +49,8 @@ private:
 		void pop();
 		~Stack();
 	};
-	glm::mat4 m_viewMatrix;
+	PerFrameData m_perFrame;
+	Array<PerObjectData> m_perObject;
 	float m_vertFov = 0.f;
 	LuaState m_lua;
 	Stack m_stack;

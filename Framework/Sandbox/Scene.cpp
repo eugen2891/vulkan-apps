@@ -5,10 +5,10 @@
 namespace sandbox
 {
 
-Scene::Scene(const char* fileName)
-	: m_viewMatrix{ glm::identity<glm::mat4>() }
-	, m_lua{ *this, fileName }  
+Scene::Scene(const char* fileName) : m_lua{ *this, fileName }
 {
+	m_perFrame.viewport.transform = glm::identity<glm::mat4>();
+	m_perFrame.viewport.projection = glm::identity<glm::mat4>();
 }
 
 void Scene::initialize()
@@ -21,16 +21,15 @@ void Scene::finalize()
 	m_lua.finalize();
 }
 
-glm::mat4 Scene::cameraMatrix(float aspectRatio) const
+void Scene::updateProjection(float aspectRatio)
 {
-	glm::mat4 proj = glm::perspective(m_vertFov, aspectRatio, 0.01f, 100.f);
-	return (proj * m_viewMatrix);
+	m_perFrame.viewport.projection = glm::perspective(m_vertFov, aspectRatio, 0.01f, 100.f);
 }
 
 Scene& Scene::perspective(const glm::vec3& from, const glm::vec3& to, const glm::vec3& up, float fovY)
 {	
 	m_vertFov = glm::radians(fovY);
-	m_viewMatrix = glm::lookAt(from, to, up);
+	m_perFrame.viewport.transform = glm::lookAt(from, to, up);
 	return *this;
 }
 

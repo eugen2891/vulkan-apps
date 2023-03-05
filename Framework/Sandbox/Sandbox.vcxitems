@@ -20,5 +20,6 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)LuaState.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Scene.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)DataDefs.hpp" />
   </ItemGroup>
 </Project>
