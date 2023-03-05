@@ -79,7 +79,7 @@ SSBO_REF STD430 PerFrameData
 #if GLSL
 	PerObjectData objects[];
 #else
-	ArrayRef<PerObjectData> objects;
+	Array<PerObjectData> objects;
 #endif
 };
 

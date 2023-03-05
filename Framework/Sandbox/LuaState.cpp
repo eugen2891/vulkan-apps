@@ -64,7 +64,12 @@ static const luaL_Reg LuaFunctions[]
 		"point_light", [](lua_State* L) { return 0; }
 	},
 	{
-		"quad_mesh", [](lua_State* L) { return 0; }
+		"quad_mesh", [](lua_State* L)
+		{
+			glm::vec4 albedoColor(lua::Float3(L, 1), 1.f);
+			lua::GetScene(L).quadMesh(albedoColor);
+			return 0; 
+		}
 	},
 	{
 		"push_transform", [](lua_State* L)

@@ -8,7 +8,7 @@ VULKAN_APPLICATION_INSTANCE(SandboxRenderer);
 
 SandboxRenderer::SandboxRenderer()
 	: m_window{ *this, applicationName(), VK_FORMAT_B8G8R8A8_UNORM, { 1440, 900 } }, m_imGuiRenderer{ *this }
-	, m_scene{ "testScene.lua" }
+	, m_scene{ "CornellBox.lua" }
 {
 	m_window.setEventHandler(&m_imGuiRenderer);
 	setOutputWindow(&m_window);

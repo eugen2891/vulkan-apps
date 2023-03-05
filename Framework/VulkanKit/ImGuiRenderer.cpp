@@ -12,10 +12,6 @@
 #include <SDL2/SDL_syswm.h>
 #include <SDL2/SDL_timer.h>
 
-
-#define ImGuiMinBuffers 2
-#define ImGuiMinVBBytes 1 MB
-
 namespace vulkan
 {
 

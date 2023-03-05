@@ -2,6 +2,7 @@
 
 #include "LuaState.hpp"
 #include "DataDefs.hpp"
+#include "Geometry.hpp"
 
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
@@ -14,18 +15,18 @@ namespace sandbox
 class Scene
 {
 public:
-	struct MeshInstance
+	struct DrawCommand
 	{
-		glm::mat4 transform;
-	};
-	struct MaterialData
-	{
-		glm::vec4 albedoColor;
+		uint32_t fromVertex;
+		uint32_t fromIndex;
+		uint32_t numIndices;
+		uint32_t numInstances;
 	};
 	explicit Scene(const char* fileName = nullptr);
 	void initialize();
 	void finalize();
 	void updateProjection(float aspectRatio);
+	Scene& quadMesh(const glm::vec4& albedoColor);
 	Scene& perspective(const glm::vec3& from, const glm::vec3& to, const glm::vec3& up, float fovY);
 	Scene& rotate(float angle, const glm::vec3& axis);
 	Scene& translate(const glm::vec3& offs);
@@ -49,8 +50,8 @@ private:
 		void pop();
 		~Stack();
 	};
-	PerFrameData m_perFrame;
-	Array<PerObjectData> m_perObject;
+	PerFrameData m_sceneData;
+	DrawCommand m_drawCalls[eMesh_EnumMax]{};
 	float m_vertFov = 0.f;
 	LuaState m_lua;
 	Stack m_stack;
