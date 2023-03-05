@@ -1,0 +1,83 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33103.184
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VulkanKit", "Framework\VulkanKit\VulkanKit.vcxitems", "{FD99DB27-D36B-4CC2-9B50-D2752134B34A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{8FB238ED-D4C9-475C-86CD-DC365678BD01}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImGuiWidgetsDemo", "Projects\ImGuiWidgetsDemo\ImGuiWidgetsDemo.vcxproj", "{4FE12D28-6C51-440E-AA03-05898866CAE5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{7371EF42-DB02-4793-A488-3DA58FA0E72F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImGui", "Framework\ImGui\ImGui.vcxitems", "{7DA9A408-73F0-4B99-A6E3-9E73F0B96C05}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lua", "Framework\Lua\Lua.vcxproj", "{40220AF8-C697-4324-BB42-6A40ED3714AE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SandboxRenderer", "Projects\SandboxRenderer\SandboxRenderer.vcxproj", "{05EC58ED-1454-4CB3-A35C-3879AD2B1A00}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Utilities", "Framework\Utilities\Utilities.vcxitems", "{2E1E9BD2-530E-4191-816B-83522909CA94}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sandbox", "Framework\Sandbox\Sandbox.vcxitems", "{7C060C8D-511C-4AA4-A170-69345C54C5C5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4FE12D28-6C51-440E-AA03-05898866CAE5}.Debug|x64.ActiveCfg = Debug|x64
+		{4FE12D28-6C51-440E-AA03-05898866CAE5}.Debug|x64.Build.0 = Debug|x64
+		{4FE12D28-6C51-440E-AA03-05898866CAE5}.Debug|x86.ActiveCfg = Debug|Win32
+		{4FE12D28-6C51-440E-AA03-05898866CAE5}.Debug|x86.Build.0 = Debug|Win32
+		{4FE12D28-6C51-440E-AA03-05898866CAE5}.Release|x64.ActiveCfg = Release|x64
+		{4FE12D28-6C51-440E-AA03-05898866CAE5}.Release|x64.Build.0 = Release|x64
+		{4FE12D28-6C51-440E-AA03-05898866CAE5}.Release|x86.ActiveCfg = Release|Win32
+		{4FE12D28-6C51-440E-AA03-05898866CAE5}.Release|x86.Build.0 = Release|Win32
+		{40220AF8-C697-4324-BB42-6A40ED3714AE}.Debug|x64.ActiveCfg = Debug|x64
+		{40220AF8-C697-4324-BB42-6A40ED3714AE}.Debug|x64.Build.0 = Debug|x64
+		{40220AF8-C697-4324-BB42-6A40ED3714AE}.Debug|x86.ActiveCfg = Debug|Win32
+		{40220AF8-C697-4324-BB42-6A40ED3714AE}.Debug|x86.Build.0 = Debug|Win32
+		{40220AF8-C697-4324-BB42-6A40ED3714AE}.Release|x64.ActiveCfg = Release|x64
+		{40220AF8-C697-4324-BB42-6A40ED3714AE}.Release|x64.Build.0 = Release|x64
+		{40220AF8-C697-4324-BB42-6A40ED3714AE}.Release|x86.ActiveCfg = Release|Win32
+		{40220AF8-C697-4324-BB42-6A40ED3714AE}.Release|x86.Build.0 = Release|Win32
+		{05EC58ED-1454-4CB3-A35C-3879AD2B1A00}.Debug|x64.ActiveCfg = Debug|x64
+		{05EC58ED-1454-4CB3-A35C-3879AD2B1A00}.Debug|x64.Build.0 = Debug|x64
+		{05EC58ED-1454-4CB3-A35C-3879AD2B1A00}.Debug|x86.ActiveCfg = Debug|Win32
+		{05EC58ED-1454-4CB3-A35C-3879AD2B1A00}.Debug|x86.Build.0 = Debug|Win32
+		{05EC58ED-1454-4CB3-A35C-3879AD2B1A00}.Release|x64.ActiveCfg = Release|x64
+		{05EC58ED-1454-4CB3-A35C-3879AD2B1A00}.Release|x64.Build.0 = Release|x64
+		{05EC58ED-1454-4CB3-A35C-3879AD2B1A00}.Release|x86.ActiveCfg = Release|Win32
+		{05EC58ED-1454-4CB3-A35C-3879AD2B1A00}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FD99DB27-D36B-4CC2-9B50-D2752134B34A} = {8FB238ED-D4C9-475C-86CD-DC365678BD01}
+		{4FE12D28-6C51-440E-AA03-05898866CAE5} = {7371EF42-DB02-4793-A488-3DA58FA0E72F}
+		{7DA9A408-73F0-4B99-A6E3-9E73F0B96C05} = {8FB238ED-D4C9-475C-86CD-DC365678BD01}
+		{40220AF8-C697-4324-BB42-6A40ED3714AE} = {8FB238ED-D4C9-475C-86CD-DC365678BD01}
+		{05EC58ED-1454-4CB3-A35C-3879AD2B1A00} = {7371EF42-DB02-4793-A488-3DA58FA0E72F}
+		{2E1E9BD2-530E-4191-816B-83522909CA94} = {8FB238ED-D4C9-475C-86CD-DC365678BD01}
+		{7C060C8D-511C-4AA4-A170-69345C54C5C5} = {8FB238ED-D4C9-475C-86CD-DC365678BD01}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C8E7841A-82FD-4238-83A1-A51CC11E8D95}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Framework\ImGui\ImGui.vcxitems*{05ec58ed-1454-4cb3-a35c-3879ad2b1a00}*SharedItemsImports = 4
+		Framework\Sandbox\Sandbox.vcxitems*{05ec58ed-1454-4cb3-a35c-3879ad2b1a00}*SharedItemsImports = 4
+		Framework\VulkanKit\VulkanKit.vcxitems*{05ec58ed-1454-4cb3-a35c-3879ad2b1a00}*SharedItemsImports = 4
+		Framework\Utilities\Utilities.vcxitems*{2e1e9bd2-530e-4191-816b-83522909ca94}*SharedItemsImports = 9
+		Framework\ImGui\ImGui.vcxitems*{4fe12d28-6c51-440e-aa03-05898866cae5}*SharedItemsImports = 4
+		Framework\VulkanKit\VulkanKit.vcxitems*{4fe12d28-6c51-440e-aa03-05898866cae5}*SharedItemsImports = 4
+		Framework\Sandbox\Sandbox.vcxitems*{7c060c8d-511c-4aa4-a170-69345c54c5c5}*SharedItemsImports = 9
+		Framework\ImGui\ImGui.vcxitems*{7da9a408-73f0-4b99-a6e3-9e73f0b96c05}*SharedItemsImports = 9
+		Framework\VulkanKit\VulkanKit.vcxitems*{fd99db27-d36b-4cc2-9b50-d2752134b34a}*SharedItemsImports = 9
+	EndGlobalSection
+EndGlobal

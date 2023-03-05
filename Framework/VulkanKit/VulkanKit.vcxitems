@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{fd99db27-d36b-4cc2-9b50-d2752134b34a}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Application.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)BindingTable.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)EventHandler.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)NativeMain.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Context.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)ImGuiRenderer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)PipelineBarrier.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)VulkanApi.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Window.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)ShaderCompiler.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)InitHelpers.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Application.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Context.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)EventHandler.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)ImGuiRenderer.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)PipelineBarrier.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)BindingTable.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Window.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)ShaderCompiler.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)VulkanApi.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)InitHelpers.hpp" />
+  </ItemGroup>
+</Project>
