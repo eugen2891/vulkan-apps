@@ -26,7 +26,7 @@ public:
 	void initialize();
 	void finalize();
 	void updateProjection(float aspectRatio);
-	Scene& quadMesh(const glm::vec4& albedoColor);
+	Scene& mesh(const glm::vec4& albedoColor, uint32_t meshId);
 	Scene& perspective(const glm::vec3& from, const glm::vec3& to, const glm::vec3& up, float fovY);
 	Scene& rotate(float angle, const glm::vec3& axis);
 	Scene& translate(const glm::vec3& offs);

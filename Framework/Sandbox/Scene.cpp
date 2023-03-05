@@ -48,7 +48,7 @@ void Scene::updateProjection(float aspectRatio)
 	m_sceneData.viewport.projection = glm::perspective(m_vertFov, aspectRatio, 0.01f, 100.f);
 }
 
-Scene& Scene::quadMesh(const glm::vec4& albedoColor)
+Scene& Scene::mesh(const glm::vec4& albedoColor, uint32_t meshId)
 {
 	if (m_sceneData.objects.num < kSceneMaxObjects)
 	{
@@ -56,8 +56,8 @@ Scene& Scene::quadMesh(const glm::vec4& albedoColor)
 		PerObjectData& objectData = m_sceneData.objects[index];
 		objectData.instance.transform = m_stack.top();
 		objectData.material.albedoColor = albedoColor;
-		++m_drawCalls[eMesh_Quad].numInstances;
-		setMeshHACK(objectData, eMesh_Quad);
+		++m_drawCalls[meshId].numInstances;
+		setMeshHACK(objectData, meshId);
 	}
 	return *this;
 }
