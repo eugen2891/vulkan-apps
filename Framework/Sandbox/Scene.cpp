@@ -43,6 +43,19 @@ void Scene::finalize()
 	m_lua.finalize();
 }
 
+size_t Scene::sceneDataSize() const
+{
+	return sizeof(m_sceneData.viewport) + sizeof(m_sceneData.lighting) + sizeof(PerObjectData) * m_sceneData.objects.num;
+}
+
+void Scene::writeSceneData(void* buffer) const
+{
+	uint8_t* offset = static_cast<uint8_t*>(buffer);
+	memcpy(offset, &m_sceneData, sizeof(m_sceneData.viewport) + sizeof(m_sceneData.lighting));
+	offset += sizeof(m_sceneData.viewport) + sizeof(m_sceneData.lighting);
+	memcpy(offset, m_sceneData.objects.items, sizeof(PerObjectData) * m_sceneData.objects.num);
+}
+
 void Scene::updateProjection(float aspectRatio)
 {
 	m_sceneData.viewport.projection = glm::perspective(m_vertFov, aspectRatio, 0.01f, 100.f);
@@ -59,6 +72,14 @@ Scene& Scene::mesh(const glm::vec4& albedoColor, uint32_t meshId)
 		++m_drawCalls[meshId].numInstances;
 		setMeshHACK(objectData, meshId);
 	}
+	return *this;
+}
+
+Scene& Scene::pointLight(const glm::vec3& position, const glm::vec4& color, const glm::vec3& attenuation)
+{
+	m_sceneData.lighting.pointLight.position = position;
+	m_sceneData.lighting.pointLight.color = color;
+	m_sceneData.lighting.pointLight.attenuation = attenuation;
 	return *this;
 }
 

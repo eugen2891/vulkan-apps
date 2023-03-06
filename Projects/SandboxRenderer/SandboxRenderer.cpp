@@ -19,10 +19,14 @@ void SandboxRenderer::initialize()
 	m_imGuiRenderer.initialize({ m_device, m_physicalDevice, m_alloc, m_window.sdlWindow() });
 	m_ctx.initialize({ m_device, m_alloc, m_queue, m_queueFamily, 3 });
 	m_scene.initialize();
+
+	vulkan::BufferCreateInfo bci{ m_scene.sceneDataSize(), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT };
+	m_sceneData.initialize(*this, bci, vulkan::MemoryFlags::kDeviceOnly);
 }
 
 void SandboxRenderer::finalize()
 {
+	m_sceneData.finalize(*this);
 	m_scene.finalize();
 	m_imGuiRenderer.finalize();
 	m_ctx.finalize();

@@ -25,8 +25,11 @@ public:
 	explicit Scene(const char* fileName = nullptr);
 	void initialize();
 	void finalize();
+	size_t sceneDataSize() const;
+	void writeSceneData(void* buffer) const;
 	void updateProjection(float aspectRatio);
 	Scene& mesh(const glm::vec4& albedoColor, uint32_t meshId);
+	Scene& pointLight(const glm::vec3& position, const glm::vec4& color, const glm::vec3& attenuation);
 	Scene& perspective(const glm::vec3& from, const glm::vec3& to, const glm::vec3& up, float fovY);
 	Scene& rotate(float angle, const glm::vec3& axis);
 	Scene& translate(const glm::vec3& offs);

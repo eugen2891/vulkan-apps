@@ -11,6 +11,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)EventHandler.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)PipelineBarrier.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)BindingTable.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Resources.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Application.cpp" />
@@ -24,5 +25,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)PipelineBarrier.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)BindingTable.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanApi.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Resources.cpp" />
   </ItemGroup>
 </Project>

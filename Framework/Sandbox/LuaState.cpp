@@ -61,7 +61,15 @@ static const luaL_Reg LuaFunctions[]
 		}
 	},
 	{
-		"point_light", [](lua_State* L) { return 0; }
+		"point_light", [](lua_State* L)
+		{
+			int nArgs = lua_gettop(L);			
+			glm::vec3 position = lua::Float3(L, 1);
+			glm::vec4 color(nArgs > 1 ? lua::Float3(L, 2) : glm::vec3{ 1.f, 1.f, 1.f }, 1.f);
+			glm::vec3 attenuation = nArgs > 2 ? lua::Float3(L, 3) : glm::vec3{ 1.f, 0.f, 0.f };
+			lua::GetScene(L).pointLight(position, color, attenuation);
+			return 0; 
+		}
 	},
 	{
 		"quad_mesh", [](lua_State* L)

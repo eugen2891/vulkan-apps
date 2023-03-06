@@ -3,6 +3,7 @@
 #include <Sandbox/Scene.hpp>
 #include <VulkanKit/Window.hpp>
 #include <VulkanKit/Context.hpp>
+#include <VulkanKit/Resources.hpp>
 #include <VulkanKit/Application.hpp>
 #include <VulkanKit/ImGuiRenderer.hpp>
 
@@ -22,6 +23,7 @@ private:
 	vulkan::ImGuiRenderer m_imGuiRenderer;
 	uint32_t m_queueFamily = UINT32_MAX;
 	VkQueue m_queue = VK_NULL_HANDLE;
+	vulkan::Buffer m_sceneData;
 	vulkan::Window m_window;
 	vulkan::Context m_ctx;
 	sandbox::Scene m_scene;
