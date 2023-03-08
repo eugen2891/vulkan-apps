@@ -23,7 +23,10 @@ private:
 	vulkan::ImGuiRenderer m_imGuiRenderer;
 	uint32_t m_queueFamily = UINT32_MAX;
 	VkQueue m_queue = VK_NULL_HANDLE;
-	vulkan::Buffer m_sceneData;
+	vulkan::Buffer m_vertexData;
+	vulkan::Buffer m_indexData;
+	vulkan::Buffer m_frameData;
+	vulkan::Buffer m_objectData;
 	vulkan::Window m_window;
 	vulkan::Context m_ctx;
 	sandbox::Scene m_scene;
