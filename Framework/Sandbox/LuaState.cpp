@@ -74,7 +74,8 @@ static const luaL_Reg LuaFunctions[]
 	{
 		"quad_mesh", [](lua_State* L)
 		{
-			glm::vec4 albedoColor(lua::Float3(L, 1), 1.f);
+			int nArgs = lua_gettop(L);
+			glm::vec4 albedoColor = nArgs > 0 ? glm::vec4{ lua::Float3(L, 1), 1.f } : glm::vec4{ 1.f, 1.f, 1.f, 1.f };
 			lua::GetScene(L).mesh(albedoColor, eMesh_Quad);
 			return 0; 
 		}

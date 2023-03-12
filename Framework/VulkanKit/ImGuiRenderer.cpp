@@ -407,9 +407,6 @@ void vulkan::ImGuiRenderer::startNewFrame(VkCommandBuffer commandBuffer, const V
 	ImGuiIO& io = ImGui::GetIO();
 	io.DisplaySize = ImVec2{ float(rect.extent.width), float(rect.extent.height) };
 
-	// Setup display size (every frame to accommodate for window resizing)
-	// io.DisplayFramebufferScale = ImVec2((float)display_w / w, (float)display_h / h);
-
 	Uint64 current_time = SDL_GetPerformanceCounter();
 	static Uint64 frequency = SDL_GetPerformanceFrequency();
 	io.DeltaTime = m_int->Time > 0 ? float(double(current_time - m_int->Time) / frequency) : float(1.0f / 60.0f);

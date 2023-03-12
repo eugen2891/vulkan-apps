@@ -24,7 +24,7 @@ typedef glm::vec4 vec4_t;
 typedef glm::mat4 mat4_t;
 
 #define STD430 alignas(16)
-#define SSBO_REF struct
+#define PARAMETER_BUFFER struct
 
 #else
 
@@ -33,7 +33,7 @@ typedef glm::mat4 mat4_t;
 #define mat4_t mat4
 
 #define STD430
-#define SSBO_REF layout(buffer_reference, std430) buffer
+#define PARAMETER_BUFFER layout(buffer_reference, std430) buffer
 
 #endif
 
@@ -66,21 +66,34 @@ struct STD430 MaterialData
 	vec4_t albedoColor;
 };
 
-struct STD430 PerObjectData
+/* RENDERDOC:
+mat4 Instance_transform;
+vec4 Material_albedoColor;
+ubyte _Pad[176];
+*/
+
+PARAMETER_BUFFER STD430 PerObjectData
 {
 	MeshInstance instance;
 	MaterialData material;
+#if !GLSL
+	char _pad[256 - sizeof(MeshInstance) - sizeof(MaterialData)];
+#endif
 };
 
-SSBO_REF STD430 PerFrameData
+/* RENDERDOC:
+mat4 Viewport_transform;
+mat4 Viewport_projection;
+vec4 Viewport_dimensions;
+vec3 PointLight_position;
+vec4 PointLight_color;
+vec3 PointLight_attenuation;
+*/
+
+PARAMETER_BUFFER STD430 PerFrameData
 {
 	ViewportData viewport;
 	LightingData lighting;
-#if GLSL
-	PerObjectData objects[];
-#else
-	Array<PerObjectData> objects;
-#endif
 };
 
 #if !GLSL

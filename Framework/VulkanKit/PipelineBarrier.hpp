@@ -18,8 +18,18 @@ public:
 	private:
 		VkImageMemoryBarrier& m_imb;
 	};
+	class Buffer
+	{
+	public:
+		explicit Buffer(VkBufferMemoryBarrier& bmb);
+		void access(VkAccessFlags oldAccess, VkAccessFlags newAccess);
+	private:
+		VkBufferMemoryBarrier& m_bmb;
+	};
 	Image image(uint32_t index);
+	Buffer buffer(uint32_t index);
 	Image image(VkImage imageHandle, const VkImageSubresourceRange& subset);
+	Buffer buffer(VkBuffer bufferHandle, VkDeviceSize offset = 0, VkDeviceSize size = VK_WHOLE_SIZE);
 	void submit(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStage, VkPipelineStageFlags dstStage) const;
 	void reset();
 private:

@@ -32,6 +32,7 @@ public:
 	VkSemaphore currentSemaphore();
 	VkImageView currentImageView();
 	VkFormat pixelFormat() const;
+	float aspectRatio() const;
 	SDL_Window* sdlWindow();
 	VkImage currentImage();
 	VkRect2D rect() const;

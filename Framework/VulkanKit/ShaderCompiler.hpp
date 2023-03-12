@@ -5,34 +5,40 @@
 #include "../Utilities/Array.hpp"
 
 struct shaderc_compiler;
+struct shaderc_include_result;
 struct shaderc_compilation_result;
 
 namespace vulkan
 {
 
-class ShaderCompiler
+class ShaderCompiler : public APIClient
 {
 public:
-	struct Config
-	{
-		VkDevice device;
-		VkAllocationCallbacks* alloc;
-	};
 	struct Binary
 	{
 		VkShaderStageFlags stage;
 		VkShaderModule spirv;
 		const char* entryPoint;
 	};
+	struct Source
+	{
+		Source(const char* fileName);
+		~Source();
+		char* name;
+		char* data;
+		size_t size;
+	};
 	using Result = ArrayRef<Binary>;
-	uint32_t compile(const char* name, const char* src, VkShaderStageFlags stages, Result& result);
-	void initialize(const Config& conf);
-	void finalize();
+	void releaseHeader(shaderc_include_result* header) const;
+	explicit ShaderCompiler(const APIState& vk, const char* incDir);
+	shaderc_include_result* acquireHeader(const char* fileName) const;
+	uint32_t compile(const Source& src, VkShaderStageFlags stages, Result& result);
+	~ShaderCompiler();
 private:
 	void createBinary(shaderc_compilation_result* cr, VkShaderStageFlags stage, Binary& binary);
-	VkAllocationCallbacks* m_alloc = nullptr;
-	shaderc_compiler* m_compiler = nullptr;
-	VkDevice m_device = VK_NULL_HANDLE;
+	char includePath[256];
+	char* relStart;
+	size_t relMax;
 };
 
 }

@@ -17,9 +17,16 @@ void Buffer::initialize(const APIState& vk, const VkBufferCreateInfo& bci, const
 	BreakIfFailed(vkCreateBuffer(vk.device(), &bci, vk.alloc(), &m_handle));
 	VkMemoryRequirements bufferMemReq;
 	vkGetBufferMemoryRequirements(vk.device(), m_handle, &bufferMemReq);
+	VkMemoryAllocateFlagsInfo mafi{ VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO, nullptr, VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT };
 	vulkan::MemoryAllocateInfo bmai{ bufferMemReq.size, memProps.findMemoryType(bufferMemReq, flags.include, flags.exclude, flags.optional) };
+	if (bci.usage & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT) bmai.pNext = &mafi;
 	BreakIfFailed(vkAllocateMemory(vk.device(), &bmai, vk.alloc(), &m_memory));
 	BreakIfFailed(vkBindBufferMemory(vk.device(), m_handle, m_memory, 0));
+	if (bci.usage & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT)
+	{
+		VkBufferDeviceAddressInfo bdai{ VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO, nullptr, m_handle };
+		m_address = vkGetBufferDeviceAddress(vk.device(), &bdai);
+	}	
 }
 
 void Buffer::finalize(const APIState& vk)

@@ -15,19 +15,13 @@ namespace sandbox
 class Scene
 {
 public:
-	struct DrawCommand
-	{
-		uint32_t fromVertex;
-		uint32_t fromIndex;
-		uint32_t numIndices;
-		uint32_t numInstances;
-	};
-	explicit Scene(const char* fileName = nullptr);
 	void initialize();
 	void finalize();
-	size_t sceneDataSize() const;
-	void writeSceneData(void* buffer) const;
 	void updateProjection(float aspectRatio);
+	ArrayRef<const Drawable> drawables() const;
+	ArrayRef<const uint8_t> perFrameData() const;
+	ArrayRef<const uint8_t> perObjectData() const;
+	explicit Scene(const char* fileName = nullptr);
 	Scene& mesh(const glm::vec4& albedoColor, uint32_t meshId);
 	Scene& pointLight(const glm::vec3& position, const glm::vec4& color, const glm::vec3& attenuation);
 	Scene& perspective(const glm::vec3& from, const glm::vec3& to, const glm::vec3& up, float fovY);
@@ -54,7 +48,8 @@ private:
 		~Stack();
 	};
 	PerFrameData m_sceneData;
-	DrawCommand m_drawCalls[eMesh_EnumMax]{};
+	Array<PerObjectData> m_objectData;
+	Array<Drawable> m_drawCalls;
 	float m_vertFov = 0.f;
 	LuaState m_lua;
 	Stack m_stack;

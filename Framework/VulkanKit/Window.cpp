@@ -94,6 +94,11 @@ VkFormat vulkan::Window::pixelFormat() const
 	return m_pixelFormat;
 }
 
+float vulkan::Window::aspectRatio() const
+{
+	return float(m_size.width) / float(m_size.height);
+}
+
 SDL_Window* vulkan::Window::sdlWindow()
 {
 	return m_window;

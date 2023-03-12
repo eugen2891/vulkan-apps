@@ -6,6 +6,7 @@
 #include <VulkanKit/Resources.hpp>
 #include <VulkanKit/Application.hpp>
 #include <VulkanKit/ImGuiRenderer.hpp>
+#include <VulkanKit/ShaderCompiler.hpp>
 
 class SandboxRenderer : public vulkan::Application
 {
@@ -20,7 +21,13 @@ protected:
 	vulkan::DeviceQueueCreateList queueInfos() const override;
 	VkQueue presentQueue() override;
 private:
+	VkPipeline pipeline();
+	void updateSceneAndUploadData();
 	vulkan::ImGuiRenderer m_imGuiRenderer;
+	vulkan::ShaderCompiler m_shaderCompiler;
+	vulkan::ShaderCompiler::Binary m_shaders[2]{};
+	VkPipelineLayout m_layout = VK_NULL_HANDLE;
+	VkPipeline m_pipeline = VK_NULL_HANDLE;
 	uint32_t m_queueFamily = UINT32_MAX;
 	VkQueue m_queue = VK_NULL_HANDLE;
 	vulkan::Buffer m_vertexData;
