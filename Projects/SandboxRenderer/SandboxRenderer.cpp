@@ -9,7 +9,7 @@ VULKAN_APPLICATION_INSTANCE(SandboxRenderer);
 SandboxRenderer::SandboxRenderer()
 	: m_shaderCompiler{ *this, "../../Framework/" }
 	, m_window{ *this, applicationName(), VK_FORMAT_B8G8R8A8_UNORM, { 1440, 900 } }, m_imGuiRenderer{ *this }
-	, m_scene{ "FirstQuad.lua" }
+	, m_scene{ "CornellBox.lua" }
 {
 	m_window.setEventHandler(&m_imGuiRenderer);
 	setOutputWindow(&m_window);
@@ -29,7 +29,7 @@ void SandboxRenderer::initialize()
 	BreakIfFailed(vkCreatePipelineLayout(m_device, &plci, m_alloc, &m_layout));
 
 	vulkan::Image2DCreateInfo ici{ VK_FORMAT_D32_SFLOAT, m_window.rect().extent, 1, 1, VK_SAMPLE_COUNT_1_BIT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT };
-
+	m_depthBuffer.initialize(*this, ici, vulkan::MemoryFlags::kDeviceOnly);
 	
 	m_scene.initialize();
 }
@@ -43,6 +43,7 @@ void SandboxRenderer::finalize()
 	m_objectData.finalize(*this);
 	m_vertexData.finalize(*this);
 	m_indexData.finalize(*this);
+	m_depthBuffer.finalize(*this);
 	m_imGuiRenderer.finalize();
 	m_scene.finalize();
 	m_ctx.finalize();
@@ -61,15 +62,23 @@ void SandboxRenderer::runApplication()
 		vulkan::PipelineBarrier& barrier = m_ctx.pipelineBarrier();
 		barrier.image(m_window.currentImage(), { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 })
 			.layout(VK_IMAGE_LAYOUT_UNDEFINED, 0, VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
-		barrier.submit(m_ctx.commandBuffer(), VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
+		barrier.image(m_depthBuffer.handle(), { VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1 })
+			.layout(VK_IMAGE_LAYOUT_UNDEFINED, 0, VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL, VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT);
+		barrier.submit(m_ctx.commandBuffer(), VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT);
 
-		VkClearColorValue clearColor{ 0.5f, 0.5f, 0.5f, 1.f };
+		vulkan::ClearValue clearColor{};
+		vulkan::ClearValue clearDepth{ 0.f };
 		const VkRenderingAttachmentInfo raiColor
 		{
 			VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO, nullptr, m_window.currentImageView(), VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL,
-			VK_RESOLVE_MODE_NONE, VK_NULL_HANDLE, VK_IMAGE_LAYOUT_UNDEFINED, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, { clearColor }
+			VK_RESOLVE_MODE_NONE, VK_NULL_HANDLE, VK_IMAGE_LAYOUT_UNDEFINED, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, clearColor
 		};
-		const VkRenderingInfo ri{ VK_STRUCTURE_TYPE_RENDERING_INFO, nullptr, 0, windowRect, 1, 0, 1, &raiColor };
+		const VkRenderingAttachmentInfo raiDepth
+		{
+			VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO, nullptr, m_depthBuffer.view(), VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL,
+			VK_RESOLVE_MODE_NONE, VK_NULL_HANDLE, VK_IMAGE_LAYOUT_UNDEFINED, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, clearDepth
+		};
+		const VkRenderingInfo ri{ VK_STRUCTURE_TYPE_RENDERING_INFO, nullptr, 0, windowRect, 1, 0, 1, &raiColor, &raiDepth };
 		vkCmdBeginRendering(m_ctx.commandBuffer(), &ri);
 		
 		VkDeviceSize bufferDataOffset = 0;
@@ -95,7 +104,9 @@ void SandboxRenderer::runApplication()
 
 		vkCmdEndRendering(m_ctx.commandBuffer());
 
-		barrier.image(0u).layout(VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 0);
+		barrier.reset();
+		barrier.image(m_window.currentImage(), { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 })
+			.layout(VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 0);
 		barrier.submit(m_ctx.commandBuffer(), VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT);
 		m_ctx.endCommandBuffer();
 
@@ -161,7 +172,10 @@ VkPipeline SandboxRenderer::pipeline()
 			VK_CULL_MODE_NONE, VK_FRONT_FACE_COUNTER_CLOCKWISE, VK_FALSE, 0.f, 0.f, 0.f, 1.f
 		};
 		VkPipelineMultisampleStateCreateInfo pmsci{ VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO, nullptr, 0, VK_SAMPLE_COUNT_1_BIT };
-		VkPipelineDepthStencilStateCreateInfo pdssci{ VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO };
+		VkPipelineDepthStencilStateCreateInfo pdssci
+		{ 
+			VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO, nullptr, 0, VK_TRUE, VK_TRUE, VK_COMPARE_OP_GREATER
+		};
 		VkPipelineColorBlendAttachmentState pcbas
 		{
 			VK_FALSE, VK_BLEND_FACTOR_SRC_ALPHA, VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA, VK_BLEND_OP_ADD,
@@ -171,8 +185,8 @@ VkPipeline SandboxRenderer::pipeline()
 		VkPipelineColorBlendStateCreateInfo pcbsci{ VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO, nullptr, 0, VK_FALSE, VK_LOGIC_OP_NO_OP, 1, &pcbas };
 		VkDynamicState ds[]{ VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
 		VkPipelineDynamicStateCreateInfo pdsci{ VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO, nullptr, 0, CountOf(ds), ds };
-		VkFormat pixelFormat = m_window.pixelFormat();
-		VkPipelineRenderingCreateInfo prci{ VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO, nullptr, 0, 1, &pixelFormat };
+		VkFormat pixelFormat = m_window.pixelFormat(), depthFormat = VK_FORMAT_D32_SFLOAT;
+		VkPipelineRenderingCreateInfo prci{ VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO, nullptr, 0, 1, &pixelFormat, VK_FORMAT_D32_SFLOAT };
 		VkGraphicsPipelineCreateInfo gpci
 		{
 			VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO, &prci, 0, CountOf(pssci), pssci, &pvisci, &piasci, &ptsci, &pvsci, &prsci, &pmsci, &pdssci, &pcbsci, &pdsci,

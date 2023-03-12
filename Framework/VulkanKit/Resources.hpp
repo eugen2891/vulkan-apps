@@ -34,13 +34,15 @@ private:
 class Image
 {
 public:
-	VkImage handle() const { return m_handle; };
+	VkImage handle() const { return m_handle; }
+	VkImageView view() const { return m_view; }
 	bool valid() const { return m_handle != VK_NULL_HANDLE; }
 	void initialize(const APIState& vk, const VkImageCreateInfo& bci, const MemoryFlags& flags);
 	void finalize(const APIState& vk);
 private:
 	VkImage m_handle = VK_NULL_HANDLE;
 	VkDeviceMemory m_memory = VK_NULL_HANDLE;
+	VkImageView m_view = VK_NULL_HANDLE;
 };
 
 }

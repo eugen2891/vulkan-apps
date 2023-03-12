@@ -33,8 +33,8 @@ void Scene::updateProjection(float aspectRatio)
 {
 	m_sceneData.viewport.projection = glm::infinitePerspective(m_vertFov, aspectRatio, 0.01f);	
 	m_sceneData.viewport.projection[1][1] *= -1.f;
-	m_sceneData.viewport.projection[3][2] *= 0.5f;
 	m_sceneData.viewport.projection[2][2] = 0.f;
+	m_sceneData.viewport.projection[3][2] *= -0.5f;
 }
 
 ArrayRef<const Drawable> Scene::drawables() const

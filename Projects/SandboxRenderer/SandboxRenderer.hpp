@@ -34,6 +34,7 @@ private:
 	vulkan::Buffer m_indexData;
 	vulkan::Buffer m_frameData;
 	vulkan::Buffer m_objectData;
+	vulkan::Image m_depthBuffer;
 	vulkan::Window m_window;
 	vulkan::Context m_ctx;
 	sandbox::Scene m_scene;

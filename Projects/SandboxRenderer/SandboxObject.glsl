@@ -17,7 +17,7 @@ layout(push_constant) uniform Params
 };
 
 layout(location=0) intermediate vec3 Normal;
-layout(location=1) intermediate vec4 LightVec;
+layout(location=1) intermediate vec3 LightVec;
 
 #if VERTEX_SHADER
 
@@ -27,9 +27,8 @@ layout(location=1) in vec3 InNorm;
 void main()
 {
 	vec4 worldPos = obj.instance.transform * vec4(InPos, 1.0);
-	vec3 lightVector = frm.lighting.pointLight.position - worldPos.xyz;
 	gl_Position = frm.viewport.projection * frm.viewport.transform * worldPos;
-	LightVec = vec4(normalize(lightVector), length(lightVector));
+	LightVec = frm.lighting.pointLight.position - worldPos.xyz;
     Normal = InNorm;
 }
 
@@ -41,14 +40,11 @@ layout(location = 0) out vec4 OutColor;
 
 void main()
 {
-#if 0
-	float diffuseRatio = max(0.0, dot(Normal, LightVec.xyz));
-    vec3 attenuation = frm.lighting.pointLight.attenuation * vec3(1.0, LightVec.w, LightVec.w * LightVec.w);
+	float distance = length(LightVec);
+	float diffuseRatio = max(0.0, dot(Normal, normalize(LightVec)));
+    vec3 attenuation = frm.lighting.pointLight.attenuation * vec3(1.0, distance, distance * distance);
     vec4 lightColor = frm.lighting.pointLight.color / (attenuation.x + attenuation.y + attenuation.z);
 	OutColor = lightColor * obj.material.albedoColor * diffuseRatio;
-#else
-	OutColor = obj.material.albedoColor;
-#endif
 }
 
 #endif

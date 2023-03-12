@@ -95,4 +95,15 @@ struct ShaderModuleCreateInfo : VkShaderModuleCreateInfo
 	template <typename... Args> explicit ShaderModuleCreateInfo(Args... args) : VkShaderModuleCreateInfo{ VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO, nullptr, 0, args... } {}
 };
 
+class ClearValue
+{
+public:
+	explicit ClearValue() : ClearValue(0.f, 0.f, 0.f, 0.f) {}
+	explicit ClearValue(float d, uint8_t s = 0) { m_value.depthStencil.depth = d; m_value.depthStencil.stencil = s; }
+	explicit ClearValue(float r, float g, float b, float a) { m_value.color.float32[0] = r; m_value.color.float32[1] = g; m_value.color.float32[2] = b; m_value.color.float32[3] = a; }
+	operator const VkClearValue& () const { return m_value; }
+private:
+	VkClearValue m_value;
+};
+
 }
