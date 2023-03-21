@@ -63,6 +63,7 @@ Scene& Scene::mesh(const glm::vec4& albedoColor, uint32_t meshId)
 		BreakIfNot(index == m_drawCalls.num);		
 		PerObjectData& objectData = m_objectData[index];
 		objectData.instance.transform = m_stack.top();
+		objectData.instance.normalMatrix = glm::transpose(glm::inverse(m_stack.top()));
 		objectData.material.albedoColor = albedoColor;
 		Drawable& cmd = m_drawCalls[m_drawCalls.num++];
 		cmd = GetMesh(meshId);

@@ -9,6 +9,8 @@ extern "C"
 #include "../Lua/lauxlib.h"
 }
 
+#include <glm/trigonometric.hpp>
+
 namespace sandbox
 {
 namespace lua
@@ -117,6 +119,14 @@ static const luaL_Reg LuaFunctions[]
 			glm::vec3 ratios = lua::Float3(L, 1);
 			lua::GetScene(L).scale(ratios);
 			return 0;
+		}
+	},
+	{
+		"math_ctg", [](lua_State* L)
+		{
+			const double angle = glm::radians(lua_tonumber(L, 1));
+			lua_pushnumber(L, 1.0 / glm::tan(angle));
+			return 1;
 		}
 	}
 };

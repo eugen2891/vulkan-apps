@@ -28,8 +28,8 @@ void main()
 {
 	vec4 worldPos = obj.instance.transform * vec4(InPos, 1.0);
 	gl_Position = frm.viewport.projection * frm.viewport.transform * worldPos;
+	Normal = normalize((obj.instance.normalMatrix * vec4(InNorm, 0.0)).xyz);
 	LightVec = frm.lighting.pointLight.position - worldPos.xyz;
-    Normal = InNorm;
 }
 
 #endif
@@ -42,9 +42,10 @@ void main()
 {
 	float distance = length(LightVec);
 	float diffuseRatio = max(0.0, dot(Normal, normalize(LightVec)));
-    vec3 attenuation = frm.lighting.pointLight.attenuation * vec3(1.0, distance, distance * distance);
-    vec4 lightColor = frm.lighting.pointLight.color / (attenuation.x + attenuation.y + attenuation.z);
-	OutColor = lightColor * obj.material.albedoColor * diffuseRatio;
+	vec3 attenuation = frm.lighting.pointLight.attenuation * vec3(1.0, distance, distance * distance);
+	vec4 lightColor = frm.lighting.pointLight.color / (attenuation.x + attenuation.y + attenuation.z);
+	vec4 albedoColor = vec4(0.318309886 * obj.material.albedoColor.rgb, 1.0);
+	OutColor = lightColor * albedoColor * diffuseRatio;
 }
 
 #endif

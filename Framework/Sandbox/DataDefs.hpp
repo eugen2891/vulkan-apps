@@ -59,6 +59,7 @@ struct STD430 LightingData
 struct STD430 MeshInstance
 {
 	mat4_t transform;
+	mat4_t normalMatrix;
 };
 
 struct STD430 MaterialData
