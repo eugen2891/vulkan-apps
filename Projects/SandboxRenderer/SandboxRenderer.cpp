@@ -2,13 +2,14 @@
 
 #include <VulkanKit/Window.hpp>
 #include <VulkanKit/Context.hpp>
+#include <Utilities/DDSFile.hpp>
 #include <ImGui/imgui.h>
 
 VULKAN_APPLICATION_INSTANCE(SandboxRenderer);
 
 SandboxRenderer::SandboxRenderer()
 	: m_shaderCompiler{ *this, "../../Framework/" }
-	, m_window{ *this, applicationName(), VK_FORMAT_B8G8R8A8_UNORM, { 1440, 1024 } }, m_imGuiRenderer{ *this }
+	, m_window{ *this, applicationName(), VK_FORMAT_B8G8R8A8_UNORM, { 1024, 1024 } }, m_imGuiRenderer{ *this }
 	, m_scene{ "CornellBox2.lua" }
 {
 	m_window.setEventHandler(&m_imGuiRenderer);
@@ -31,6 +32,8 @@ void SandboxRenderer::initialize()
 	vulkan::Image2DCreateInfo ici{ VK_FORMAT_D32_SFLOAT, m_window.rect().extent, 1, 1, VK_SAMPLE_COUNT_1_BIT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT };
 	m_depthBuffer.initialize(*this, ici, vulkan::MemoryFlags::kDeviceOnly);
 	
+	DDSFile textureFile("EnvMap.dds");	
+
 	m_scene.initialize();
 }
 
@@ -203,7 +206,7 @@ void SandboxRenderer::updateSceneAndUploadData()
 	ArrayRef<const uint8_t> perFrameData = m_scene.perFrameData();
 	ArrayRef<const uint8_t> perObjectData = m_scene.perObjectData();
 	ArrayRef<const uint8_t> vertexData, indexData;
-	BreakIfNot(perFrameData.num && perObjectData.num)
+	BreakIfNot(perFrameData.num && perObjectData.num);
 	{
 		if (!m_frameData.valid())
 		{

@@ -15,7 +15,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Array.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)DDSFile.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Debug.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Memory.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)DDSFile.cpp" />
   </ItemGroup>
 </Project>

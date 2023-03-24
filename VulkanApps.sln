@@ -72,6 +72,7 @@ Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Framework\ImGui\ImGui.vcxitems*{05ec58ed-1454-4cb3-a35c-3879ad2b1a00}*SharedItemsImports = 4
 		Framework\Sandbox\Sandbox.vcxitems*{05ec58ed-1454-4cb3-a35c-3879ad2b1a00}*SharedItemsImports = 4
+		Framework\Utilities\Utilities.vcxitems*{05ec58ed-1454-4cb3-a35c-3879ad2b1a00}*SharedItemsImports = 4
 		Framework\VulkanKit\VulkanKit.vcxitems*{05ec58ed-1454-4cb3-a35c-3879ad2b1a00}*SharedItemsImports = 4
 		Framework\Utilities\Utilities.vcxitems*{2e1e9bd2-530e-4191-816b-83522909ca94}*SharedItemsImports = 9
 		Framework\ImGui\ImGui.vcxitems*{4fe12d28-6c51-440e-aa03-05898866cae5}*SharedItemsImports = 4

@@ -46,47 +46,40 @@ struct PhysicalDeviceMemoryProperties : VkPhysicalDeviceMemoryProperties
 
 struct BufferCreateInfo : VkBufferCreateInfo
 {
-	//operator const VkBufferCreateInfo* () const { return this; }
 	explicit BufferCreateInfo(VkDeviceSize size, VkBufferUsageFlags usage) : VkBufferCreateInfo{ VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO, nullptr, 0, size, usage } {}
 };
 
 struct Image1DCreateInfo : VkImageCreateInfo
 {
-	//operator const VkImageCreateInfo* () const { return this; }
 	explicit Image1DCreateInfo(VkFormat format, uint32_t extent, uint32_t mips, uint32_t faces, VkSampleCountFlagBits samples, VkImageTiling tiling, VkImageUsageFlags usage)
 		: VkImageCreateInfo{ VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO, nullptr, 0, VK_IMAGE_TYPE_1D, format, { extent, 1, 1 }, mips, faces, samples, tiling, usage } {}
 };
 
 struct Image2DCreateInfo : VkImageCreateInfo
 {
-	//operator const VkImageCreateInfo* () const { return this; }
 	explicit Image2DCreateInfo(VkFormat format, const VkExtent2D& extent, uint32_t mips, uint32_t faces, VkSampleCountFlagBits samples, VkImageTiling tiling, VkImageUsageFlags usage)
 		: VkImageCreateInfo{ VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO, nullptr, 0, VK_IMAGE_TYPE_2D, format, { extent.width, extent.height, 1 }, mips, faces, samples, tiling, usage } {}
 };
 
 struct Image3DCreateInfo : VkImageCreateInfo
 {
-	//operator const VkImageCreateInfo* () const { return this; }
 	explicit Image3DCreateInfo(VkFormat format, const VkExtent3D& extent, uint32_t mips, uint32_t faces, VkSampleCountFlagBits samples, VkImageTiling tiling, VkImageUsageFlags usage)
 		: VkImageCreateInfo{ VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO, nullptr, 0, VK_IMAGE_TYPE_3D, format, extent, mips, faces, samples, tiling, usage } {}
 };
 
 struct Image2DViewCreateInfo : VkImageViewCreateInfo
 {
-	//operator const VkImageViewCreateInfo* () const { return this; }
 	explicit Image2DViewCreateInfo(VkImage image, VkFormat format, const VkComponentMapping& components, const VkImageSubresourceRange& range)
 		: VkImageViewCreateInfo{ VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO, nullptr, 0, image, VK_IMAGE_VIEW_TYPE_2D, format, components, range } {}
 };
 
 struct MemoryAllocateInfo : VkMemoryAllocateInfo
 {
-	//operator const VkMemoryAllocateInfo* () const { return this; }
 	template <typename... Args> explicit MemoryAllocateInfo(Args... args) : VkMemoryAllocateInfo{ VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO, nullptr, args... } {}
 };
 
 struct MappedMemoryRange : VkMappedMemoryRange
 {
-	//operator const VkMappedMemoryRange* () const { return this; }
 	template <typename... Args> explicit MappedMemoryRange(Args... args) : VkMappedMemoryRange{ VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE, nullptr, args... } {}
 };
 

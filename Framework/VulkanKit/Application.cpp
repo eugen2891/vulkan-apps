@@ -87,14 +87,16 @@ void vulkan::Application::initializeInternal()
 	}
 	if (!m_physicalDevice) ReturnIfFailed(VK_ERROR_INITIALIZATION_FAILED);
 
-	VkPhysicalDeviceVulkan13Features features13{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES };
+	VkPhysicalDeviceAccelerationStructureFeaturesKHR featuresAS{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR };
+	VkPhysicalDeviceRayTracingPipelineFeaturesKHR featuresRT{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR, &featuresAS };
+	VkPhysicalDeviceVulkan13Features features13{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES, &featuresRT };
 	VkPhysicalDeviceVulkan12Features features12{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES, &features13 };
 	VkPhysicalDeviceVulkan12Features features11{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES, &features12 };
 	VkPhysicalDeviceFeatures2 features10{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2, &features11 };
-	vkGetPhysicalDeviceFeatures2(m_physicalDevice, &features10);
+	//vkGetPhysicalDeviceFeatures2(m_physicalDevice, &features10);
 
 	DeviceQueueCreateList queues = queueInfos();
-	const char* deviceExt[]{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+	const char* deviceExt[]{ VK_KHR_SWAPCHAIN_EXTENSION_NAME, VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME, VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME, VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME };
 	VkDeviceCreateInfo dci
 	{
 		VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO, &features10, 0, queues.num, queues.items, 0, nullptr, CountOf(deviceExt), deviceExt
