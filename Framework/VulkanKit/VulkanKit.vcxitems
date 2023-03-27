@@ -21,7 +21,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)Context.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)ImGuiRenderer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)PipelineBarrier.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Raytracing\ASBuilder.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Resources.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanApi.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Window.cpp" />
@@ -35,8 +34,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)ImGuiRenderer.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)PipelineBarrier.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)BindingTable.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Raytracing\ASBuilder.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Raytracing\Wrapper.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Resources.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Window.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ShaderCompiler.hpp" />

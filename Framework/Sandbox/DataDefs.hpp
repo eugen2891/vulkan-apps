@@ -51,9 +51,16 @@ struct STD430 PointLight
 	vec3_t attenuation;
 };
 
+struct STD430 DirectionalLight
+{
+	vec3_t direction;
+	vec4_t color;
+};
+
 struct STD430 LightingData
 {
 	PointLight pointLight;
+	DirectionalLight directionalLight;
 };
 
 struct STD430 MeshInstance
@@ -89,6 +96,8 @@ vec4 Viewport_dimensions;
 vec3 PointLight_position;
 vec4 PointLight_color;
 vec3 PointLight_attenuation;
+vec3 DirectionalLight_direction;
+vec4 DirectionalLight_color;
 */
 
 PARAMETER_BUFFER STD430 PerFrameData

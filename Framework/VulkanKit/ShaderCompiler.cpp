@@ -1,7 +1,6 @@
-#include "ShaderCompiler.hpp"
+#include <GlobalPCH.hpp>
 
-#include <cstring>
-#include <cstdio>
+#include "ShaderCompiler.hpp"
 
 #include <sys/stat.h>
 

@@ -2,7 +2,6 @@
 
 #include <VulkanKit/Window.hpp>
 #include <VulkanKit/Context.hpp>
-#include <Utilities/DDSFile.hpp>
 #include <ImGui/imgui.h>
 
 VULKAN_APPLICATION_INSTANCE(SandboxRenderer);
@@ -31,8 +30,6 @@ void SandboxRenderer::initialize()
 
 	vulkan::Image2DCreateInfo ici{ VK_FORMAT_D32_SFLOAT, m_window.rect().extent, 1, 1, VK_SAMPLE_COUNT_1_BIT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT };
 	m_depthBuffer.initialize(*this, ici, vulkan::MemoryFlags::kDeviceOnly);
-	
-	DDSFile textureFile("EnvMap.dds");	
 
 	m_scene.initialize();
 }

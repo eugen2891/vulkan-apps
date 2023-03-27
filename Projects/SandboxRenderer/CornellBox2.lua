@@ -44,7 +44,8 @@ function startup()
 	local vFov = 60.0
 	local Zc = 1.0 + math_ctg(vFov * 0.5)
 	perspective({ 0, 0, Zc }, { 0, 0, 0 }, { 0, 1, 0 }, vFov)
-	point_light({ 0, 0.95, 0 }, { 1, 1, 1 }, { 1, 0, 0.3 })
+	point_light({ 0, 0.95, 0 }, { 1, 1, 1 }, { 1, 0, 0.5 })
+	directional_light({ 0, 0, 1 })
 end
 
 function update()

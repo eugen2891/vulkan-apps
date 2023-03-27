@@ -2,16 +2,9 @@
 
 #include "../Utilities/Debug.hpp"
 
-#if defined(_WIN32)
-#define VK_USE_PLATFORM_WIN32_KHR
-#define VK_NATIVE_SURFACE_EXTENSION_NAME VK_KHR_WIN32_SURFACE_EXTENSION_NAME
-#endif
-
 #define ReturnIfFailed(expr) ReturnIfNot((expr) == VK_SUCCESS)
 #define RetvalIfFailed(expr, val) RetvalIfNot((expr) == VK_SUCCESS, val)
 #define BreakIfFailed(expr) BreakIfNot((expr) == VK_SUCCESS)
-
-#include <Volk/volk.h>
 
 namespace vulkan
 {

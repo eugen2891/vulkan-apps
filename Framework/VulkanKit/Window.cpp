@@ -1,10 +1,11 @@
+#include <GlobalPCH.hpp>
+
 #include "Window.hpp"
 #include "InitHelpers.hpp"
 #include "EventHandler.hpp"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_syswm.h>
-#include <type_traits>
 
 #if defined(_MSC_VER)
 #pragma comment(lib, "SDL2")

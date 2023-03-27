@@ -1,3 +1,5 @@
+#include <GlobalPCH.hpp>
+
 #include "VulkanApi.hpp"
 
 const char* vulkan::APIClient::toString(VkResult value)

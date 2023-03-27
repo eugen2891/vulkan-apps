@@ -4,8 +4,6 @@
 
 #include "../Utilities/Array.hpp"
 
-#include <initializer_list>
-
 namespace vulkan
 {
 

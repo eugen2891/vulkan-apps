@@ -1,9 +1,5 @@
 #include "Geometry.hpp"
 
-#include <utility>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
 namespace sandbox
 {
 
@@ -127,5 +123,3 @@ uint32_t GetVertexStride()
 }
 
 }
-
-

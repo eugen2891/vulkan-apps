@@ -4,9 +4,6 @@
 #include "DataDefs.hpp"
 #include "Geometry.hpp"
 
-#include <glm/vec3.hpp>
-#include <glm/mat4x4.hpp>
-
 #include "../Utilities/Array.hpp"
 
 namespace sandbox
@@ -23,6 +20,7 @@ public:
 	ArrayRef<const uint8_t> perObjectData() const;
 	explicit Scene(const char* fileName = nullptr);
 	Scene& mesh(const glm::vec4& albedoColor, uint32_t meshId);
+	Scene& directionalLight(const glm::vec3& direction, const glm::vec4& color);
 	Scene& pointLight(const glm::vec3& position, const glm::vec4& color, const glm::vec3& attenuation);
 	Scene& perspective(const glm::vec3& from, const glm::vec3& to, const glm::vec3& up, float fovY);
 	Scene& rotate(float angle, const glm::vec3& axis);

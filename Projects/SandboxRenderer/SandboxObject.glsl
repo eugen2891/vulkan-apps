@@ -38,14 +38,25 @@ void main()
 
 layout(location = 0) out vec4 OutColor;
 
-void main()
+vec4 GetDirectionalLight(DirectionalLight light)
+{
+	float diffuseRatio = max(0.0, dot(Normal, light.direction));
+	return vec4(light.color.rgb * diffuseRatio, 1.0);
+}
+
+vec4 GetPointLight(PointLight light)
 {
 	float distance = length(LightVec);
 	float diffuseRatio = max(0.0, dot(Normal, normalize(LightVec)));
-	vec3 attenuation = frm.lighting.pointLight.attenuation * vec3(1.0, distance, distance * distance);
-	vec4 lightColor = frm.lighting.pointLight.color / (attenuation.x + attenuation.y + attenuation.z);
+	vec3 attenuation = light.attenuation * vec3(1.0, distance, distance * distance);
+	return vec4((light.color / (attenuation.x + attenuation.y + attenuation.z)).rgb * diffuseRatio, 1.0);
+}
+
+void main()
+{
 	vec4 albedoColor = vec4(0.318309886 * obj.material.albedoColor.rgb, 1.0);
-	OutColor = lightColor * albedoColor * diffuseRatio;
+	vec4 lightColor = GetPointLight(frm.lighting.pointLight) + GetDirectionalLight(frm.lighting.directionalLight);
+	OutColor = lightColor * albedoColor;
 }
 
 #endif

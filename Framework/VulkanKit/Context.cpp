@@ -1,7 +1,5 @@
 #include "Context.hpp"
 
-#include <cstring>
-
 void vulkan::Context::initialize(const Config& conf)
 {
 	VkCommandPoolCreateInfo cpci{ VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO, nullptr, VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, conf.queueFamily };

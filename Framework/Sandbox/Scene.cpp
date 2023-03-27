@@ -1,3 +1,5 @@
+#include <GlobalPCH.hpp>
+
 #include "Scene.hpp"
 #include "Geometry.hpp"
 
@@ -69,6 +71,13 @@ Scene& Scene::mesh(const glm::vec4& albedoColor, uint32_t meshId)
 		cmd = GetMesh(meshId);
 		cmd.dataOffset = sizeof(PerObjectData) * index;
 	}
+	return *this;
+}
+
+Scene& Scene::directionalLight(const glm::vec3& direction, const glm::vec4& color)
+{
+	m_sceneData.lighting.directionalLight.direction = direction;
+	m_sceneData.lighting.directionalLight.color = color;
 	return *this;
 }
 

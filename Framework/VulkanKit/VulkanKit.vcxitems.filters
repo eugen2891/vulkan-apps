@@ -12,12 +12,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)PipelineBarrier.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)BindingTable.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Resources.hpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Raytracing\Wrapper.hpp">
-      <Filter>Raytracing</Filter>
-    </ClInclude>
-    <ClInclude Include="$(MSBuildThisFileDirectory)Raytracing\ASBuilder.hpp">
-      <Filter>Raytracing</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Application.cpp" />
@@ -32,13 +26,5 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)BindingTable.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)VulkanApi.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Resources.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Raytracing\ASBuilder.cpp">
-      <Filter>Raytracing</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="Raytracing">
-      <UniqueIdentifier>{0ce2c3f6-faea-414a-af5c-b0b39de8d2ab}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
 </Project>

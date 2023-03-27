@@ -9,8 +9,6 @@ extern "C"
 #include "../Lua/lauxlib.h"
 }
 
-#include <glm/trigonometric.hpp>
-
 namespace sandbox
 {
 namespace lua
@@ -71,6 +69,16 @@ static const luaL_Reg LuaFunctions[]
 			glm::vec3 attenuation = nArgs > 2 ? lua::Float3(L, 3) : glm::vec3{ 1.f, 0.f, 0.f };
 			lua::GetScene(L).pointLight(position, color, attenuation);
 			return 0; 
+		}
+	},
+	{
+		"directional_light", [](lua_State* L)
+		{
+			int nArgs = lua_gettop(L);
+			glm::vec3 direction = lua::Float3(L, 1);
+			glm::vec4 color(nArgs > 1 ? lua::Float3(L, 2) : glm::vec3{ 1.f, 1.f, 1.f }, 1.f);
+			lua::GetScene(L).directionalLight(direction, color);
+			return 0;
 		}
 	},
 	{
