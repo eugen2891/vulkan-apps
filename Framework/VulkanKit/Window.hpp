@@ -14,21 +14,13 @@ class EventHandler;
 class Window : public APIClient
 {
 public:
-	struct InstanceInfo
-	{
-		VkInstance instance;
-		VkAllocationCallbacks* alloc;
-	};
-	struct DeviceInfo
-	{
-		VkQueue presentQueue;
-	};
 	bool pollEvents();
+	size_t numBuffers() const;
 	bool swapchainValid() const;
 	VkSurfaceKHR surface() const;
 	void setEventHandler(EventHandler* handler);
 	explicit Window(const APIState& vk, const char* title, VkFormat pixelFormat, VkExtent2D size);
-	void present(const ArrayRef<VkSemaphore>& waitFor);
+	void present(const Range<VkSemaphore>& waitFor);
 	VkSemaphore currentSemaphore();
 	VkImageView currentImageView();
 	VkFormat pixelFormat() const;
@@ -39,7 +31,7 @@ public:
 private:
 	friend class Application;
 	void createWindowAndSurface();
-	void setDeviceInfo(const DeviceInfo& info);
+	void setPresentQueue(VkQueue presentQueue);
 	void destroySwapchain();
 	void destroyWindowAndSurface();
 	void updateSwapchain();
@@ -52,9 +44,9 @@ private:
 	uint32_t m_currentImage = UINT32_MAX;
 	uint32_t m_currentSemaphore = 0;
 	bool m_shouldRecreate = true;
-	Array<VkSemaphore> m_semaphores;
-	Array<VkImageView> m_imageViews;
-	Array<VkImage> m_images;
+	std::vector<VkSemaphore> m_semaphores;
+	std::vector<VkImageView> m_imageViews;
+	std::vector<VkImage> m_images;
 	const char* m_title;
 	VkFormat m_pixelFormat;
 	VkExtent2D m_size;

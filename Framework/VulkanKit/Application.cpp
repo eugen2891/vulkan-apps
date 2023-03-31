@@ -5,37 +5,56 @@
 
 #include <Volk/volk.c>
 
-void vulkan::Application::main()
+namespace vulkan
+{
+
+void Application::main()
 {
 	initializeInternal();
 	runApplication();
 	finalizeInternal();
 }
 
-void vulkan::Application::initialize()
+void Application::initialize()
 {
 }
 
-void vulkan::Application::finalize()
+void Application::finalize()
 {
 }
 
-void vulkan::Application::setOutputWindow(Window* wndPtr)
+void Application::setOutputWindow(Window* wndPtr)
 {
 	m_wndPtr = wndPtr;
+	m_instanceExt.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
+	m_instanceExt.push_back(VK_NATIVE_SURFACE_EXTENSION_NAME);
+#if _DEBUG
+	m_instanceExt.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+#endif
+	m_deviceExt.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
 }
 
-const char* vulkan::Application::applicationName() const
+void Application::requestFeatures(FeatureSet& features) const
 {
-	return "vulkan::ApplicationBase";
 }
 
-const char* vulkan::Application::engineName() const
+std::vector<Application::QueueRequest> Application::requestQueues() const
+{
+	std::vector<QueueRequest> retval{ { VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT } };
+	return retval;
+}
+
+const char* Application::applicationName() const
+{
+	return "ApplicationBase";
+}
+
+const char* Application::engineName() const
 {
 	return "VulkanHelper";
 }
 
-bool vulkan::Application::canPresent(VkPhysicalDevice physicalDevice, uint32_t family) const
+bool Application::canPresent(VkPhysicalDevice physicalDevice, uint32_t family) const
 {
 	if (m_wndPtr)
 	{
@@ -46,20 +65,59 @@ bool vulkan::Application::canPresent(VkPhysicalDevice physicalDevice, uint32_t f
 	return false;
 }
 
-void vulkan::Application::initializeInternal()
+std::vector<VkDeviceQueueCreateInfo> Application::detectQueues(VkPhysicalDevice physicalDevice, uint32_t& presentQueue)
+{
+	uint32_t numFamilies = 0;
+	static const float priority = 1.f;
+	std::vector<VkDeviceQueueCreateInfo> retval;
+	std::vector<VkQueueFamilyProperties> properties;
+	std::vector<QueueRequest> requests = requestQueues();
+	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &numFamilies, nullptr);
+	if (numFamilies > 0)
+	{
+		properties.resize(numFamilies);
+		vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &numFamilies, properties.data());
+		for (const auto& req : requests)
+		{
+			uint32_t index = numFamilies;
+			for (uint32_t i = 0; i < numFamilies; i++)
+			{
+				const VkQueueFamilyProperties props = properties[i];
+				if (props.queueCount > 0 && (props.queueFlags & req.include) == req.include && (props.queueFlags & req.exclude) == 0)
+				{
+					index = i;
+					break;
+				}
+			}
+			if (index == numFamilies)
+			{
+				retval.clear();
+				presentQueue = UINT32_MAX;
+				break;
+			}
+			else
+			{
+				VkDeviceQueueCreateInfo info{ VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO, nullptr, 0, index, 1, &priority };
+				if (m_wndPtr && presentQueue == UINT32_MAX && canPresent(physicalDevice, index)) presentQueue = index;
+				retval.push_back(info);
+			}
+		}		
+	}
+	return retval;
+}
+
+void Application::initializeInternal()
 {
 	ReturnIfFailed(volkInitialize());
 
 	const VkApplicationInfo ai
-	{ 
-		VK_STRUCTURE_TYPE_APPLICATION_INFO, nullptr, applicationName(), 0u, engineName(), 0u, VK_API_VERSION_1_3 
+	{
+		VK_STRUCTURE_TYPE_APPLICATION_INFO, nullptr, applicationName(), 0u, engineName(), 0u, VK_API_VERSION_1_3
 	};
-
-	const char* instanceExt[]{ VK_KHR_SURFACE_EXTENSION_NAME, VK_NATIVE_SURFACE_EXTENSION_NAME };
 
 	const VkInstanceCreateInfo ici
 	{
-		VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO, nullptr, 0, &ai, 0, nullptr, CountOf(instanceExt), instanceExt
+		VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO, nullptr, 0, &ai, 0, nullptr, uint32_t(m_instanceExt.size()), m_instanceExt.data()
 	};
 
 	ReturnIfFailed(vkCreateInstance(&ici, m_alloc, &m_instance));
@@ -70,51 +128,51 @@ void vulkan::Application::initializeInternal()
 	VkPhysicalDevice discreteGpu = VK_NULL_HANDLE;
 	VkPhysicalDevice integratedGpu = VK_NULL_HANDLE;
 
-	PhysicalDevicesList physicalDevices(m_instance);
-	for (VkPhysicalDevice physicalDevice : physicalDevices)
+	for (VkPhysicalDevice physicalDevice : enumPhysicalDevices())
 	{
 		VkPhysicalDeviceProperties props;
 		vkGetPhysicalDeviceProperties(physicalDevice, &props);
 		if (props.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && !discreteGpu) discreteGpu = physicalDevice;
 		else if (props.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU && !integratedGpu) integratedGpu = physicalDevice;
 	}
-	 
+
+	uint32_t presentQueueFamily = UINT32_MAX;
+	std::vector<VkDeviceQueueCreateInfo> queues;
 	if (discreteGpu)
 	{
-		if (detectQueues(discreteGpu)) m_physicalDevice = discreteGpu; 
+		queues = detectQueues(discreteGpu, presentQueueFamily);
+		if (!queues.empty()) m_physicalDevice = discreteGpu;
+		else if (integratedGpu)
+		{
+			queues = detectQueues(integratedGpu, presentQueueFamily);
+			if (!queues.empty()) m_physicalDevice = integratedGpu;
+		}
 	}
-	if (!m_physicalDevice && integratedGpu)
-	{
-		if (detectQueues(integratedGpu)) m_physicalDevice = integratedGpu; 
-	}
-	if (!m_physicalDevice) ReturnIfFailed(VK_ERROR_INITIALIZATION_FAILED);
-
-	VkPhysicalDeviceAccelerationStructureFeaturesKHR featuresAS{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR };
-	VkPhysicalDeviceRayTracingPipelineFeaturesKHR featuresRT{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR, &featuresAS };
-	VkPhysicalDeviceVulkan13Features features13{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES, &featuresRT };
-	VkPhysicalDeviceVulkan12Features features12{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES, &features13 };
-	VkPhysicalDeviceVulkan11Features features11{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES, &features12 };
-	VkPhysicalDeviceFeatures2 features10{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2, &features11 };
+	if (!m_physicalDevice) ReturnIfFailed(VK_ERROR_INITIALIZATION_FAILED)	
 	
-	features13.dynamicRendering = VK_TRUE;
-	features12.bufferDeviceAddress = VK_TRUE;
+	FeatureSet features;
+	features.v13().dynamicRendering = VK_TRUE;
+	features.v12().bufferDeviceAddress = VK_TRUE;
+	requestFeatures(features);
 
-	DeviceQueueCreateList queues = queueInfos();
-	const char* deviceExt[]{ VK_KHR_SWAPCHAIN_EXTENSION_NAME/*, VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME, VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME, VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME*/};
 	VkDeviceCreateInfo dci
 	{
-		VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO, &features10, 0, queues.num, queues.items, 0, nullptr, CountOf(deviceExt), deviceExt
+		VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO, &features.m_vk10, 0, uint32_t(queues.size()), queues.data(), 0, nullptr, uint32_t(m_deviceExt.size()), m_deviceExt.data()
 	};
 
 	ReturnIfFailed(vkCreateDevice(m_physicalDevice, &dci, m_alloc, &m_device));
 	volkLoadDevice(m_device);
 
-	if (m_wndPtr) m_wndPtr->setDeviceInfo({ presentQueue() });
+	if (m_wndPtr)
+	{
+		BreakIfNot(presentQueueFamily != UINT32_MAX);
+		m_wndPtr->setPresentQueue(getDeviceQueue(presentQueueFamily));
+	}
 
 	initialize();
 }
 
-void vulkan::Application::finalizeInternal()
+void Application::finalizeInternal()
 {
 	BreakIfFailed(vkDeviceWaitIdle(m_device));
 	finalize();
@@ -124,4 +182,6 @@ void vulkan::Application::finalizeInternal()
 
 	if (m_wndPtr) m_wndPtr->destroyWindowAndSurface();
 	vkDestroyInstance(m_instance, m_alloc);
+}
+
 }

@@ -105,16 +105,16 @@ Drawable GetMesh(uint32_t index)
 	return retval;
 }
 
-ArrayRef<const uint8_t> GetVertexData()
+Range<const uint8_t> GetVertexData()
 {
 	const uint8_t* tmp = reinterpret_cast<const uint8_t*>(VertexCache);
-	return ArrayRef{ tmp, sizeof(VertexCache) };
+	return Range{ tmp, sizeof(VertexCache) };
 }
 
-ArrayRef<const uint8_t> GetIndexData()
+Range<const uint8_t> GetIndexData()
 {
 	const uint8_t* tmp = reinterpret_cast<const uint8_t*>(IndexCache);
-	return ArrayRef{ tmp, sizeof(IndexCache) };
+	return Range{ tmp, sizeof(IndexCache) };
 }
 
 uint32_t GetVertexStride()

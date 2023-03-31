@@ -28,7 +28,7 @@ public:
 		char* data;
 		size_t size;
 	};
-	using Result = ArrayRef<Binary>;
+	using Result = Range<Binary>;
 	void releaseHeader(shaderc_include_result* header) const;
 	explicit ShaderCompiler(const APIState& vk, const char* incDir);
 	shaderc_include_result* acquireHeader(const char* fileName) const;

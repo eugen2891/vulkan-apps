@@ -7,37 +7,6 @@
 namespace vulkan
 {
 
-struct PhysicalDevicesList : public Array<VkPhysicalDevice>
-{
-	explicit PhysicalDevicesList(VkInstance instance);
-};
-
-struct QueueFamiliesList : public Array<VkQueueFamilyProperties>
-{
-	explicit QueueFamiliesList(VkPhysicalDevice physicalDevice);
-	uint32_t findByFlags(VkQueueFlags incl, VkQueueFlags excl = 0) const;
-};
-
-struct DeviceQueueCreateList : public Array<VkDeviceQueueCreateInfo>
-{
-	explicit DeviceQueueCreateList(uint32_t count);
-};
-
-struct SurfaceFormatsList : public Array<VkSurfaceFormatKHR>
-{
-	explicit SurfaceFormatsList(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface);
-};
-
-struct PresentModesList : public Array<VkPresentModeKHR>
-{
-	explicit PresentModesList(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface);
-};
-
-struct SwapchainImagesList : public Array<VkImage>
-{
-	explicit SwapchainImagesList(VkDevice device, VkSwapchainKHR swapchain);
-};
-
 struct PhysicalDeviceMemoryProperties : VkPhysicalDeviceMemoryProperties
 {
 	explicit PhysicalDeviceMemoryProperties(VkPhysicalDevice physicalDevice);

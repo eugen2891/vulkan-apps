@@ -17,9 +17,6 @@ protected:
 	void finalize() override;
 	void runApplication() override;
 	const char* applicationName() const override;
-	bool detectQueues(VkPhysicalDevice physicalDevice) override;
-	vulkan::DeviceQueueCreateList queueInfos() const override;
-	VkQueue presentQueue() override;
 private:
 	VkPipeline pipeline();
 	void updateSceneAndUploadData();
@@ -28,8 +25,6 @@ private:
 	vulkan::ShaderCompiler::Binary m_shaders[2]{};
 	VkPipelineLayout m_layout = VK_NULL_HANDLE;
 	VkPipeline m_pipeline = VK_NULL_HANDLE;
-	uint32_t m_queueFamily = UINT32_MAX;
-	VkQueue m_queue = VK_NULL_HANDLE;
 	vulkan::Buffer m_vertexData;
 	vulkan::Buffer m_indexData;
 	vulkan::Buffer m_frameData;

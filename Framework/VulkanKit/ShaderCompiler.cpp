@@ -54,7 +54,7 @@ uint32_t ShaderCompiler::compile(const Source& src, VkShaderStageFlags stages, R
 	);
 	if (stages & VK_SHADER_STAGE_VERTEX_BIT)
 	{
-		BreakIfNot(result.num >= (++modules));
+		BreakIfNot(result.num() >= (++modules));
 		shaderc_compiler_t compiler = shaderc_compiler_initialize();
 		shaderc_compile_options_t options = shaderc_compile_options_clone(sharedOptions);
 		shaderc_compile_options_add_macro_definition(options, "VERTEX_SHADER", 13, "1", 1);		
@@ -65,7 +65,7 @@ uint32_t ShaderCompiler::compile(const Source& src, VkShaderStageFlags stages, R
 	}
 	if (stages & VK_SHADER_STAGE_FRAGMENT_BIT)
 	{
-		BreakIfNot(result.num >= (++modules));
+		BreakIfNot(result.num() >= (++modules));
 		shaderc_compiler_t compiler = shaderc_compiler_initialize();
 		shaderc_compile_options_t options = shaderc_compile_options_clone(sharedOptions);
 		shaderc_compile_options_add_macro_definition(options, "FRAGMENT_SHADER", 15, "1", 1);
@@ -76,7 +76,7 @@ uint32_t ShaderCompiler::compile(const Source& src, VkShaderStageFlags stages, R
 	}
 	if (stages & VK_SHADER_STAGE_COMPUTE_BIT)
 	{
-		BreakIfNot(result.num >= (++modules));
+		BreakIfNot(result.num() >= (++modules));
 		shaderc_compiler_t compiler = shaderc_compiler_initialize();
 		shaderc_compile_options_t options = shaderc_compile_options_clone(sharedOptions);
 		shaderc_compile_options_add_macro_definition(options, "COMPUTE_SHADER", 14, "1", 1);

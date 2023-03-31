@@ -1,10 +1,13 @@
 #pragma once
 
-#include <vector>
 #include <cstdio>
+#include <cstdint>
 #include <cstdlib>
 #include <cstring>
 #include <cstdint>
+
+#include <vector>
+#include <algorithm>
 #include <type_traits>
 #include <initializer_list>
 

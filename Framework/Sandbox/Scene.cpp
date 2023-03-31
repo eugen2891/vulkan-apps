@@ -9,16 +9,14 @@
 namespace sandbox
 {
 
-static const uint32_t kSceneMaxObjects = 1024;
+static const uint32_t kSceneMinObjects = 32;
 
 Scene::Scene(const char* fileName) : m_lua{ *this, fileName }
 {
+	m_drawCalls.reserve(kSceneMinObjects);
+	m_objectData.reserve(kSceneMinObjects);
 	m_sceneData.viewport.transform = glm::identity<glm::mat4>();
 	m_sceneData.viewport.projection = glm::identity<glm::mat4>();
-	m_objectData = Array<PerObjectData>::New(kSceneMaxObjects);
-	m_drawCalls = Array<Drawable>::New(kSceneMaxObjects);
-	m_objectData.num = 0;
-	m_drawCalls.num = 0;
 }
 
 void Scene::initialize()
@@ -39,38 +37,33 @@ void Scene::updateProjection(float aspectRatio)
 	m_sceneData.viewport.projection[3][2] *= -0.5f;
 }
 
-ArrayRef<const Drawable> Scene::drawables() const
+Range<const Drawable> Scene::drawables() const
 {
-	const Drawable* tmp = m_drawCalls.items;
-	return ArrayRef<const Drawable>{ tmp, m_drawCalls.num };
+	const Drawable* tmp = m_drawCalls.data();
+	return Range<const Drawable>{ tmp, m_drawCalls.size() };
 }
 
-ArrayRef<const uint8_t> Scene::perFrameData() const
+Range<const uint8_t> Scene::perFrameData() const
 {
 	const uint8_t* tmp = reinterpret_cast<const uint8_t*>(&m_sceneData);
-	return ArrayRef<const uint8_t>{ tmp, sizeof(m_sceneData) };
+	return Range<const uint8_t>{ tmp, sizeof(m_sceneData) };
 }
 
-ArrayRef<const uint8_t> Scene::perObjectData() const
+Range<const uint8_t> Scene::perObjectData() const
 {
-	const uint8_t* tmp = reinterpret_cast<const uint8_t*>(m_objectData.items);
-	return ArrayRef<const uint8_t>{ tmp, sizeof(PerObjectData) * m_objectData.num };
+	const uint8_t* tmp = reinterpret_cast<const uint8_t*>(m_objectData.data());
+	return Range<const uint8_t>{ tmp, sizeof(PerObjectData) * m_objectData.size() };
 }
 
 Scene& Scene::mesh(const glm::vec4& albedoColor, uint32_t meshId)
 {
-	if (m_objectData.num < kSceneMaxObjects)
-	{
-		auto index = m_objectData.num++;
-		BreakIfNot(index == m_drawCalls.num);		
-		PerObjectData& objectData = m_objectData[index];
-		objectData.instance.transform = m_stack.top();
-		objectData.instance.normalMatrix = glm::transpose(glm::inverse(m_stack.top()));
-		objectData.material.albedoColor = albedoColor;
-		Drawable& cmd = m_drawCalls[m_drawCalls.num++];
-		cmd = GetMesh(meshId);
-		cmd.dataOffset = sizeof(PerObjectData) * index;
-	}
+	auto index = m_objectData.size();
+	PerObjectData& objectData = m_objectData.emplace_back();
+	objectData.instance.transform = m_stack.top();
+	objectData.instance.normalMatrix = glm::transpose(glm::inverse(m_stack.top()));
+	objectData.material.albedoColor = albedoColor;
+	Drawable& cmd = m_drawCalls.emplace_back(GetMesh(meshId));
+	cmd.dataOffset = sizeof(PerObjectData) * index;
 	return *this;
 }
 

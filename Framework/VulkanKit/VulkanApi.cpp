@@ -2,7 +2,97 @@
 
 #include "VulkanApi.hpp"
 
-const char* vulkan::APIClient::toString(VkResult value)
+namespace vulkan
+{
+
+std::vector<VkPhysicalDevice> APIState::enumPhysicalDevices() const noexcept
+{
+	uint32_t num = 0;
+	std::vector<VkPhysicalDevice> retval{};
+	BreakIfFailed(vkEnumeratePhysicalDevices(m_instance, &num, nullptr));
+	if (num > 0)
+	{
+		retval.resize(num);
+		BreakIfFailed(vkEnumeratePhysicalDevices(m_instance, &num, retval.data()));
+	}
+	return retval;
+}
+
+VkQueue APIState::getDeviceQueue(uint32_t family, uint32_t index) const noexcept
+{
+	VkQueue retval = VK_NULL_HANDLE;
+	vkGetDeviceQueue(m_device, family, index, &retval);
+	return retval;
+}
+
+std::vector<VkImage> APIState::getSwapchainImages(VkSwapchainKHR swapchain) const noexcept
+{
+	uint32_t num = 0;
+	std::vector<VkImage> retval{};
+	BreakIfFailed(vkGetSwapchainImagesKHR(m_device, swapchain, &num, nullptr));
+	if (num > 0)
+	{
+		retval.resize(num);
+		BreakIfFailed(vkGetSwapchainImagesKHR(m_device, swapchain, &num, retval.data()));
+	}
+	return retval;
+}
+
+std::vector<VkPresentModeKHR> APIState::enumPresentModes(VkSurfaceKHR surface) const noexcept
+{
+	uint32_t num = 0;
+	std::vector<VkPresentModeKHR> retval{};
+	BreakIfFailed(vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, surface, &num, nullptr));
+	if (num > 0)
+	{
+		retval.resize(num);
+		BreakIfFailed(vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, surface, &num, retval.data()));
+	}
+	return retval;
+}
+
+std::vector<VkSurfaceFormatKHR> APIState::enumSurfaceFormats(VkSurfaceKHR surface) const noexcept
+{
+	uint32_t num = 0;
+	std::vector<VkSurfaceFormatKHR> retval{};
+	BreakIfFailed(vkGetPhysicalDeviceSurfaceFormatsKHR(m_physicalDevice, surface, &num, nullptr));
+	if (num > 0)
+	{
+		retval.resize(num);
+		BreakIfFailed(vkGetPhysicalDeviceSurfaceFormatsKHR(m_physicalDevice, surface, &num, retval.data()));
+	}
+	return retval;
+}
+
+VkPipelineLayout APIState::createPipelineLayout(const VkPipelineLayoutCreateInfo& info) const noexcept
+{
+	VkPipelineLayout retval = VK_NULL_HANDLE;
+	BreakIfFailed(vkCreatePipelineLayout(m_device, &info, m_alloc, &retval));
+	return retval;
+}
+
+VkDescriptorPool APIState::createDescriptorPool(const VkDescriptorPoolCreateInfo& info) const noexcept
+{
+	VkDescriptorPool retval = VK_NULL_HANDLE;
+	BreakIfFailed(vkCreateDescriptorPool(m_device, &info, m_alloc, &retval));
+	return retval;
+}
+
+VkDescriptorSetLayout APIState::createDescriptorSetLayout(const VkDescriptorSetLayoutCreateInfo& info) const noexcept
+{
+	VkDescriptorSetLayout retval = VK_NULL_HANDLE;
+	BreakIfFailed(vkCreateDescriptorSetLayout(m_device, &info, m_alloc, &retval));
+	return retval;
+}
+
+std::vector<VkDescriptorSet> APIState::allocateDescriptorSets(const VkDescriptorSetAllocateInfo& info) const noexcept
+{
+	std::vector<VkDescriptorSet> retval(info.descriptorSetCount);
+	BreakIfFailed(vkAllocateDescriptorSets(m_device, &info, retval.data()));
+	return retval;
+}
+
+const char* APIClient::toString(VkResult value)
 {
 	switch (value)
 	{
@@ -101,4 +191,6 @@ const char* vulkan::APIClient::toString(VkResult value)
 	default:
 		return nullptr;
 	};
+}
+
 }

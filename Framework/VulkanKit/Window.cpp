@@ -39,6 +39,12 @@ bool vulkan::Window::pollEvents()
 	return isActive;
 }
 
+size_t vulkan::Window::numBuffers() const
+{
+	BreakIfNot(m_images.size() > 0);
+	return m_images.size();
+}
+
 bool vulkan::Window::swapchainValid() const
 {
 	return !m_shouldRecreate;
@@ -59,11 +65,11 @@ void vulkan::Window::setEventHandler(EventHandler* handler)
 	if (!m_eventHandler) m_eventHandler = handler;
 }
 
-void vulkan::Window::present(const ArrayRef<VkSemaphore>& waitFor)
+void vulkan::Window::present(const Range<VkSemaphore>& waitFor)
 {
 	VkPresentInfoKHR pi
 	{
-		VK_STRUCTURE_TYPE_PRESENT_INFO_KHR, nullptr, waitFor.num, waitFor.items, 1, &m_swapchain, &m_currentImage
+		VK_STRUCTURE_TYPE_PRESENT_INFO_KHR, nullptr, uint32_t(waitFor.num()), waitFor.get(), 1,& m_swapchain,& m_currentImage
 	};
 	VkResult presentResult = vkQueuePresentKHR(m_presentQueue, &pi);
 	switch (presentResult)
@@ -137,14 +143,14 @@ void vulkan::Window::createWindowAndSurface()
 #endif
 }
 
-void vulkan::Window::setDeviceInfo(const DeviceInfo& info)
+void vulkan::Window::setPresentQueue(VkQueue presentQueue)
 {
-	m_presentQueue = info.presentQueue;
+	m_presentQueue = presentQueue;
 }
 
 void vulkan::Window::destroySwapchain()
 {
-	for (uint32_t i = 0; i < m_images.num; i++)
+	for (auto i = 0; i < m_images.size(); i++)
 	{
 		vkDestroySemaphore(m_vk.device(), m_semaphores[i], m_vk.alloc());
 		vkDestroyImageView(m_vk.device(), m_imageViews[i], m_vk.alloc());
@@ -174,8 +180,7 @@ void vulkan::Window::updateSwapchain()
 	sci.imageExtent = caps.currentExtent;
 	m_size = caps.currentExtent;
 
-	SurfaceFormatsList formats(m_vk.physicalDevice(), m_surface);
-	for (VkSurfaceFormatKHR& format : formats)
+	for (VkSurfaceFormatKHR& format : m_vk.enumSurfaceFormats(m_surface))
 	{
 		if (format.format == m_pixelFormat)
 		{
@@ -192,8 +197,7 @@ void vulkan::Window::updateSwapchain()
 	sci.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	sci.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 
-	PresentModesList presentModes(m_vk.physicalDevice(), m_surface);
-	for (VkPresentModeKHR presentMode : presentModes)
+	for (VkPresentModeKHR presentMode : m_vk.enumPresentModes(m_surface))
 	{
 		if (presentMode == VK_PRESENT_MODE_FIFO_KHR)
 		{
@@ -205,20 +209,20 @@ void vulkan::Window::updateSwapchain()
 	sci.oldSwapchain = m_swapchain;
 
 	ReturnIfFailed(vkCreateSwapchainKHR(m_vk.device(), &sci, m_vk.alloc(), &m_swapchain));
-	SwapchainImagesList images(m_vk.device(), m_swapchain);
-	m_semaphores = Array<VkSemaphore>::New(images.num);
-	m_imageViews = Array<VkImageView>::New(images.num);
-	for (uint32_t i = 0; i < images.num; i++)
+	m_images = m_vk.getSwapchainImages(m_swapchain);
+	m_semaphores.resize(m_images.size());
+	m_imageViews.resize(m_images.size());
+	for (auto i = 0; i < m_images.size(); i++)
 	{
 		VkSemaphoreCreateInfo sci{ VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO, nullptr, 0 };
 		ReturnIfFailed(vkCreateSemaphore(m_vk.device(), &sci, m_vk.alloc(), &m_semaphores[i]));
-		vulkan::Image2DViewCreateInfo ivci{ images[i], m_pixelFormat, {}, { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 } };
+		
+		vulkan::Image2DViewCreateInfo ivci{ m_images[i], m_pixelFormat, {}, { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 } };
 		ReturnIfFailed(vkCreateImageView(m_vk.device(), &ivci, m_vk.alloc(), &m_imageViews[i]));
 	}
-	m_images = std::move(images);
 	
 	DispatchEvent(onSwapchainReset(*this));
-	m_currentSemaphore = images.num - 1;
+	m_currentSemaphore = uint32_t(m_images.size() - 1);
 	m_currentImage = UINT32_MAX;
 	m_shouldRecreate = false;
 }
@@ -227,7 +231,7 @@ uint32_t vulkan::Window::currentIndex()
 {
 	if (m_currentImage == UINT32_MAX)
 	{
-		m_currentSemaphore = (m_currentSemaphore + 1) % m_semaphores.num;
+		m_currentSemaphore = (m_currentSemaphore + 1) % m_semaphores.size();
 		VkResult acquireResult = vkAcquireNextImageKHR(m_vk.device(), m_swapchain, UINT64_MAX, m_semaphores[m_currentSemaphore], VK_NULL_HANDLE, &m_currentImage);
 		switch (acquireResult)
 		{

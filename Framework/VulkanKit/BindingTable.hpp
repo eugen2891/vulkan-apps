@@ -20,7 +20,7 @@ public:
 private:	
 	VkPipelineLayout m_layout = VK_NULL_HANDLE;
 	VkDescriptorPool m_pool = VK_NULL_HANDLE;
-	Array<VkDescriptorSetLayout> m_sets;
+	std::vector<VkDescriptorSetLayout> m_sets;
 	uint32_t m_maxWrites = 0;
 };
 
@@ -35,8 +35,8 @@ public:
 private:
 	friend class BindingTableLayout;
 	VkPipelineLayout m_layout = VK_NULL_HANDLE;
-	Array<VkWriteDescriptorSet> m_writes;
-	Array<VkDescriptorSet> m_sets;
+	std::vector<VkWriteDescriptorSet> m_writes;
+	std::vector<VkDescriptorSet> m_sets;
 	uint32_t m_maxWrites;
 };
 

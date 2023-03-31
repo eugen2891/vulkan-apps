@@ -46,7 +46,7 @@ private:
 	VkSampler m_sampler = VK_NULL_HANDLE;
 	VkImage m_texture = VK_NULL_HANDLE;
 	VkImageView m_srv = VK_NULL_HANDLE;
-	Array<VkBuffer> m_vertexBuffers;
+	std::vector<VkBuffer> m_vertexBuffers;
 	BindingTable m_bindingTable;
 	uint32_t m_currentBuffer = 0;
 	size_t m_bufferBytes = 0;

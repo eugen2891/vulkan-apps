@@ -343,7 +343,7 @@ void vulkan::ImGuiRenderer::initialize(const Config& conf)
 
 	m_bufferBytes = Max(conf.vertexMem, kImGuiMinVBBytes);
 	uint32_t numBuffers = Max(conf.numBuffers, kImGuiMinBuffers);
-	m_vertexBuffers = Array<VkBuffer>::New(numBuffers);
+	m_vertexBuffers.resize(numBuffers, VK_NULL_HANDLE);
 	m_currentBuffer = numBuffers - 1;
 
 	vulkan::PhysicalDeviceMemoryProperties memProps(conf.physicalDevice);
@@ -354,9 +354,9 @@ void vulkan::ImGuiRenderer::initialize(const Config& conf)
 	vkGetBufferMemoryRequirements(m_vk.device(), m_vertexBuffers[0], &bufferMemReq);
 	m_bufferBytes = AlignUp(bufferMemReq.size, bufferMemReq.alignment);
 
-	vulkan::MemoryAllocateInfo bmai{ m_bufferBytes * m_vertexBuffers.num, memProps.findMemoryType(bufferMemReq, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, 0, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) };
+	vulkan::MemoryAllocateInfo bmai{ m_bufferBytes * m_vertexBuffers.size(), memProps.findMemoryType(bufferMemReq, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, 0, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) };
 	BreakIfFailed(vkAllocateMemory(m_vk.device(), &bmai, m_vk.alloc(), &m_bufferMem));
-	for (uint32_t i = 0; i < m_vertexBuffers.num; i++) BreakIfFailed(vkBindBufferMemory(m_vk.device(), m_vertexBuffers[i], m_bufferMem, i * m_bufferBytes));
+	for (auto i = 0; i < m_vertexBuffers.size(); i++) BreakIfFailed(vkBindBufferMemory(m_vk.device(), m_vertexBuffers[i], m_bufferMem, i * m_bufferBytes));
 
 	int fontW = 0, fontH = 0;
 	unsigned char* fontData = nullptr;
@@ -472,7 +472,7 @@ void vulkan::ImGuiRenderer::render(VkCommandBuffer commandBuffer, VkImageView re
 	if (hasData)
 	{
 		void* bufferBase = nullptr;
-		m_currentBuffer = (m_currentBuffer + 1) % m_vertexBuffers.num;
+		m_currentBuffer = (m_currentBuffer + 1) % m_vertexBuffers.size();
 		vulkan::MappedMemoryRange range{ m_bufferMem, m_currentBuffer * m_bufferBytes, m_bufferBytes };
 		BreakIfFailed(vkMapMemory(m_vk.device(), m_bufferMem, range.offset, range.size, 0, &bufferBase));
 

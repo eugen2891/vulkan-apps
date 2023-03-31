@@ -24,9 +24,9 @@ enum eMesh : uint32_t
 
 Drawable GetMesh(uint32_t index);
 
-ArrayRef<const uint8_t> GetVertexData();
+Range<const uint8_t> GetVertexData();
 
-ArrayRef<const uint8_t> GetIndexData();
+Range<const uint8_t> GetIndexData();
 
 uint32_t GetVertexStride();
 
