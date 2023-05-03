@@ -1,7 +1,9 @@
 #include "SandboxRenderer.hpp"
+#include "WhittedRaytracer.hpp"
 
 #include <VulkanKit/Window.hpp>
 #include <VulkanKit/Context.hpp>
+#include <VulkanKit/Resources.hpp>
 #include <ImGui/imgui.h>
 
 VULKAN_APPLICATION_INSTANCE(SandboxRenderer);
@@ -31,8 +33,8 @@ void SandboxRenderer::initialize()
 	VkPipelineLayoutCreateInfo plci{ VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO, nullptr, 0, 0, nullptr, 1, &pcr };
 	BreakIfFailed(vkCreatePipelineLayout(m_device, &plci, m_alloc, &m_layout));
 
-	vulkan::Image2DCreateInfo ici{ VK_FORMAT_D32_SFLOAT, m_window.rect().extent, 1, 1, VK_SAMPLE_COUNT_1_BIT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT };
-	m_depthBuffer.initialize(*this, ici, vulkan::MemoryFlags::kDeviceOnly);
+	const VkImageUsageFlags depthBufferUsage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+	m_depthBuffer = createImage2D(VK_FORMAT_D32_SFLOAT, m_window.rect().extent, 1, VK_SAMPLE_COUNT_1_BIT, VK_IMAGE_TILING_OPTIMAL, depthBufferUsage, vulkan::MemoryFlags::kDeviceOnly);
 
 	m_scene.initialize();
 }
@@ -42,11 +44,11 @@ void SandboxRenderer::finalize()
 	vkDestroyPipeline(m_device, m_pipeline, m_alloc);
 	vkDestroyPipelineLayout(m_device, m_layout, m_alloc);
 	for (auto const& shader : m_shaders) vkDestroyShaderModule(m_device, shader.spirv, m_alloc);
-	m_frameData.finalize(*this);
-	m_objectData.finalize(*this);
-	m_vertexData.finalize(*this);
-	m_indexData.finalize(*this);
-	m_depthBuffer.finalize(*this);
+	m_frameData->finalize();
+	m_objectData->finalize();
+	m_vertexData->finalize();
+	m_indexData->finalize();
+	m_depthBuffer->finalize();
 	m_imGuiRenderer.finalize();
 	m_scene.finalize();
 	m_ctx.finalize();
@@ -54,10 +56,21 @@ void SandboxRenderer::finalize()
 
 void SandboxRenderer::runApplication()
 {
+	bool firstFrame = true;
+	WhittedRaytracer rayTracer(*this);
+
 	while (m_window.pollEvents())
 	{
 		m_ctx.beginCommandBuffer();
 		updateSceneAndUploadData();		
+
+		if (firstFrame)
+		{
+			//rayTracer.setIndexData(m_indexData, VK_INDEX_TYPE_UINT32, sizeof(uint32_t));
+			//rayTracer.setVertexData(m_vertexData, VK_FORMAT_R32G32B32A32_SFLOAT, sandbox::GetVertexStride());
+			//rayTracer.buildAccelerationStructures(m_ctx.commandBuffer());
+			firstFrame = false;
+		}
 
 		VkRect2D windowRect = m_window.rect();
 		m_imGuiRenderer.startNewFrame(m_ctx.commandBuffer(), windowRect);
@@ -65,7 +78,7 @@ void SandboxRenderer::runApplication()
 		vulkan::PipelineBarrier& barrier = m_ctx.pipelineBarrier();
 		barrier.image(m_window.currentImage(), { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 })
 			.layout(VK_IMAGE_LAYOUT_UNDEFINED, 0, VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT);
-		barrier.image(m_depthBuffer.handle(), { VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1 })
+		barrier.image(*m_depthBuffer, {VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1})
 			.layout(VK_IMAGE_LAYOUT_UNDEFINED, 0, VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL, VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT);
 		barrier.submit(m_ctx.commandBuffer(), VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT);
 
@@ -78,14 +91,14 @@ void SandboxRenderer::runApplication()
 		};
 		const VkRenderingAttachmentInfo raiDepth
 		{
-			VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO, nullptr, m_depthBuffer.view(), VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL,
+			VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO, nullptr, m_depthBuffer->imageView(), VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL,
 			VK_RESOLVE_MODE_NONE, VK_NULL_HANDLE, VK_IMAGE_LAYOUT_UNDEFINED, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, clearDepth
 		};
 		const VkRenderingInfo ri{ VK_STRUCTURE_TYPE_RENDERING_INFO, nullptr, 0, windowRect, 1, 0, 1, &raiColor, &raiDepth };
 		vkCmdBeginRendering(m_ctx.commandBuffer(), &ri);
 		
 		VkDeviceSize bufferDataOffset = 0;
-		VkBuffer vertexBuffer = m_vertexData.handle(), indexBuffer = m_indexData.handle();
+		VkBuffer vertexBuffer = *m_vertexData, indexBuffer = *m_indexData;
 		vkCmdBindVertexBuffers(m_ctx.commandBuffer(), 0, 1, &vertexBuffer, &bufferDataOffset);
 		vkCmdBindIndexBuffer(m_ctx.commandBuffer(), indexBuffer, bufferDataOffset, VK_INDEX_TYPE_UINT32);
 		vkCmdBindPipeline(m_ctx.commandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline());
@@ -94,11 +107,11 @@ void SandboxRenderer::runApplication()
 		vkCmdSetViewport(m_ctx.commandBuffer(), 0, 1, &viewport);
 		vkCmdSetScissor(m_ctx.commandBuffer(), 0, 1, &windowRect);
 
-		const VkDeviceAddress framePtr = m_frameData.gpuAddress();
+		const VkDeviceAddress framePtr = m_frameData->bufferAddress();
 		vkCmdPushConstants(m_ctx.commandBuffer(), m_layout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(VkDeviceAddress), &framePtr);
 		for (const sandbox::Drawable& cmd : m_scene.drawables())
 		{
-			const VkDeviceAddress objectPtr = m_objectData.gpuAddress() + cmd.dataOffset;
+			const VkDeviceAddress objectPtr = m_objectData->bufferAddress() + cmd.dataOffset;
 			vkCmdPushConstants(m_ctx.commandBuffer(), m_layout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(VkDeviceAddress), sizeof(VkDeviceAddress), &objectPtr);
 			vkCmdDrawIndexed(m_ctx.commandBuffer(), cmd.indexCount, 1, cmd.firstIndex, cmd.vertexOffset, 0);
 		}
@@ -185,50 +198,51 @@ void SandboxRenderer::updateSceneAndUploadData()
 	Range<const uint8_t> vertexData, indexData;
 	BreakIfNot(perFrameData.num() && perObjectData.num());
 	{
-		if (!m_frameData.valid())
+		if (!m_frameData)
 		{
-			vulkan::BufferCreateInfo bci{ perFrameData.num(), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT };
-			m_frameData.initialize(*this, bci, vulkan::MemoryFlags::kDeviceOnly);
+			const VkBufferUsageFlags usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT;
+			m_frameData = createBuffer(perFrameData.num(), usage, vulkan::MemoryFlags::kDeviceOnly);
 		}
-		if (!m_objectData.valid())
+		if (!m_objectData)
 		{
-			vulkan::BufferCreateInfo bci{ perObjectData.num(), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT };
-			m_objectData.initialize(*this, bci, vulkan::MemoryFlags::kDeviceOnly);
+			const VkBufferUsageFlags usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT;
+			m_objectData = createBuffer(perObjectData.num(), usage, vulkan::MemoryFlags::kDeviceOnly);
 		}
-		if (!m_vertexData.valid())
+		if (!m_vertexData)
 		{
 			vertexData = sandbox::GetVertexData();
-			vulkan::BufferCreateInfo bci{ vertexData.num(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT };
-			m_vertexData.initialize(*this, bci, vulkan::MemoryFlags::kDeviceOnly);
+			const VkBufferUsageFlags usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+			m_vertexData = createBuffer(vertexData.num(), usage, vulkan::MemoryFlags::kDeviceOnly);
 		}
-		if (!m_indexData.valid())
+		if (!m_indexData)
 		{
 			indexData = sandbox::GetIndexData();
+			const VkBufferUsageFlags usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 			vulkan::BufferCreateInfo bci{ indexData.num(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT };
-			m_indexData.initialize(*this, bci, vulkan::MemoryFlags::kDeviceOnly);
+			m_indexData = createBuffer(indexData.num(), usage, vulkan::MemoryFlags::kDeviceOnly);
 		}
 		uint32_t indexBarrier = 1, vertexBarrier = 1;
 		vulkan::PipelineBarrier& barrier = m_ctx.pipelineBarrier();
 		VkPipelineStageFlags stageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-		barrier.buffer(m_frameData.handle()).access(VK_ACCESS_SHADER_READ_BIT, VK_ACCESS_TRANSFER_WRITE_BIT);
-		barrier.buffer(m_objectData.handle()).access(VK_ACCESS_SHADER_READ_BIT, VK_ACCESS_TRANSFER_WRITE_BIT);
+		barrier.buffer(*m_frameData).access(VK_ACCESS_SHADER_READ_BIT, VK_ACCESS_TRANSFER_WRITE_BIT);
+		barrier.buffer(*m_objectData).access(VK_ACCESS_SHADER_READ_BIT, VK_ACCESS_TRANSFER_WRITE_BIT);
 		if (vertexData.num())
 		{
-			barrier.buffer(m_vertexData.handle()).access(VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT, VK_ACCESS_TRANSFER_WRITE_BIT);
+			barrier.buffer(*m_vertexData).access(VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT, VK_ACCESS_TRANSFER_WRITE_BIT);
 			stageMask |= VK_PIPELINE_STAGE_VERTEX_INPUT_BIT;
 			vertexBarrier = 2;
 		}
 		if (indexData.num())
 		{
-			barrier.buffer(m_indexData.handle()).access(VK_ACCESS_INDEX_READ_BIT, VK_ACCESS_TRANSFER_WRITE_BIT);
+			barrier.buffer(*m_indexData).access(VK_ACCESS_INDEX_READ_BIT, VK_ACCESS_TRANSFER_WRITE_BIT);
 			stageMask |= VK_PIPELINE_STAGE_VERTEX_INPUT_BIT;
 			indexBarrier = vertexBarrier + 1;
 		}
 		barrier.submit(m_ctx.commandBuffer(), stageMask, VK_PIPELINE_STAGE_TRANSFER_BIT);
-		vkCmdUpdateBuffer(m_ctx.commandBuffer(), m_frameData.handle(), 0, perFrameData.num(), perFrameData.get());
-		vkCmdUpdateBuffer(m_ctx.commandBuffer(), m_objectData.handle(), 0, perObjectData.num(), perObjectData.get());
-		if (vertexData.num()) vkCmdUpdateBuffer(m_ctx.commandBuffer(), m_vertexData.handle(), 0, vertexData.num(), vertexData.get());
-		if (indexData.num()) vkCmdUpdateBuffer(m_ctx.commandBuffer(), m_indexData.handle(), 0, indexData.num(), indexData.get());
+		vkCmdUpdateBuffer(m_ctx.commandBuffer(), *m_frameData, 0, perFrameData.num(), perFrameData.get());
+		vkCmdUpdateBuffer(m_ctx.commandBuffer(), *m_objectData, 0, perObjectData.num(), perObjectData.get());
+		if (vertexData.num()) vkCmdUpdateBuffer(m_ctx.commandBuffer(), *m_vertexData, 0, vertexData.num(), vertexData.get());
+		if (indexData.num()) vkCmdUpdateBuffer(m_ctx.commandBuffer(), *m_indexData, 0, indexData.num(), indexData.get());
 		barrier.buffer(0u).access(VK_ACCESS_TRANSFER_WRITE_BIT, VK_ACCESS_SHADER_READ_BIT);
 		barrier.buffer(1u).access(VK_ACCESS_TRANSFER_WRITE_BIT, VK_ACCESS_SHADER_READ_BIT);
 		if (vertexData.num()) barrier.buffer(vertexBarrier).access(VK_ACCESS_TRANSFER_WRITE_BIT, VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT);

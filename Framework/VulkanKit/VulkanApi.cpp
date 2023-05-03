@@ -25,7 +25,7 @@ VkQueue APIState::getDeviceQueue(uint32_t family, uint32_t index) const noexcept
 	return retval;
 }
 
-std::vector<VkImage> APIState::getSwapchainImages(VkSwapchainKHR swapchain) const noexcept
+std::vector<VkImage> APIState::enumSwapchainImages(VkSwapchainKHR swapchain) const noexcept
 {
 	uint32_t num = 0;
 	std::vector<VkImage> retval{};
@@ -64,6 +64,40 @@ std::vector<VkSurfaceFormatKHR> APIState::enumSurfaceFormats(VkSurfaceKHR surfac
 	return retval;
 }
 
+Resource* APIState::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, MemoryFlags memoryFlags) noexcept
+{
+	Resource* retval = &m_resources.emplace_back(*this, eResourceType_Buffer);
+	VkBufferCreateInfo bci{ VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO, nullptr, 0, size, usage };
+	retval->initializeAsBuffer(bci, memoryFlags);
+	return retval;
+}
+
+Resource* APIState::createImage2D(VkFormat format, const VkExtent2D& extent, uint32_t mips, VkSampleCountFlagBits samples, VkImageTiling tiling, VkImageUsageFlags usage, MemoryFlags memoryFlags) noexcept
+{
+	Resource* retval = &m_resources.emplace_back(*this, eResourceType_Image);
+	VkImageCreateInfo ici{ VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO, nullptr, 0, VK_IMAGE_TYPE_2D, format, { extent.width, extent.height, 1 }, mips, 1, samples, tiling, usage };
+	retval->initializeAsImage(ici, memoryFlags);
+	return retval;
+}
+
+VkSampler APIState::createSampler(const SamplerFiltering& filter, const SamplerAddressing& address) const noexcept
+{
+	VkSampler retval = VK_NULL_HANDLE;
+	VkSamplerCreateInfo info
+	{
+		VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO, nullptr, 0, filter.magFilter, filter.minFilter, filter.mipmapMode, address.u, address.v, address.w
+	};
+	BreakIfFailed(vkCreateSampler(m_device, &info, m_alloc, &retval));
+	return retval;
+}
+
+VkPipeline APIState::createComputePipeline(const VkComputePipelineCreateInfo& info) const noexcept
+{
+	VkPipeline retval;
+	BreakIfFailed(vkCreateComputePipelines(m_device, VK_NULL_HANDLE, 1u, &info, m_alloc, &retval));
+	return retval;
+}
+
 VkPipelineLayout APIState::createPipelineLayout(const VkPipelineLayoutCreateInfo& info) const noexcept
 {
 	VkPipelineLayout retval = VK_NULL_HANDLE;
@@ -90,6 +124,11 @@ std::vector<VkDescriptorSet> APIState::allocateDescriptorSets(const VkDescriptor
 	std::vector<VkDescriptorSet> retval(info.descriptorSetCount);
 	BreakIfFailed(vkAllocateDescriptorSets(m_device, &info, retval.data()));
 	return retval;
+}
+
+void APIState::updateDescriptorSets(const Range<VkWriteDescriptorSet>& writes, const Range<VkCopyDescriptorSet>& copies) const noexcept
+{
+	vkUpdateDescriptorSets(m_device, uint32_t(writes.num()), writes.get(), uint32_t(copies.num()), copies.get());
 }
 
 const char* APIClient::toString(VkResult value)

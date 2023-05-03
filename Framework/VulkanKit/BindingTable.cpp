@@ -17,12 +17,33 @@ static void IncreasePoolSize(std::vector<VkDescriptorPoolSize>& sizes, VkDescrip
 	sizes.push_back(size);
 }
 
+BindingTableUpdate& BindingTableUpdate::uniformBuffer(VkDescriptorSet set, uint32_t binding, const VkDescriptorBufferInfo* info) noexcept
+{
+	VkWriteDescriptorSet write{ VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, nullptr, set, binding, 0u, 1u, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, nullptr, info, nullptr };
+	m_writes.push_back(write);
+	return *this;
+}
+
+BindingTableUpdate& BindingTableUpdate::combinedImageSampler(VkDescriptorSet set, uint32_t binding, const VkDescriptorImageInfo* info) noexcept
+{
+	VkWriteDescriptorSet write{ VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, nullptr, set, binding, 0u, 1u, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, info, nullptr, nullptr };
+	m_writes.push_back(write);
+	return *this;
+}
+
+vulkan::BindingTableUpdate& BindingTableUpdate::storageImage(VkDescriptorSet set, uint32_t binding, const VkDescriptorImageInfo* info) noexcept
+{
+	VkWriteDescriptorSet write{ VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET, nullptr, set, binding, 0u, 1u, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, info, nullptr, nullptr };
+	m_writes.push_back(write);
+	return *this;
+}
+
 }
 
 void vulkan::BindingTableLayout::initialize(std::initializer_list<BindingDescList> sets, std::initializer_list<VkPushConstantRange> push, uint32_t maxTables)
 {
 	ReturnIfNot(m_layout == VK_NULL_HANDLE);	
-	std::vector<VkDescriptorPoolSize> sizes(16, VkDescriptorPoolSize{});
+	std::vector<VkDescriptorPoolSize> sizes;
 
 	uint32_t numSets = 0;
 	m_sets.reserve(sets.size());
@@ -38,6 +59,11 @@ void vulkan::BindingTableLayout::initialize(std::initializer_list<BindingDescLis
 
 	m_layout = m_vk.createPipelineLayout({ VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO, nullptr, 0, uint32_t(m_sets.size()), m_sets.data(), uint32_t(push.size()), push.begin() });
 	m_pool = m_vk.createDescriptorPool({ VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO, nullptr, 0, uint32_t(sets.size() * maxTables), uint32_t(sizes.size()), sizes.data() });
+}
+
+VkDescriptorSet vulkan::BindingTableLayout::allocateDescriptorSet(uint32_t layoutIndex) const noexcept
+{
+	return m_vk.allocateDescriptorSets({ VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO, nullptr, m_pool, 1, &m_sets[layoutIndex]}).front();
 }
 
 void vulkan::BindingTableLayout::createBindingTable(BindingTable& table)

@@ -21,6 +21,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Utilities", "Framework\Util
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sandbox", "Framework\Sandbox\Sandbox.vcxitems", "{7C060C8D-511C-4AA4-A170-69345C54C5C5}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FluidSolver2D", "Projects\FluidSolver2D\FluidSolver2D.vcxproj", "{D788B9DD-7421-4791-AED4-15B94C6D8FA8}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FireSimulator", "Projects\FireSimulator\FireSimulator.vcxproj", "{EC466F99-581D-4EB4-9CE1-BC8516C2075F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -53,6 +57,22 @@ Global
 		{05EC58ED-1454-4CB3-A35C-3879AD2B1A00}.Release|x64.Build.0 = Release|x64
 		{05EC58ED-1454-4CB3-A35C-3879AD2B1A00}.Release|x86.ActiveCfg = Release|Win32
 		{05EC58ED-1454-4CB3-A35C-3879AD2B1A00}.Release|x86.Build.0 = Release|Win32
+		{D788B9DD-7421-4791-AED4-15B94C6D8FA8}.Debug|x64.ActiveCfg = Debug|x64
+		{D788B9DD-7421-4791-AED4-15B94C6D8FA8}.Debug|x64.Build.0 = Debug|x64
+		{D788B9DD-7421-4791-AED4-15B94C6D8FA8}.Debug|x86.ActiveCfg = Debug|Win32
+		{D788B9DD-7421-4791-AED4-15B94C6D8FA8}.Debug|x86.Build.0 = Debug|Win32
+		{D788B9DD-7421-4791-AED4-15B94C6D8FA8}.Release|x64.ActiveCfg = Release|x64
+		{D788B9DD-7421-4791-AED4-15B94C6D8FA8}.Release|x64.Build.0 = Release|x64
+		{D788B9DD-7421-4791-AED4-15B94C6D8FA8}.Release|x86.ActiveCfg = Release|Win32
+		{D788B9DD-7421-4791-AED4-15B94C6D8FA8}.Release|x86.Build.0 = Release|Win32
+		{EC466F99-581D-4EB4-9CE1-BC8516C2075F}.Debug|x64.ActiveCfg = Debug|x64
+		{EC466F99-581D-4EB4-9CE1-BC8516C2075F}.Debug|x64.Build.0 = Debug|x64
+		{EC466F99-581D-4EB4-9CE1-BC8516C2075F}.Debug|x86.ActiveCfg = Debug|Win32
+		{EC466F99-581D-4EB4-9CE1-BC8516C2075F}.Debug|x86.Build.0 = Debug|Win32
+		{EC466F99-581D-4EB4-9CE1-BC8516C2075F}.Release|x64.ActiveCfg = Release|x64
+		{EC466F99-581D-4EB4-9CE1-BC8516C2075F}.Release|x64.Build.0 = Release|x64
+		{EC466F99-581D-4EB4-9CE1-BC8516C2075F}.Release|x86.ActiveCfg = Release|Win32
+		{EC466F99-581D-4EB4-9CE1-BC8516C2075F}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -65,6 +85,8 @@ Global
 		{05EC58ED-1454-4CB3-A35C-3879AD2B1A00} = {7371EF42-DB02-4793-A488-3DA58FA0E72F}
 		{2E1E9BD2-530E-4191-816B-83522909CA94} = {8FB238ED-D4C9-475C-86CD-DC365678BD01}
 		{7C060C8D-511C-4AA4-A170-69345C54C5C5} = {8FB238ED-D4C9-475C-86CD-DC365678BD01}
+		{D788B9DD-7421-4791-AED4-15B94C6D8FA8} = {7371EF42-DB02-4793-A488-3DA58FA0E72F}
+		{EC466F99-581D-4EB4-9CE1-BC8516C2075F} = {7371EF42-DB02-4793-A488-3DA58FA0E72F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C8E7841A-82FD-4238-83A1-A51CC11E8D95}
@@ -80,6 +102,12 @@ Global
 		Framework\VulkanKit\VulkanKit.vcxitems*{4fe12d28-6c51-440e-aa03-05898866cae5}*SharedItemsImports = 4
 		Framework\Sandbox\Sandbox.vcxitems*{7c060c8d-511c-4aa4-a170-69345c54c5c5}*SharedItemsImports = 9
 		Framework\ImGui\ImGui.vcxitems*{7da9a408-73f0-4b99-a6e3-9e73f0b96c05}*SharedItemsImports = 9
+		Framework\ImGui\ImGui.vcxitems*{d788b9dd-7421-4791-aed4-15b94c6d8fa8}*SharedItemsImports = 4
+		Framework\Utilities\Utilities.vcxitems*{d788b9dd-7421-4791-aed4-15b94c6d8fa8}*SharedItemsImports = 4
+		Framework\VulkanKit\VulkanKit.vcxitems*{d788b9dd-7421-4791-aed4-15b94c6d8fa8}*SharedItemsImports = 4
+		Framework\ImGui\ImGui.vcxitems*{ec466f99-581d-4eb4-9ce1-bc8516c2075f}*SharedItemsImports = 4
+		Framework\Utilities\Utilities.vcxitems*{ec466f99-581d-4eb4-9ce1-bc8516c2075f}*SharedItemsImports = 4
+		Framework\VulkanKit\VulkanKit.vcxitems*{ec466f99-581d-4eb4-9ce1-bc8516c2075f}*SharedItemsImports = 4
 		Framework\VulkanKit\VulkanKit.vcxitems*{fd99db27-d36b-4cc2-9b50-d2752134b34a}*SharedItemsImports = 9
 	EndGlobalSection
 EndGlobal

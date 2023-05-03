@@ -33,7 +33,7 @@ shaderc_include_result* ShaderCompiler::acquireHeader(const char* fileName) cons
 	return result;
 }
 
-ShaderCompiler::ShaderCompiler(const APIState& vk, const char* incDir) : APIClient(vk)
+ShaderCompiler::ShaderCompiler(APIState& vk, const char* incDir) : APIClient(vk)
 {
 	strcpy_s(includePath, incDir);
 	char* sep = strrchr(includePath, '/');
@@ -43,7 +43,7 @@ ShaderCompiler::ShaderCompiler(const APIState& vk, const char* incDir) : APIClie
 	relStart = ++sep;
 }
 
-uint32_t ShaderCompiler::compile(const Source& src, VkShaderStageFlags stages, Result& result)
+uint32_t ShaderCompiler::compile(const Source& src, VkShaderStageFlags stages, Result& result, const Range<const char*>& macros)
 {
 	const size_t length = src.size;
 	uint32_t modules = 0, index = 0;
@@ -80,6 +80,10 @@ uint32_t ShaderCompiler::compile(const Source& src, VkShaderStageFlags stages, R
 		shaderc_compiler_t compiler = shaderc_compiler_initialize();
 		shaderc_compile_options_t options = shaderc_compile_options_clone(sharedOptions);
 		shaderc_compile_options_add_macro_definition(options, "COMPUTE_SHADER", 14, "1", 1);
+		for (auto i = 0; i < macros.num(); i++)
+		{
+			shaderc_compile_options_add_macro_definition(options, macros.get()[i], strlen(macros.get()[i]), "1", 1);
+		}
 		shaderc_compilation_result_t res = shaderc_compile_into_spv(compiler, src.data, length, shaderc_compute_shader, src.name, "main", options);
 		createBinary(res, VK_SHADER_STAGE_COMPUTE_BIT, result[index++]);
 		shaderc_compile_options_release(options);

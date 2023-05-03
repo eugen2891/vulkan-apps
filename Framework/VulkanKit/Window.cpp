@@ -50,7 +50,7 @@ bool vulkan::Window::swapchainValid() const
 	return !m_shouldRecreate;
 }
 
-vulkan::Window::Window(const APIState& vk, const char* title, VkFormat pixelFormat, VkExtent2D size)
+vulkan::Window::Window(APIState& vk, const char* title, VkFormat pixelFormat, VkExtent2D size)
 	: APIClient(vk), m_title(title), m_pixelFormat(pixelFormat), m_size(size)
 {
 }
@@ -175,7 +175,7 @@ void vulkan::Window::updateSwapchain()
 
 	VkSurfaceCapabilitiesKHR caps;
 	ReturnIfFailed(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_vk.physicalDevice(), m_surface, &caps));
-	sci.minImageCount = Min(Max(VULKAN_SWAPCHAIN_MIN_SIZE, caps.minImageCount), caps.maxImageCount);
+	sci.minImageCount = util::Min(util::Max<uint32_t>(VULKAN_SWAPCHAIN_MIN_SIZE, caps.minImageCount), caps.maxImageCount);
 	sci.preTransform = caps.currentTransform;
 	sci.imageExtent = caps.currentExtent;
 	m_size = caps.currentExtent;
@@ -193,7 +193,7 @@ void vulkan::Window::updateSwapchain()
 	ReturnIfNot(sci.imageFormat != VK_FORMAT_UNDEFINED);
 
 	sci.imageArrayLayers = 1;
-	sci.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+	sci.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 	sci.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	sci.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 
@@ -209,7 +209,7 @@ void vulkan::Window::updateSwapchain()
 	sci.oldSwapchain = m_swapchain;
 
 	ReturnIfFailed(vkCreateSwapchainKHR(m_vk.device(), &sci, m_vk.alloc(), &m_swapchain));
-	m_images = m_vk.getSwapchainImages(m_swapchain);
+	m_images = m_vk.enumSwapchainImages(m_swapchain);
 	m_semaphores.resize(m_images.size());
 	m_imageViews.resize(m_images.size());
 	for (auto i = 0; i < m_images.size(); i++)

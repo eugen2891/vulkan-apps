@@ -13,6 +13,7 @@ struct Drawable
 	uint32_t indexCount;
 	uint32_t firstIndex;
 	int32_t vertexOffset;
+	uint32_t vertexCount;
 };
 
 enum eMesh : uint32_t

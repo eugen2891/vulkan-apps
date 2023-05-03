@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{4fe12d28-6c51-440e-aa03-05898866cae5}</ProjectGuid>
-    <RootNamespace>ImGuiWidgetsDemo</RootNamespace>
+    <ProjectGuid>{ec466f99-581d-4eb4-9ce1-bc8516c2075f}</ProjectGuid>
+    <RootNamespace>FireSimulator</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -31,7 +31,6 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
-    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -39,14 +38,12 @@
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
-    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -54,15 +51,14 @@
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="Shared">
     <Import Project="..\..\Framework\VulkanKit\VulkanKit.vcxitems" Label="Shared" />
-    <Import Project="..\..\Framework\ImGui\ImGui.vcxitems" Label="Shared" />
     <Import Project="..\..\Framework\Utilities\Utilities.vcxitems" Label="Shared" />
+    <Import Project="..\..\Framework\ImGui\ImGui.vcxitems" Label="Shared" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -99,12 +95,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Framework\;$(VULKAN_SDK)\Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)\Include\;$(SolutionDir)Framework\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>GlobalPCH.hpp</PrecompiledHeaderFile>
       <ForcedIncludeFiles>GlobalPCH.hpp</ForcedIncludeFiles>
@@ -112,7 +105,6 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies />
       <AdditionalLibraryDirectories>$(VULKAN_SDK)\Lib\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -124,12 +116,11 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Framework\;$(VULKAN_SDK)\Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)\Include\;$(SolutionDir)Framework\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>GlobalPCH.hpp</PrecompiledHeaderFile>
       <ForcedIncludeFiles>GlobalPCH.hpp</ForcedIncludeFiles>
     </ClCompile>
     <Link>
@@ -137,7 +128,6 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies />
       <AdditionalLibraryDirectories>$(VULKAN_SDK)\Lib\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -147,12 +137,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Framework\;$(VULKAN_SDK)\Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)\Include\;$(SolutionDir)Framework\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>GlobalPCH.hpp</PrecompiledHeaderFile>
       <ForcedIncludeFiles>GlobalPCH.hpp</ForcedIncludeFiles>
@@ -160,7 +147,6 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies />
       <AdditionalLibraryDirectories>$(VULKAN_SDK)\Lib\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -172,12 +158,11 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Framework\;$(VULKAN_SDK)\Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
-      <ExceptionHandling>Sync</ExceptionHandling>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)\Include\;$(SolutionDir)Framework\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>GlobalPCH.hpp</PrecompiledHeaderFile>
       <ForcedIncludeFiles>GlobalPCH.hpp</ForcedIncludeFiles>
     </ClCompile>
     <Link>
@@ -185,15 +170,19 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies />
       <AdditionalLibraryDirectories>$(VULKAN_SDK)\Lib\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="ImGuiWidgetsDemo.hpp" />
+    <ClInclude Include="FireSimulator.hpp" />
+    <ClInclude Include="ImageTargets.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ImGuiWidgetsDemo.cpp" />
+    <ClCompile Include="FireSimulator.cpp" />
+    <ClCompile Include="ImageTargets.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="FireSimulator.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

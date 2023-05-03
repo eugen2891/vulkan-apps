@@ -14,9 +14,6 @@ protected:
 	void finalize() override;
 	void runApplication() override;
 	const char* applicationName() const override;
-	bool detectQueues(VkPhysicalDevice physicalDevice) override;
-	vulkan::DeviceQueueCreateList queueInfos() const override;
-	VkQueue presentQueue() override;
 private:
 	vulkan::ImGuiRenderer m_imGuiRenderer;
 	uint32_t m_queueFamily = UINT32_MAX;

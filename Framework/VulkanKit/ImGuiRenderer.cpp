@@ -288,7 +288,7 @@ static void ImGuiUpdateMouseCursor(ImGuiInternalState* state)
 
 }
 
-vulkan::ImGuiRenderer::ImGuiRenderer(const APIState& vk)
+vulkan::ImGuiRenderer::ImGuiRenderer(APIState& vk)
 	: APIClient(vk), m_bindingTableLayout{ vk }
 {
 }
@@ -341,8 +341,8 @@ void vulkan::ImGuiRenderer::initialize(const Config& conf)
 	SDL_SetHint(SDL_HINT_MOUSE_AUTO_CAPTURE, "0");
 #endif
 
-	m_bufferBytes = Max(conf.vertexMem, kImGuiMinVBBytes);
-	uint32_t numBuffers = Max(conf.numBuffers, kImGuiMinBuffers);
+	m_bufferBytes = util::Max(conf.vertexMem, kImGuiMinVBBytes);
+	uint32_t numBuffers = util::Max(conf.numBuffers, kImGuiMinBuffers);
 	m_vertexBuffers.resize(numBuffers, VK_NULL_HANDLE);
 	m_currentBuffer = numBuffers - 1;
 

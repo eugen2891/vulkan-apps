@@ -30,9 +30,9 @@ public:
 	};
 	using Result = Range<Binary>;
 	void releaseHeader(shaderc_include_result* header) const;
-	explicit ShaderCompiler(const APIState& vk, const char* incDir);
+	explicit ShaderCompiler(APIState& vk, const char* incDir);
 	shaderc_include_result* acquireHeader(const char* fileName) const;
-	uint32_t compile(const Source& src, VkShaderStageFlags stages, Result& result);
+	uint32_t compile(const Source& src, VkShaderStageFlags stages, Result& result, const Range<const char*>& macros = {});
 	~ShaderCompiler();
 private:
 	void createBinary(shaderc_compilation_result* cr, VkShaderStageFlags stage, Binary& binary);

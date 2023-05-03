@@ -2,8 +2,10 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="SandboxRenderer.cpp" />
+    <ClCompile Include="WhittedRaytracer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SandboxRenderer.hpp" />
+    <ClInclude Include="WhittedRaytracer.hpp" />
   </ItemGroup>
 </Project>

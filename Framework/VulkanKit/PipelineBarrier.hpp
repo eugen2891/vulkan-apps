@@ -28,6 +28,7 @@ public:
 	};
 	Image image(uint32_t index);
 	Buffer buffer(uint32_t index);
+	void memory(VkAccessFlags oldAccess, VkAccessFlags newAccess);
 	Image image(VkImage imageHandle, const VkImageSubresourceRange& subset);
 	Buffer buffer(VkBuffer bufferHandle, VkDeviceSize offset = 0, VkDeviceSize size = VK_WHOLE_SIZE);
 	void submit(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStage, VkPipelineStageFlags dstStage) const;
@@ -38,6 +39,7 @@ private:
 	VkMemoryBarrier m_memory;
 	uint32_t m_numBuffers = 0;
 	uint32_t m_numImages = 0;
+	bool m_hasMemory = false;
 };
 
 }

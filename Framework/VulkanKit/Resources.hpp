@@ -1,9 +1,16 @@
 #pragma once
 
-#include "VulkanApi.hpp"
-
 namespace vulkan
 {
+
+class APIState;
+
+enum ResourceType
+{
+	eResourceType_Invalid = -1,
+	eResourceType_Buffer,
+	eResourceType_Image
+};
 
 struct MemoryFlags
 {
@@ -16,33 +23,48 @@ struct MemoryFlags
 	VkMemoryPropertyFlags optional = 0;
 };
 
-class Buffer
+//Sampler::kMinMagMipLinear
+
+struct SamplerFiltering
 {
-public:
-	VkBuffer handle() const { return m_handle; };
-	VkDeviceAddress gpuAddress() const { return m_address; };
-	bool valid() const { return m_handle != VK_NULL_HANDLE; }
-	void initialize(const APIState& vk, const VkBufferCreateInfo& bci, const MemoryFlags& flags);
-	void finalize(const APIState& vk);
-private:
-	friend struct Resources;
-	VkBuffer m_handle = VK_NULL_HANDLE;
-	VkDeviceMemory m_memory = VK_NULL_HANDLE;
-	VkDeviceAddress m_address = 0;
+	static const SamplerFiltering kMinMagMipNearest;
+	static const SamplerFiltering kMinMagMipLinear;
+	VkFilter magFilter = VK_FILTER_NEAREST;
+	VkFilter minFilter = VK_FILTER_NEAREST;
+	VkSamplerMipmapMode mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
 };
 
-class Image
+struct SamplerAddressing
+{
+	static const SamplerAddressing kWrap;
+	static const SamplerAddressing kBorder;
+	VkSamplerAddressMode u = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+	VkSamplerAddressMode v = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+	VkSamplerAddressMode w = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+};
+
+class Resource
 {
 public:
-	VkImage handle() const { return m_handle; }
-	VkImageView view() const { return m_view; }
-	bool valid() const { return m_handle != VK_NULL_HANDLE; }
-	void initialize(const APIState& vk, const VkImageCreateInfo& bci, const MemoryFlags& flags);
-	void finalize(const APIState& vk);
+	Resource(APIState& vk, ResourceType type) noexcept;
+	VkDeviceAddress bufferAddress() const noexcept;
+	VkImageView imageView() const noexcept;
+	operator VkBuffer() const noexcept;
+	operator VkImage() const noexcept;
+	bool valid() const noexcept;
+	void finalize();
 private:
-	VkImage m_handle = VK_NULL_HANDLE;
+	void initializeAsBuffer(const VkBufferCreateInfo& bci, const MemoryFlags& flags);
+	void initializeAsImage(const VkImageCreateInfo& ici, const MemoryFlags& flags);
+	APIState& m_vk;
+	friend class APIState;
+	const ResourceType m_type;
 	VkDeviceMemory m_memory = VK_NULL_HANDLE;
-	VkImageView m_view = VK_NULL_HANDLE;
+	union ResourceData
+	{
+		struct BufferData { VkBuffer handle; VkDeviceAddress address; } buffer;
+		struct ImageData { VkImage handle; VkImageView view; } image;
+	} m_data{};
 };
 
 }

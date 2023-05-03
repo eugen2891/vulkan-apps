@@ -95,11 +95,13 @@ Drawable GetMesh(uint32_t index)
 	{
 	case eMesh_Quad:
 		retval.indexCount = 6;
+		retval.vertexCount = 4;
 		break;
 	case eMesh_Cube:
 		retval.firstIndex = 6;
 		retval.indexCount = 36;
 		retval.vertexOffset = 4;
+		retval.vertexCount = 24;
 		break;
 	}
 	return retval;

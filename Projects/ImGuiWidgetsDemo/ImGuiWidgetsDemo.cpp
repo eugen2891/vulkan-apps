@@ -6,8 +6,12 @@
 
 VULKAN_APPLICATION_INSTANCE(ImGuiWidgetsDemo);
 
+static const uint32_t kMaxCommandBuffers = 3;
+
 ImGuiWidgetsDemo::ImGuiWidgetsDemo()
-	: m_window{ *this, applicationName(), VK_FORMAT_B8G8R8A8_UNORM, { 1440, 900 } }, m_imGuiRenderer{ *this }
+	: m_window{ *this, applicationName(), VK_FORMAT_B8G8R8A8_UNORM, { 1440, 900 } }
+	, m_imGuiRenderer{ *this }
+	, m_ctx{ *this }
 {
 	m_window.setEventHandler(&m_imGuiRenderer);
 	setOutputWindow(&m_window);
@@ -15,8 +19,8 @@ ImGuiWidgetsDemo::ImGuiWidgetsDemo()
 
 void ImGuiWidgetsDemo::initialize()
 {
+	m_ctx.initialize(kMaxCommandBuffers);
 	m_imGuiRenderer.initialize({ m_device, m_physicalDevice, m_alloc, m_window.sdlWindow() });
-	m_ctx.initialize({ m_device, m_alloc, m_queue, m_queueFamily, 3 });
 }
 
 void ImGuiWidgetsDemo::finalize()
@@ -60,27 +64,4 @@ void ImGuiWidgetsDemo::runApplication()
 const char* ImGuiWidgetsDemo::applicationName() const
 {
 	return "ImGui Widgets Demo";
-}
-
-bool ImGuiWidgetsDemo::detectQueues(VkPhysicalDevice physicalDevice)
-{
-	vulkan::QueueFamiliesList queueFamilies(physicalDevice);
-	m_queueFamily = queueFamilies.findByFlags(VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_TRANSFER_BIT);
-	if (m_queueFamily < queueFamilies.num) return canPresent(physicalDevice, m_queueFamily);
-	return false;
-}
-
-vulkan::DeviceQueueCreateList ImGuiWidgetsDemo::queueInfos() const
-{
-	static float priority = 1.f;
-	vulkan::DeviceQueueCreateList queues(1);
-	queues.items[0].queueFamilyIndex = m_queueFamily;
-	queues.items[0].queueCount = 1;
-	return queues;
-}
-
-VkQueue ImGuiWidgetsDemo::presentQueue()
-{
-	if (m_queue == VK_NULL_HANDLE) vkGetDeviceQueue(m_device, m_queueFamily, 0, &m_queue);
-	return m_queue;
 }

@@ -47,6 +47,15 @@ vulkan::PipelineBarrier::Buffer vulkan::PipelineBarrier::buffer(VkBuffer bufferH
 	return Buffer(bmb);
 }
 
+void vulkan::PipelineBarrier::memory(VkAccessFlags oldAccess, VkAccessFlags newAccess)
+{
+	m_memory.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+	m_memory.pNext = nullptr;
+	m_memory.srcAccessMask = oldAccess;
+	m_memory.dstAccessMask = newAccess;
+	m_hasMemory = true;
+}
+
 vulkan::PipelineBarrier::Image vulkan::PipelineBarrier::image(uint32_t index)
 {
 	BreakIfNot(index < kMaxImages);
@@ -63,11 +72,12 @@ vulkan::PipelineBarrier::Buffer vulkan::PipelineBarrier::buffer(uint32_t index)
 
 void vulkan::PipelineBarrier::submit(VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStage, VkPipelineStageFlags dstStage) const
 {
-	vkCmdPipelineBarrier(commandBuffer, srcStage, dstStage, 0, 0, nullptr, m_numBuffers, m_buffer, m_numImages, m_image);
+	vkCmdPipelineBarrier(commandBuffer, srcStage, dstStage, 0, m_hasMemory ? 1 : 0, &m_memory, m_numBuffers, m_buffer, m_numImages, m_image);
 }
 
 void vulkan::PipelineBarrier::reset()
 {
+	m_hasMemory = false;
 	m_numBuffers = 0;
 	m_numImages = 0;
 }

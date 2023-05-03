@@ -28,9 +28,6 @@ void Application::setOutputWindow(Window* wndPtr)
 	m_wndPtr = wndPtr;
 	m_instanceExt.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
 	m_instanceExt.push_back(VK_NATIVE_SURFACE_EXTENSION_NAME);
-#if _DEBUG
-	m_instanceExt.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-#endif
 	m_deviceExt.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
 }
 
@@ -110,6 +107,16 @@ void Application::initializeInternal()
 {
 	ReturnIfFailed(volkInitialize());
 
+#if _DEBUG
+	m_instanceExt.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+#endif
+
+#if VULKAN_RAYTRACING
+	m_deviceExt.push_back(VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME);
+	m_deviceExt.push_back(VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME);
+	m_deviceExt.push_back(VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME);
+#endif
+
 	const VkApplicationInfo ai
 	{
 		VK_STRUCTURE_TYPE_APPLICATION_INFO, nullptr, applicationName(), 0u, engineName(), 0u, VK_API_VERSION_1_3
@@ -153,6 +160,11 @@ void Application::initializeInternal()
 	FeatureSet features;
 	features.v13().dynamicRendering = VK_TRUE;
 	features.v12().bufferDeviceAddress = VK_TRUE;
+	features.v10().fragmentStoresAndAtomics = VK_TRUE;
+#if VULKAN_RAYTRACING
+	features.rt().rayTracingPipeline = VK_TRUE;
+	features.as().accelerationStructure = VK_TRUE;
+#endif
 	requestFeatures(features);
 
 	VkDeviceCreateInfo dci

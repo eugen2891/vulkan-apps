@@ -23,7 +23,7 @@ public:
 		uint32_t numBuffers;
 		size_t vertexMem;
 	};
-	explicit ImGuiRenderer(const APIState& vk);
+	explicit ImGuiRenderer(APIState& vk);
 	void initialize(const Config& conf);
 	void startNewFrame(VkCommandBuffer commandBuffer, const VkRect2D& rect);
 	void render(VkCommandBuffer commandBuffer, VkImageView renderTarget, VkFormat outputFormat, const VkClearColorValue* clearColor);
@@ -35,7 +35,6 @@ private:
 	struct ImGuiInternalState* m_int = nullptr;
 	BindingTableLayout m_bindingTableLayout;
 	VkFormat m_outputFormat = VK_FORMAT_UNDEFINED;
-	VkDescriptorSet m_fontAtlasDS = VK_NULL_HANDLE;
 	VkImageView m_fontAtlasImageView = VK_NULL_HANDLE;
 	VkSampler m_fontAtlasSampler = VK_NULL_HANDLE;
 	VkDeviceMemory m_imageMem = VK_NULL_HANDLE;

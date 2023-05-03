@@ -19,7 +19,7 @@ public:
 	bool swapchainValid() const;
 	VkSurfaceKHR surface() const;
 	void setEventHandler(EventHandler* handler);
-	explicit Window(const APIState& vk, const char* title, VkFormat pixelFormat, VkExtent2D size);
+	Window(APIState& vk, const char* title, VkFormat pixelFormat, VkExtent2D size);
 	void present(const Range<VkSemaphore>& waitFor);
 	VkSemaphore currentSemaphore();
 	VkImageView currentImageView();

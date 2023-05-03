@@ -3,10 +3,14 @@
 #include <Sandbox/Scene.hpp>
 #include <VulkanKit/Window.hpp>
 #include <VulkanKit/Context.hpp>
-#include <VulkanKit/Resources.hpp>
 #include <VulkanKit/Application.hpp>
 #include <VulkanKit/ImGuiRenderer.hpp>
 #include <VulkanKit/ShaderCompiler.hpp>
+
+namespace vulkan
+{
+class Resource;
+}
 
 class SandboxRenderer : public vulkan::Application
 {
@@ -25,11 +29,11 @@ private:
 	vulkan::ShaderCompiler::Binary m_shaders[2]{};
 	VkPipelineLayout m_layout = VK_NULL_HANDLE;
 	VkPipeline m_pipeline = VK_NULL_HANDLE;
-	vulkan::Buffer m_vertexData;
-	vulkan::Buffer m_indexData;
-	vulkan::Buffer m_frameData;
-	vulkan::Buffer m_objectData;
-	vulkan::Image m_depthBuffer;
+	vulkan::Resource* m_vertexData = nullptr;
+	vulkan::Resource* m_indexData = nullptr;
+	vulkan::Resource* m_frameData = nullptr;
+	vulkan::Resource* m_objectData = nullptr;
+	vulkan::Resource* m_depthBuffer;
 	vulkan::Window m_window;
 	vulkan::Context m_ctx;
 	sandbox::Scene m_scene;
