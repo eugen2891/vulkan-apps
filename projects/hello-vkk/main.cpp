@@ -1,11 +1,12 @@
 #include "camera.hpp"
 
+#define HAVE_M_PI
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 
 #include <vulkan-kit/vkk.h>
 
-#include <glm/gtc/matrix_transform.hpp>
+#include <cglm/cglm.h>
 
 static const struct BoxData
 {
@@ -63,7 +64,7 @@ int main(int argc, char** argv)
 	setGraphicsPipelineFaceCulling(pipeline, VK_CULL_MODE_BACK_BIT);
 
 	Camera camera(5.f, 1.f);
-	Buffer cameraData = createUniformBuffer(sizeof(glm::mat4), eDeviceQueue_Universal);
+	Buffer cameraData = createUniformBuffer(sizeof(mat4), eDeviceQueue_Universal);
 	Buffer vertexData = NULL;
 
 	SDL_MaximizeWindow(window);
