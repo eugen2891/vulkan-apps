@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{415273ee-7835-40d8-957b-619fa600ccc2}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)buffer.inl" />
+    <None Include="$(MSBuildThisFileDirectory)cmdbuff.inl" />
+    <None Include="$(MSBuildThisFileDirectory)framebuff.inl" />
+    <None Include="$(MSBuildThisFileDirectory)image.inl" />
+    <None Include="$(MSBuildThisFileDirectory)macros.inl" />
+    <None Include="$(MSBuildThisFileDirectory)pipeline.inl" />
+    <None Include="$(MSBuildThisFileDirectory)renderdoc.inl" />
+    <None Include="$(MSBuildThisFileDirectory)renderpass.inl" />
+    <None Include="$(MSBuildThisFileDirectory)shaders.inl" />
+    <None Include="$(MSBuildThisFileDirectory)swapchain.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)vkk.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)vkk.h" />
+  </ItemGroup>
+</Project>

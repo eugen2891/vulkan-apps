@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33502.453
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vulkan-kit", "framework\vulkan-kit\vulkan-kit.vcxitems", "{415273EE-7835-40D8-957B-619FA600CCC2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "framework", "framework", "{F613F88B-660F-4EBE-AB97-938EEB82909A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "projects", "projects", "{66356330-75BA-4F0E-8701-B37EEA7CC749}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hello-vkk", "projects\hello-vkk\hello-vkk.vcxproj", "{F2972451-9791-446A-B71D-349E92EA36B4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F2972451-9791-446A-B71D-349E92EA36B4}.Debug|x64.ActiveCfg = Debug|x64
+		{F2972451-9791-446A-B71D-349E92EA36B4}.Debug|x64.Build.0 = Debug|x64
+		{F2972451-9791-446A-B71D-349E92EA36B4}.Release|x64.ActiveCfg = Release|x64
+		{F2972451-9791-446A-B71D-349E92EA36B4}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{415273EE-7835-40D8-957B-619FA600CCC2} = {F613F88B-660F-4EBE-AB97-938EEB82909A}
+		{F2972451-9791-446A-B71D-349E92EA36B4} = {66356330-75BA-4F0E-8701-B37EEA7CC749}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {790A82C5-EABE-4A0A-9322-76C5F70082E4}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		framework\vulkan-kit\vulkan-kit.vcxitems*{415273ee-7835-40d8-957b-619fa600ccc2}*SharedItemsImports = 9
+		framework\vulkan-kit\vulkan-kit.vcxitems*{f2972451-9791-446a-b71d-349e92ea36b4}*SharedItemsImports = 4
+	EndGlobalSection
+EndGlobal
