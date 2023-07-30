@@ -8,6 +8,8 @@
 
 #include <cglm/cglm.h>
 
+#include "sphere.inl"
+
 static const struct BoxData
 {
 	float vertices[24];
@@ -110,13 +112,14 @@ int main(int argc, char** argv)
 		camera.writeUniforms(cameraData);
 
 		beginCommandBuffer(eDeviceQueue_Universal);
-
+		
 		if (!vertexData)
 		{
-			vertexData = createVertexArray(sizeof(kBoxData), eDeviceQueue_Invalid);
+			const SphereData* sphere = getSphereMesh();
+			vertexData = createVertexArray(sizeof(SphereData), eDeviceQueue_Invalid);
 			bufferMemoryBarrier(vertexData, VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT, VK_ACCESS_TRANSFER_WRITE_BIT);
 			pipelineBarrier(VK_PIPELINE_STAGE_VERTEX_INPUT_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT);
-			updateBuffer(vertexData, &kBoxData, 0, sizeof(kBoxData));
+			updateBuffer(vertexData, sphere, 0, sizeof(SphereData));
 			bufferMemoryBarrier(vertexData, VK_ACCESS_TRANSFER_WRITE_BIT, VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT);
 			pipelineBarrier(VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_VERTEX_INPUT_BIT);
 		}
@@ -124,9 +127,9 @@ int main(int argc, char** argv)
 		beginRenderPass(swapchainPass, getSwapchainFramebuffer());
 		bindUniformBuffer(0, cameraData);
 		bindVertexBufferRange(0, vertexData, 0);
-		bindIndexBufferRange(VK_INDEX_TYPE_UINT16, vertexData, sizeof(kBoxData.vertices));
+		bindIndexBufferRange(VK_INDEX_TYPE_UINT32, vertexData, sizeof(SphereData::vertices));
 		bindGraphicsPipeline(pipeline);
-		drawIndexed(36, 1, 0, 0, 0);
+		drawIndexed(_countof(SphereData::indices), 1, 0, 0, 0);
 		endRenderPass();
 
 		submitCommandBuffer(eDeviceQueue_Universal, true);

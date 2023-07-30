@@ -175,6 +175,7 @@
       <FileType>Document</FileType>
     </None>
     <None Include="hello.glsl" />
+    <None Include="sphere.inl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp" />

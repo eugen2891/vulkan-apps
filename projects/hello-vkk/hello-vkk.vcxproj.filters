@@ -9,5 +9,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="hello.glsl" />
+    <None Include="sphere.inl" />
   </ItemGroup>
 </Project>
