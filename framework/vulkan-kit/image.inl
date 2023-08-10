@@ -8,6 +8,7 @@ struct ImageT
 	VkFormat format;
 	VkExtent3D size;
 	uint32_t mips;
+	VkImageAspectFlags aspect;
 };
 
 static void initImage(Image image, VkFormat format, const VkExtent3D* size, uint32_t numMips, bool isCube, bool alloc)
@@ -66,6 +67,7 @@ static void initImage(Image image, VkFormat format, const VkExtent3D* size, uint
 	};
 	breakIfFailed(vkCreateImageView(Device, &ivci, Alloc, &image->view));
 
+	image->aspect = aspect;
 	image->format = format;
 	image->mips = numMips;
 	image->size = *size;

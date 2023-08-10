@@ -14,7 +14,7 @@ struct BufferT
 	struct BufferContext* context;
 };
 
-static Buffer createBuffer(size_t size, VkBufferUsageFlags usage, DeviceQueue queue)
+static Buffer createBuffer(size_t size, VkBufferUsageFlags usage, DeviceQueue queue, bool forceCpuWritable)
 {
 	Buffer retval = calloc(1, sizeof(struct BufferT));
 	breakIfNot(retval);
@@ -37,7 +37,7 @@ static Buffer createBuffer(size_t size, VkBufferUsageFlags usage, DeviceQueue qu
 	VkMemoryPropertyFlags memReqired = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
 	VkMemoryPropertyFlags memExcluded = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, memMaybe = 0;
 	usage |= VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
-	if (queue != eDeviceQueue_Invalid)
+	if (queue != eDeviceQueue_Invalid || forceCpuWritable)
 	{
 		memReqired = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
 		if (usage != VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT)
@@ -68,7 +68,7 @@ static Buffer createBuffer(size_t size, VkBufferUsageFlags usage, DeviceQueue qu
 		};
 		breakIfFailed(vkAllocateMemory(Device, &mai, Alloc, &retval->context[i].memory));
 		vkBindBufferMemory(Device, retval->context[i].handle, retval->context[i].memory, 0);
-		if (queue != eDeviceQueue_Invalid)
+		if (queue != eDeviceQueue_Invalid || forceCpuWritable)
 		{
 			breakIfFailed(vkMapMemory(Device, retval->context[i].memory, 0, VK_WHOLE_SIZE, 0, &retval->context[i].mapped));
 		}
@@ -79,12 +79,17 @@ static Buffer createBuffer(size_t size, VkBufferUsageFlags usage, DeviceQueue qu
 
 Buffer createVertexArray(size_t bytes, DeviceQueue queue)
 {
-	return createBuffer(bytes, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, queue);
+	return createBuffer(bytes, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, queue, false);
 }
 
 Buffer createUniformBuffer(size_t bytes, DeviceQueue queue)
 {
-	return createBuffer(bytes, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, queue);
+	return createBuffer(bytes, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, queue, false);
+}
+
+Buffer createUploadBuffer(size_t bytes, DeviceQueue queue)
+{
+	return createBuffer(bytes, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, queue, true);
 }
 
 void* getBufferMappedPtr(Buffer buffer)

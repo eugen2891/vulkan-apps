@@ -1,34 +1,22 @@
-#pragma once
+#include "geometry.h"
 
-#include <cglm/cglm.h>
-
-#ifndef SPHERE_NUM_PARALLELS
-#define SPHERE_NUM_PARALLELS 32
-#endif
-
-#ifndef SPHERE_NUM_MERIDIANS
-#define SPHERE_NUM_MERIDIANS 32
-#endif
-
-struct SphereData
+Mesh getSphereMesh(void)
 {
-	vec3 vertices[(SPHERE_NUM_PARALLELS - 1) * SPHERE_NUM_MERIDIANS + 2];
-	uint32_t indices[3 * (2 * SPHERE_NUM_PARALLELS - 2) * SPHERE_NUM_MERIDIANS];
-};
-
-static const struct SphereData* getSphereMesh(void)
-{
-	static uint32_t numVertices;
-	static struct SphereData mesh;
-	if (numVertices == 0)
+	static struct MeshT mesh;
+	static struct SphereData
 	{
-		numVertices = (SPHERE_NUM_PARALLELS - 1) * SPHERE_NUM_MERIDIANS + 2;
+		vec3 vertices[(SPHERE_NUM_PARALLELS - 1) * SPHERE_NUM_MERIDIANS + 2];
+		uint32_t indices[3 * (2 * SPHERE_NUM_PARALLELS - 2) * SPHERE_NUM_MERIDIANS];
+	} sphere;
+	if (mesh.indexCount == 0)
+	{
+		const uint32_t numVertices = (SPHERE_NUM_PARALLELS - 1) * SPHERE_NUM_MERIDIANS + 2;
 		const float numParRcp = 1.f / (float)SPHERE_NUM_PARALLELS;
 		const float numMerRcp = 1.f / (float)SPHERE_NUM_MERIDIANS;
 
-		mesh.vertices[0][0] = 0.f;
-		mesh.vertices[0][1] = 1.f;
-		mesh.vertices[0][2] = 0.f;
+		sphere.vertices[0][0] = 0.f;
+		sphere.vertices[0][1] = 1.f;
+		sphere.vertices[0][2] = 0.f;
 		for (uint32_t i = 0; i < (SPHERE_NUM_PARALLELS - 1); i++)
 		{
 			const float polar = (float)M_PI * (float)(i + 1) * numParRcp;
@@ -39,14 +27,14 @@ static const struct SphereData* getSphereMesh(void)
 				const float azimuth = 2.f * (float)M_PI * (float)j * numMerRcp;
 				const float sa = sinf(azimuth), ca = cosf(azimuth);
 				const float x = sp * ca, y = cp, z = sp * sa;
-				mesh.vertices[index][0] = x;
-				mesh.vertices[index][1] = y;
-				mesh.vertices[index][2] = z;
+				sphere.vertices[index][0] = x;
+				sphere.vertices[index][1] = y;
+				sphere.vertices[index][2] = z;
 			}
 		}
-		mesh.vertices[numVertices - 1][0] = 0.f;
-		mesh.vertices[numVertices - 1][1] = -1.f;
-		mesh.vertices[numVertices - 1][2] = 0.f;
+		sphere.vertices[numVertices - 1][0] = 0.f;
+		sphere.vertices[numVertices - 1][1] = -1.f;
+		sphere.vertices[numVertices - 1][2] = 0.f;
 
 		uint32_t indexPos = 0;
 
@@ -54,9 +42,9 @@ static const struct SphereData* getSphereMesh(void)
 		{
 			const uint32_t a = i + 1;
 			const uint32_t b = (i + 1) % SPHERE_NUM_MERIDIANS + 1;
-			mesh.indices[indexPos++] = 0;
-			mesh.indices[indexPos++] = b;
-			mesh.indices[indexPos++] = a;
+			sphere.indices[indexPos++] = 0;
+			sphere.indices[indexPos++] = b;
+			sphere.indices[indexPos++] = a;
 		}
 
 		for (uint32_t i = 0; i < SPHERE_NUM_PARALLELS - 2; ++i)
@@ -69,12 +57,12 @@ static const struct SphereData* getSphereMesh(void)
 				const uint32_t a1 = aStart + (j + 1) % SPHERE_NUM_MERIDIANS;
 				const uint32_t b = bStart + j;
 				const uint32_t b1 = bStart + (j + 1) % SPHERE_NUM_MERIDIANS;
-				mesh.indices[indexPos++] = a;
-				mesh.indices[indexPos++] = a1;
-				mesh.indices[indexPos++] = b1;
-				mesh.indices[indexPos++] = a;
-				mesh.indices[indexPos++] = b1;
-				mesh.indices[indexPos++] = b;
+				sphere.indices[indexPos++] = a;
+				sphere.indices[indexPos++] = a1;
+				sphere.indices[indexPos++] = b1;
+				sphere.indices[indexPos++] = a;
+				sphere.indices[indexPos++] = b1;
+				sphere.indices[indexPos++] = b;
 			}
 		}
 
@@ -82,12 +70,15 @@ static const struct SphereData* getSphereMesh(void)
 		{
 			const uint32_t a = i + SPHERE_NUM_MERIDIANS * (SPHERE_NUM_PARALLELS - 2) + 1;
 			const uint32_t b = (i + 1) % SPHERE_NUM_MERIDIANS + SPHERE_NUM_MERIDIANS * (SPHERE_NUM_PARALLELS - 2) + 1;
-			mesh.indices[indexPos++] = numVertices - 1;
-			mesh.indices[indexPos++] = a;
-			mesh.indices[indexPos++] = b;
+			sphere.indices[indexPos++] = numVertices - 1;
+			sphere.indices[indexPos++] = a;
+			sphere.indices[indexPos++] = b;
 		}
+		mesh.indexCount = 3 * (2 * SPHERE_NUM_PARALLELS - 2) * SPHERE_NUM_MERIDIANS;
+		mesh.indexType = VK_INDEX_TYPE_UINT32;
+		mesh.meshData = &sphere;
+		mesh.meshDataSize = sizeof(sphere);
+		mesh.indexDataOffset = sizeof(sphere.vertices);
 	}
 	return &mesh;
 }
-
-

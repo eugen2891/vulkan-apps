@@ -61,6 +61,7 @@ Framebuffer getSwapchainFramebuffer(void);
 
 Buffer createVertexArray(size_t bytes, DeviceQueue queue);
 Buffer createUniformBuffer(size_t bytes, DeviceQueue queue);
+Buffer createUploadBuffer(size_t bytes, DeviceQueue queue);
 void* getBufferMappedPtr(Buffer buffer);
 void destroyBuffer(Buffer buffer);
 
@@ -75,8 +76,10 @@ void destroyPipeline(Pipeline pipeline);
 void beginCommandBuffer(DeviceQueue queue);
 void submitCommandBuffer(DeviceQueue queue, bool useSwapchainImage);
 void bufferMemoryBarrier(Buffer buffer, VkAccessFlags from, VkAccessFlags to);
+void imageMemoryBarrier(Image image, VkImageLayout fromLayout, VkAccessFlags fromAccess, VkImageLayout toLayout, VkAccessFlags toAccess, ImageSubset subset);
 void pipelineBarrier(VkPipelineStageFlags from, VkPipelineStageFlags to);
 void updateBuffer(Buffer buffer, const void* data, size_t dstOffset, size_t bytes);
+//updateImageMipLevel(Buffer src, Image dst, uint32_t level);
 void beginRenderPass(RenderPass renderPass, Framebuffer framebuffer);
 void bindUniformBuffer(uint32_t binding, Buffer buffer);
 void bindVertexBufferRange(uint32_t binding, Buffer buffer, size_t offset);

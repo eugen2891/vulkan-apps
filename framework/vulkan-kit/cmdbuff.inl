@@ -101,6 +101,27 @@ void bufferMemoryBarrier(Buffer buffer, VkAccessFlags from, VkAccessFlags to)
 	barrier->size = buffer->size;
 }
 
+void imageMemoryBarrier(Image image, VkImageLayout fromLayout, VkAccessFlags fromAccess, VkImageLayout toLayout, VkAccessFlags toAccess, ImageSubset subset)
+{
+	struct DeviceQueueContext* queueContext = &QueueContext[ActiveQueue];
+	breakIfNot(queueContext->numImageBarriers < MAX_RESOURCE_BARRIERS);
+	VkImageMemoryBarrier* barrier = queueContext->imageBarriers + (queueContext->numImageBarriers++);
+	barrier->sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	barrier->pNext = NULL;
+	barrier->srcAccessMask = fromAccess;
+	barrier->dstAccessMask = toAccess;
+	barrier->oldLayout = fromLayout;
+	barrier->newLayout = toLayout;
+	barrier->srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	barrier->dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	barrier->image = image->handle;
+	barrier->subresourceRange.aspectMask = image->aspect;
+	barrier->subresourceRange.baseMipLevel = imageSubsetFromMip(subset);
+	barrier->subresourceRange.levelCount = imageSubsetNumMips(subset);
+	barrier->subresourceRange.baseArrayLayer = imageSubsetFromLayer(subset);
+	barrier->subresourceRange.layerCount = imageSubsetNumLayers(subset);
+}
+
 void pipelineBarrier(VkPipelineStageFlags from, VkPipelineStageFlags to)
 {
 	struct DeviceQueueContext* queueContext = &QueueContext[ActiveQueue];

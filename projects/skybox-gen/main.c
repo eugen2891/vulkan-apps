@@ -4,34 +4,35 @@
 
 #include <vulkan-kit/vkk.h>
 #include <shared/geometry.h>
-#include <stb/stb_image.h>
 
-#include "camera.hpp"
+#include <string.h>
 
-static const struct BoxData
+static struct SkyboxParams
 {
-	float vertices[24];
-	uint16_t indices[36];
-} kBoxData
-{
-	{
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f,  1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f, -1.0f
+	vec3 sunDirection;
+	float sunIntencity;
+	vec3 rayleighScatter;
+	float rayleighScaleH;
+	float viewElevation;
+	float atmosphereMaxH;
+	float planetRadius;
+	float mieScatter;
+	float mieScaleH;
+	float miePrefD;
+} Skybox = {
+	.sunIntencity = 32.f,
+	.rayleighScatter = {
+		5.5e-6f,
+		13.0e-6f,
+		22.4e-6f
 	},
-	{
-		/* X+ */ 1, 0, 4, 0, 5, 4,
-		/* X- */ 3, 2, 6, 2, 7, 6,
-		/* Y+ */ 2, 3, 1, 3, 0, 1,
-		/* Y- */ 6, 7, 5, 7, 4, 5,
-		/* Z+ */ 6, 5, 3, 5, 0, 3,
-		/* Z- */ 4, 7, 1, 7, 2, 1
-	}
+	.rayleighScaleH = 8000.f,
+	.viewElevation = 1000.f,
+	.atmosphereMaxH = 100000.f,
+	.planetRadius = 6371000.f,
+	.mieScatter = 21e-6f,
+	.mieScaleH = 1200.f,
+	.miePrefD = 0.758f
 };
 
 int main(int argc, char** argv)
@@ -54,28 +55,20 @@ int main(int argc, char** argv)
 	requestSwapchainImageCount(3);
 	createDevice();
 
-	const float clearColor[]{ 0.0f, 0.5f, 0.5f, 1.f };
 	RenderPass swapchainPass = getSwapchainRenderPass();
+	const float clearColor[] = { 0.0f, 0.5f, 0.5f, 1.f };
 	setRenderPassClearColor(swapchainPass, 0, clearColor);
 	setRenderPassClearDepth(swapchainPass, 1.f);
 
-	Pipeline pipeline = createGraphicsPipeline("hello.glsl", VK_SHADER_STAGE_ALL, swapchainPass);
+	Pipeline pipeline = createGraphicsPipeline("skybox.glsl", VK_SHADER_STAGE_ALL, swapchainPass);
 	setGraphicsPipelineDepthTest(pipeline, true, true, VK_COMPARE_OP_LESS);
 	setGraphicsPipelineFaceCulling(pipeline, VK_CULL_MODE_BACK_BIT);
 
-	int imageWidth, imageHeight, imageChannels;
-	unsigned char* imageData = stbi_load("../assets/globe-8k.png", &imageWidth, &imageHeight, &imageChannels, 0);	
-	const size_t imageDataSize = imageHeight * imageWidth * imageChannels;
-	const VkFormat imageFormat = (imageChannels == 3) ? VK_FORMAT_R8G8B8_UNORM : VK_FORMAT_R8G8B8A8_UNORM;
-	Buffer imageBuffer = createUploadBuffer(imageDataSize, eDeviceQueue_Invalid);
-	memcpy(getBufferMappedPtr(imageBuffer), imageData, imageDataSize);
-	stbi_image_free(imageData);
-
-	Camera camera(5.f, 1.f);
+	mat4 cameraMatrix;
+	float aspectRatio = 1.f;
 	Mesh sphere = getSphereMesh();
-	Buffer cameraData = createUniformBuffer(sizeof(mat4), eDeviceQueue_Universal);
-	Image textureImage = nullptr;
-	Buffer vertexData = nullptr;
+	vec3 sunPosition = { 0.f, 1.f, 0.f };
+	Buffer vertexData = NULL, cameraData = NULL, skyboxData = NULL;
 
 	SDL_MaximizeWindow(window);
 
@@ -91,19 +84,23 @@ int main(int argc, char** argv)
 				isRunning = false;
 				break;
 			case SDL_MOUSEWHEEL:
-				camera.applyZoom(event.wheel.preciseY);
+				//camera.applyZoom(event.wheel.preciseY);
 				break;
 			case SDL_MOUSEMOTION:
 				if (event.motion.state & SDL_BUTTON_LMASK)
 				{
-					camera.applyRotation(float(-event.motion.xrel), float(event.motion.yrel));
+					//camera.applyRotation(float(-event.motion.xrel), float(event.motion.yrel));
+					float h = sunPosition[1] + (float)event.motion.yrel * -0.001f;
+					sunPosition[1] = glm_max(glm_min(h, 1.f), -0.3f);
+					sunPosition[2] = -cosf(asinf(sunPosition[1]));
 				}
 				break;
 			case SDL_WINDOWEVENT:
 				switch (event.window.event)
 				{
 				case SDL_WINDOWEVENT_SIZE_CHANGED:
-					camera.applyResize(event.window.data1, event.window.data2);
+					//camera.applyResize(event.window.data1, event.window.data2);
+					aspectRatio = (float)event.window.data1 / (float)event.window.data2;
 					resetSwapchain();
 					break;
 				}
@@ -117,10 +114,26 @@ int main(int argc, char** argv)
 			break;
 		}
 
-		camera.writeUniforms(cameraData);
-
 		beginCommandBuffer(eDeviceQueue_Universal);
-		
+
+		if (!cameraData)
+		{
+			mat4 view, proj;
+			glm_perspective(glm_rad(60.f), aspectRatio, 0.001f, 1000.f, proj);
+			glm_lookat((vec3) { 0.f, 0.f, 5.f }, (vec3){0.f, 0.f, 0.f}, (vec3){ 0.f, 1.f, 0.f }, view);
+			cameraData = createUniformBuffer(sizeof(cameraMatrix), eDeviceQueue_Universal);
+			glm_mul(proj, view, cameraMatrix);
+		}
+
+		if (!skyboxData)
+		{
+			skyboxData = createUniformBuffer(sizeof(Skybox), eDeviceQueue_Universal);
+		}
+
+		glm_normalize_to(sunPosition, Skybox.sunDirection);
+		memcpy(getBufferMappedPtr(cameraData), cameraMatrix, sizeof(cameraMatrix));
+		memcpy(getBufferMappedPtr(skyboxData), &Skybox, sizeof(Skybox));
+
 		if (!vertexData)
 		{
 			vertexData = createVertexArray(sphere->meshDataSize, eDeviceQueue_Invalid);
@@ -131,14 +144,9 @@ int main(int argc, char** argv)
 			pipelineBarrier(VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_VERTEX_INPUT_BIT);
 		}
 
-		if (!textureImage)
-		{
-			//create image
-			//upload mip 0
-		}
-
 		beginRenderPass(swapchainPass, getSwapchainFramebuffer());
 		bindUniformBuffer(0, cameraData);
+		bindUniformBuffer(1, skyboxData);
 		bindVertexBufferRange(0, vertexData, 0);
 		bindIndexBufferRange(VK_INDEX_TYPE_UINT32, vertexData, sphere->indexDataOffset);
 		bindGraphicsPipeline(pipeline);
@@ -150,9 +158,9 @@ int main(int argc, char** argv)
 	}
 
 	deviceWaitIdle();
-	destroyBuffer(imageBuffer);
 	destroyBuffer(vertexData);
 	destroyBuffer(cameraData);
+	destroyBuffer(skyboxData);
 	destroyPipeline(pipeline);
 	destroyDevice();
 

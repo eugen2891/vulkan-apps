@@ -13,6 +13,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hello-vkk", "projects\hello
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cglm", "framework\cglm\win\cglm.vcxproj", "{CA8BCAF9-CD25-4133-8F62-3D1449B5D2FC}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "skybox-gen", "projects\skybox-gen\skybox-gen.vcxproj", "{95DDFA46-DDAE-4229-B875-46971808A9C4}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "shared", "framework\shared\shared.vcxitems", "{95EA1CCF-5654-41B6-AEE2-6840A5D777B9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stb", "framework\stb\stb.vcxitems", "{F362438E-C179-46C6-8E08-2BB53FBC770B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -67,6 +73,26 @@ Global
 		{CA8BCAF9-CD25-4133-8F62-3D1449B5D2FC}.Release|x64.Build.0 = Release|x64
 		{CA8BCAF9-CD25-4133-8F62-3D1449B5D2FC}.Release|x86.ActiveCfg = Release|Win32
 		{CA8BCAF9-CD25-4133-8F62-3D1449B5D2FC}.Release|x86.Build.0 = Release|Win32
+		{95DDFA46-DDAE-4229-B875-46971808A9C4}.Debug|ARM.ActiveCfg = Debug|x64
+		{95DDFA46-DDAE-4229-B875-46971808A9C4}.Debug|ARM.Build.0 = Debug|x64
+		{95DDFA46-DDAE-4229-B875-46971808A9C4}.Debug|ARM64.ActiveCfg = Debug|x64
+		{95DDFA46-DDAE-4229-B875-46971808A9C4}.Debug|ARM64.Build.0 = Debug|x64
+		{95DDFA46-DDAE-4229-B875-46971808A9C4}.Debug|ARM64EC.ActiveCfg = Debug|x64
+		{95DDFA46-DDAE-4229-B875-46971808A9C4}.Debug|ARM64EC.Build.0 = Debug|x64
+		{95DDFA46-DDAE-4229-B875-46971808A9C4}.Debug|x64.ActiveCfg = Debug|x64
+		{95DDFA46-DDAE-4229-B875-46971808A9C4}.Debug|x64.Build.0 = Debug|x64
+		{95DDFA46-DDAE-4229-B875-46971808A9C4}.Debug|x86.ActiveCfg = Debug|Win32
+		{95DDFA46-DDAE-4229-B875-46971808A9C4}.Debug|x86.Build.0 = Debug|Win32
+		{95DDFA46-DDAE-4229-B875-46971808A9C4}.Release|ARM.ActiveCfg = Release|x64
+		{95DDFA46-DDAE-4229-B875-46971808A9C4}.Release|ARM.Build.0 = Release|x64
+		{95DDFA46-DDAE-4229-B875-46971808A9C4}.Release|ARM64.ActiveCfg = Release|x64
+		{95DDFA46-DDAE-4229-B875-46971808A9C4}.Release|ARM64.Build.0 = Release|x64
+		{95DDFA46-DDAE-4229-B875-46971808A9C4}.Release|ARM64EC.ActiveCfg = Release|x64
+		{95DDFA46-DDAE-4229-B875-46971808A9C4}.Release|ARM64EC.Build.0 = Release|x64
+		{95DDFA46-DDAE-4229-B875-46971808A9C4}.Release|x64.ActiveCfg = Release|x64
+		{95DDFA46-DDAE-4229-B875-46971808A9C4}.Release|x64.Build.0 = Release|x64
+		{95DDFA46-DDAE-4229-B875-46971808A9C4}.Release|x86.ActiveCfg = Release|Win32
+		{95DDFA46-DDAE-4229-B875-46971808A9C4}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -75,12 +101,21 @@ Global
 		{415273EE-7835-40D8-957B-619FA600CCC2} = {F613F88B-660F-4EBE-AB97-938EEB82909A}
 		{F2972451-9791-446A-B71D-349E92EA36B4} = {66356330-75BA-4F0E-8701-B37EEA7CC749}
 		{CA8BCAF9-CD25-4133-8F62-3D1449B5D2FC} = {F613F88B-660F-4EBE-AB97-938EEB82909A}
+		{95DDFA46-DDAE-4229-B875-46971808A9C4} = {66356330-75BA-4F0E-8701-B37EEA7CC749}
+		{95EA1CCF-5654-41B6-AEE2-6840A5D777B9} = {F613F88B-660F-4EBE-AB97-938EEB82909A}
+		{F362438E-C179-46C6-8E08-2BB53FBC770B} = {F613F88B-660F-4EBE-AB97-938EEB82909A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {790A82C5-EABE-4A0A-9322-76C5F70082E4}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		framework\vulkan-kit\vulkan-kit.vcxitems*{415273ee-7835-40d8-957b-619fa600ccc2}*SharedItemsImports = 9
+		framework\shared\shared.vcxitems*{95ddfa46-ddae-4229-b875-46971808a9c4}*SharedItemsImports = 4
+		framework\vulkan-kit\vulkan-kit.vcxitems*{95ddfa46-ddae-4229-b875-46971808a9c4}*SharedItemsImports = 4
+		framework\shared\shared.vcxitems*{95ea1ccf-5654-41b6-aee2-6840a5d777b9}*SharedItemsImports = 9
+		framework\shared\shared.vcxitems*{f2972451-9791-446a-b71d-349e92ea36b4}*SharedItemsImports = 4
+		framework\stb\stb.vcxitems*{f2972451-9791-446a-b71d-349e92ea36b4}*SharedItemsImports = 4
 		framework\vulkan-kit\vulkan-kit.vcxitems*{f2972451-9791-446a-b71d-349e92ea36b4}*SharedItemsImports = 4
+		framework\stb\stb.vcxitems*{f362438e-c179-46c6-8e08-2bb53fbc770b}*SharedItemsImports = 9
 	EndGlobalSection
 EndGlobal
