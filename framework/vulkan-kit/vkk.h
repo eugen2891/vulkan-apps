@@ -26,6 +26,7 @@ enum DeviceQueueT
 
 struct SDL_Window;
 
+typedef VkSampler SamplerState;
 typedef struct ImageT* Image;
 typedef struct BufferT* Buffer;
 typedef struct PipelineT* Pipeline;
@@ -66,6 +67,7 @@ void* getBufferMappedPtr(Buffer buffer);
 void destroyBuffer(Buffer buffer);
 
 Image createRenderTargetImage(VkFormat format, const VkExtent3D* size);
+Image createSampledImage(VkFormat format, const VkExtent3D* size, uint32_t numMips);
 void destroyImage(Image image);
 
 Pipeline createGraphicsPipeline(const char* shaderFile, VkShaderStageFlags stageFlags, RenderPass renderPass);
@@ -73,15 +75,20 @@ void setGraphicsPipelineDepthTest(Pipeline pipeline, bool write, bool test, VkCo
 void setGraphicsPipelineFaceCulling(Pipeline pipeline, VkCullModeFlags mode);
 void destroyPipeline(Pipeline pipeline);
 
+SamplerState createSamplerState(VkFilter minMag, VkSamplerMipmapMode mipMode, VkSamplerAddressMode addressMode);
+void destroySamplerState(SamplerState sampler);
+
 void beginCommandBuffer(DeviceQueue queue);
 void submitCommandBuffer(DeviceQueue queue, bool useSwapchainImage);
 void bufferMemoryBarrier(Buffer buffer, VkAccessFlags from, VkAccessFlags to);
 void imageMemoryBarrier(Image image, VkImageLayout fromLayout, VkAccessFlags fromAccess, VkImageLayout toLayout, VkAccessFlags toAccess, ImageSubset subset);
 void pipelineBarrier(VkPipelineStageFlags from, VkPipelineStageFlags to);
 void updateBuffer(Buffer buffer, const void* data, size_t dstOffset, size_t bytes);
-//updateImageMipLevel(Buffer src, Image dst, uint32_t level);
+void updateImageMipLevel(Buffer src, Image dst, uint32_t mipLevel);
 void beginRenderPass(RenderPass renderPass, Framebuffer framebuffer);
+void bindSamplerState(uint32_t binding, SamplerState sampler);
 void bindUniformBuffer(uint32_t binding, Buffer buffer);
+void bindSampledImage(uint32_t binding, Image image);
 void bindVertexBufferRange(uint32_t binding, Buffer buffer, size_t offset);
 void bindIndexBufferRange(VkIndexType indexType, Buffer buffer, size_t offset);
 void bindGraphicsPipeline(Pipeline pipeline);

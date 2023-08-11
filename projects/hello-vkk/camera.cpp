@@ -23,7 +23,8 @@ void Camera::applyRotation(float horz, float vert)
 {
 	m_azimuth += horz * m_angleStep;
 	m_elevation += vert * m_angleStep;
-	m_elevation = glm_clamp(m_elevation, -GLM_PI_2f, GLM_PI_2f);
+	const float limit = GLM_PI_2f - 0.00001f;
+	m_elevation = glm_clamp(m_elevation, -limit, limit);
 }
 
 void Camera::applyResize(int width, int height)

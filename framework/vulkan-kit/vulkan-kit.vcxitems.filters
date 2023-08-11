@@ -37,6 +37,9 @@
     <None Include="$(MSBuildThisFileDirectory)renderdoc.inl">
       <Filter>internal</Filter>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)sampler.inl">
+      <Filter>internal</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="internal">

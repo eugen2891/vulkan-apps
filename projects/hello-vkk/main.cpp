@@ -64,12 +64,13 @@ int main(int argc, char** argv)
 	setGraphicsPipelineFaceCulling(pipeline, VK_CULL_MODE_BACK_BIT);
 
 	int imageWidth, imageHeight, imageChannels;
-	unsigned char* imageData = stbi_load("../assets/globe-8k.png", &imageWidth, &imageHeight, &imageChannels, 0);	
-	const size_t imageDataSize = imageHeight * imageWidth * imageChannels;
-	const VkFormat imageFormat = (imageChannels == 3) ? VK_FORMAT_R8G8B8_UNORM : VK_FORMAT_R8G8B8A8_UNORM;
+	unsigned char* imageData = stbi_load("../assets/globe-8k.png", &imageWidth, &imageHeight, &imageChannels, 4);
+	const size_t imageDataSize = imageHeight * imageWidth * 4;
 	Buffer imageBuffer = createUploadBuffer(imageDataSize, eDeviceQueue_Invalid);
 	memcpy(getBufferMappedPtr(imageBuffer), imageData, imageDataSize);
 	stbi_image_free(imageData);
+
+	SamplerState sampler = createSamplerState(VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_LINEAR, VK_SAMPLER_ADDRESS_MODE_REPEAT);
 
 	Camera camera(5.f, 1.f);
 	Mesh sphere = getSphereMesh();
@@ -133,12 +134,20 @@ int main(int argc, char** argv)
 
 		if (!textureImage)
 		{
-			//create image
-			//upload mip 0
+			const ImageSubset subset = makeImageSubset(0, 1, 0, 1);
+			const VkExtent3D imageExt{ uint32_t(imageWidth), uint32_t(imageHeight), 1 };
+			textureImage = createSampledImage(VK_FORMAT_R8G8B8A8_UNORM, &imageExt, 1);
+			imageMemoryBarrier(textureImage, VK_IMAGE_LAYOUT_UNDEFINED, VK_ACCESS_NONE, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_ACCESS_TRANSFER_WRITE_BIT, subset);
+			pipelineBarrier(VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT);
+			updateImageMipLevel(imageBuffer, textureImage, 0);
+			imageMemoryBarrier(textureImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_ACCESS_TRANSFER_WRITE_BIT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, subset);
+			pipelineBarrier(VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
 		}
 
 		beginRenderPass(swapchainPass, getSwapchainFramebuffer());
+		bindSamplerState(0, sampler);
 		bindUniformBuffer(0, cameraData);
+		bindSampledImage(0, textureImage);
 		bindVertexBufferRange(0, vertexData, 0);
 		bindIndexBufferRange(VK_INDEX_TYPE_UINT32, vertexData, sphere->indexDataOffset);
 		bindGraphicsPipeline(pipeline);
@@ -150,10 +159,12 @@ int main(int argc, char** argv)
 	}
 
 	deviceWaitIdle();
+	destroyImage(textureImage);
 	destroyBuffer(imageBuffer);
 	destroyBuffer(vertexData);
 	destroyBuffer(cameraData);
 	destroyPipeline(pipeline);
+	destroySamplerState(sampler);
 	destroyDevice();
 
 	SDL_DestroyWindow(window);

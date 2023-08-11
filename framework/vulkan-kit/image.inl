@@ -117,6 +117,36 @@ Image createRenderTargetImage(VkFormat format, const VkExtent3D* size)
 	return retval;
 }
 
+Image createSampledImage(VkFormat format, const VkExtent3D* size, uint32_t numMips)
+{
+	VkImageCreateInfo ici = {
+		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+		.imageType = VK_IMAGE_TYPE_2D,
+		.format = format,
+		.extent = *size,
+		.mipLevels = numMips,
+		.arrayLayers = 1,
+		.samples = VK_SAMPLE_COUNT_1_BIT,
+		.tiling = VK_IMAGE_TILING_OPTIMAL,
+		.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT
+	};
+
+	VkImage handle = VK_NULL_HANDLE;
+	breakIfFailed(vkCreateImage(Device, &ici, Alloc, &handle));
+
+	Image retval = calloc(1, sizeof(struct ImageT));
+	breakIfNot(retval);
+	if (!retval)
+	{
+		vkDestroyImage(Device, handle, Alloc);
+		return NULL;
+	}
+
+	retval->handle = handle;
+	initImage(retval, format, size, 1, false, true);
+	return retval;
+}
+
 void destroyImage(Image image)
 {
 	if (image)

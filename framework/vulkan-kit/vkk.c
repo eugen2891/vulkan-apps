@@ -81,6 +81,9 @@ struct DeviceQueueContext
 {
 	VkImageMemoryBarrier imageBarriers[MAX_RESOURCE_BARRIERS];
 	VkBufferMemoryBarrier bufferBarriers[MAX_RESOURCE_BARRIERS];
+#if MAX_SAMPLER_STATES
+	VkDescriptorImageInfo samplerStates[MAX_SAMPLER_STATES];
+#endif
 #if MAX_UNIFORM_BUFFERS
 	VkDescriptorBufferInfo uniformBuffers[MAX_UNIFORM_BUFFERS];
 #endif
@@ -127,6 +130,7 @@ static void destroySwapchain(bool);
 
 #include "buffer.inl"
 #include "image.inl"
+#include "sampler.inl"
 #include "renderdoc.inl"
 #include "renderpass.inl"
 #include "shaders.inl"
@@ -428,6 +432,20 @@ void createDevice(void)
 
 	uint32_t bindIndex = 0;
 	VkDescriptorSetLayoutBinding bindings[MAX_SHADER_BINDINGS] = { 0 };
+#if MAX_SAMPLER_STATES
+	for (uint32_t i = 0; i < MAX_SAMPLER_STATES; i++)
+	{
+		struct ShaderMacro* macro = &ShaderMacros[NumShaderMacros++];
+		macro->nameLength = snprintf(macro->name, sizeof(macro->name), "sampler_state_%u", i);
+		macro->valLength = snprintf(macro->val, sizeof(macro->val), "%u", bindIndex);
+		VkDescriptorSetLayoutBinding* info = &bindings[bindIndex];
+		info->binding = bindIndex;
+		info->descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
+		info->descriptorCount = 1;
+		info->stageFlags = VK_SHADER_STAGE_COMPUTE_BIT | VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+		++bindIndex;
+	}
+#endif
 #if MAX_UNIFORM_BUFFERS
 	for (uint32_t i = 0; i < MAX_UNIFORM_BUFFERS; i++)
 	{
@@ -478,6 +496,13 @@ void createDevice(void)
 
 	uint32_t numPoolSizes = 0;
 	VkDescriptorPoolSize poolSizes[16];
+#if MAX_SAMPLER_STATES
+	{
+		VkDescriptorPoolSize* ps = &poolSizes[numPoolSizes++];
+		ps->type = VK_DESCRIPTOR_TYPE_SAMPLER;
+		ps->descriptorCount = MAX_SAMPLER_STATES * MAX_DRAW_CALLS;
+	}
+#endif
 #if MAX_UNIFORM_BUFFERS
 	{
 		VkDescriptorPoolSize* ps = &poolSizes[numPoolSizes++];

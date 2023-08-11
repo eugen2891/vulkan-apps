@@ -41,10 +41,14 @@
 #define makeImageSubset(fromMip, numMips, fromLayer, numLayers) \
 	(((fromMip) & 0x0000000Fu) | (((numMips) << 4) & 0x000000F0u) \
 	| (((fromLayer) << 8) & 0x000FFF00u) | (((numLayers) << 20) & 0xFFF00000u))
-#define imageSubsetNumLayers(subset) (((subset) >> 20) && 0x0000000FFFu)
-#define imageSubsetFromLayer(subset) (((subset) >> 8) && 0x0000000FFFu)
-#define imageSubsetNumMips(subset) (((subset) >> 4) && 0x0000000Fu)
-#define imageSubsetFromMip(subset) ((subset) && 0x0000000Fu)
+#define imageSubsetNumLayers(subset) (((subset) >> 20) & 0x0000000FFFu)
+#define imageSubsetFromLayer(subset) (((subset) >> 8) & 0x0000000FFFu)
+#define imageSubsetNumMips(subset) (((subset) >> 4) & 0x0000000Fu)
+#define imageSubsetFromMip(subset) ((subset) & 0x0000000Fu)
+
+#if !defined(MAX_SAMPLER_STATES)
+#define MAX_SAMPLER_STATES 1
+#endif
 
 #if !defined(MAX_UNIFORM_BUFFERS)
 #define MAX_UNIFORM_BUFFERS 1
@@ -66,10 +70,11 @@
 #define MAX_DRAW_CALLS 1024
 #endif
 
-#define UB_BINDING_OFFSET 0
-#define SI_BINDING_OFFSET (VKK_MAX_UNIFORM_BUFFERS)
+#define SS_BINDING_OFFSET (0)
+#define UB_BINDING_OFFSET (SS_BINDING_OFFSET) + (MAX_SAMPLER_STATES)
+#define SI_BINDING_OFFSET (UB_BINDING_OFFSET) + (MAX_UNIFORM_BUFFERS)
 
-#define MAX_SHADER_BINDINGS ((MAX_UNIFORM_BUFFERS) + (MAX_SAMPLED_IMAGES))
+#define MAX_SHADER_BINDINGS ((MAX_SAMPLER_STATES) + (MAX_UNIFORM_BUFFERS) + (MAX_SAMPLED_IMAGES))
 
 #ifndef MAX_INSTANCE_EXTENSIONS
 #define MAX_INSTANCE_EXTENSIONS 8

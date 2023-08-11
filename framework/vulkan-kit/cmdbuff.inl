@@ -136,6 +136,19 @@ void updateBuffer(Buffer buffer, const void* data, size_t dstOffset, size_t byte
 	vkCmdUpdateBuffer(CommandBuffer, buffer->context[index].handle, dstOffset, bytes, data);
 }
 
+void updateImageMipLevel(Buffer src, Image dst, uint32_t mipLevel)
+{
+	VkBufferImageCopy region = {
+		.imageSubresource = {
+			.aspectMask = dst->aspect,
+			.mipLevel = mipLevel,
+			.layerCount = 1
+		},
+		.imageExtent = dst->size
+	};
+	vkCmdCopyBufferToImage(CommandBuffer, getBufferHandle(src), dst->handle, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+}
+
 void beginRenderPass(RenderPass renderPass, Framebuffer framebuffer)
 {
 	uint32_t numClears = 0;
@@ -151,6 +164,27 @@ void beginRenderPass(RenderPass renderPass, Framebuffer framebuffer)
 	vkCmdBeginRenderPass(CommandBuffer, &rpbi, VK_SUBPASS_CONTENTS_INLINE);
 	vkCmdSetViewport(CommandBuffer, 0, 1, &framebuffer->viewport);
 	vkCmdSetScissor(CommandBuffer, 0, 1, &framebuffer->scissor);
+}
+
+void bindSamplerState(uint32_t binding, SamplerState sampler)
+{
+	breakIfNot(binding < MAX_SAMPLER_STATES);
+	struct DeviceQueueContext* queueContext = &QueueContext[ActiveQueue];
+	VkDescriptorImageInfo* info = &queueContext->samplerStates[binding];
+	info->sampler = sampler;
+	info->imageView = VK_NULL_HANDLE;
+	info->imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	VkWriteDescriptorSet* descriptorWrite = queueContext->descriptorWrites + (queueContext->numDescriptorWrites++);
+	descriptorWrite->sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	descriptorWrite->pNext = NULL;
+	descriptorWrite->dstSet = VK_NULL_HANDLE;
+	descriptorWrite->dstBinding = binding + SS_BINDING_OFFSET;
+	descriptorWrite->dstArrayElement = 0;
+	descriptorWrite->descriptorCount = 1;
+	descriptorWrite->descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
+	descriptorWrite->pImageInfo = info;
+	descriptorWrite->pBufferInfo = NULL;
+	descriptorWrite->pTexelBufferView = NULL;
 }
 
 void bindUniformBuffer(uint32_t binding, Buffer buffer)
@@ -171,6 +205,27 @@ void bindUniformBuffer(uint32_t binding, Buffer buffer)
 	descriptorWrite->descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	descriptorWrite->pImageInfo = NULL;
 	descriptorWrite->pBufferInfo = info;
+	descriptorWrite->pTexelBufferView = NULL;
+}
+
+void bindSampledImage(uint32_t binding, Image image)
+{
+	breakIfNot(binding < MAX_SAMPLER_STATES);
+	struct DeviceQueueContext* queueContext = &QueueContext[ActiveQueue];
+	VkDescriptorImageInfo* info = &queueContext->sampledImages[binding];
+	info->sampler = VK_NULL_HANDLE;
+	info->imageView = image->view;
+	info->imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	VkWriteDescriptorSet* descriptorWrite = queueContext->descriptorWrites + (queueContext->numDescriptorWrites++);
+	descriptorWrite->sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	descriptorWrite->pNext = NULL;
+	descriptorWrite->dstSet = VK_NULL_HANDLE;
+	descriptorWrite->dstBinding = binding + SI_BINDING_OFFSET;
+	descriptorWrite->dstArrayElement = 0;
+	descriptorWrite->descriptorCount = 1;
+	descriptorWrite->descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+	descriptorWrite->pImageInfo = info;
+	descriptorWrite->pBufferInfo = NULL;
 	descriptorWrite->pTexelBufferView = NULL;
 }
 

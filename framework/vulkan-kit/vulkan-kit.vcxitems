@@ -22,6 +22,7 @@
     <None Include="$(MSBuildThisFileDirectory)pipeline.inl" />
     <None Include="$(MSBuildThisFileDirectory)renderdoc.inl" />
     <None Include="$(MSBuildThisFileDirectory)renderpass.inl" />
+    <None Include="$(MSBuildThisFileDirectory)sampler.inl" />
     <None Include="$(MSBuildThisFileDirectory)shaders.inl" />
     <None Include="$(MSBuildThisFileDirectory)swapchain.inl" />
   </ItemGroup>
