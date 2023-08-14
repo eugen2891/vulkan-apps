@@ -149,6 +149,44 @@ void updateImageMipLevel(Buffer src, Image dst, uint32_t mipLevel)
 	vkCmdCopyBufferToImage(CommandBuffer, getBufferHandle(src), dst->handle, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 }
 
+static inline int maxInt(int a, int b)
+{
+	return (a < b) ? b : a;
+}
+
+void blit(Image src, Image dst, ImageSubset srcSubset, ImageSubset dstSubset)
+{
+	VkImageBlit imageBlit = {
+		.srcSubresource = {
+			.aspectMask = src->aspect,
+			.mipLevel = imageSubsetFromMip(srcSubset),
+			.baseArrayLayer = imageSubsetFromLayer(srcSubset),
+			.layerCount = imageSubsetNumLayers(srcSubset)
+		},
+		.srcOffsets = {
+			[1] = {
+				maxInt((int)(src->size.width >> imageSubsetFromMip(srcSubset)), 1),
+				maxInt((int)(src->size.height >> imageSubsetFromMip(srcSubset)), 1),
+				maxInt((int)(src->size.depth >> imageSubsetFromMip(srcSubset)), 1)
+			}
+		},
+		.dstSubresource = {
+			.aspectMask = dst->aspect,
+			.mipLevel = imageSubsetFromMip(dstSubset),
+			.baseArrayLayer = imageSubsetFromLayer(dstSubset),
+			.layerCount = imageSubsetNumLayers(dstSubset)
+		},
+		.dstOffsets = {
+			[1] = {
+				maxInt((int)(dst->size.width >> imageSubsetFromMip(dstSubset)), 1),
+				maxInt((int)(dst->size.height >> imageSubsetFromMip(dstSubset)), 1),
+				maxInt((int)(dst->size.depth >> imageSubsetFromMip(dstSubset)), 1)
+			}
+		}
+	};
+	vkCmdBlitImage(CommandBuffer, src->handle, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dst->handle, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &imageBlit, VK_FILTER_LINEAR);
+}
+
 void beginRenderPass(RenderPass renderPass, Framebuffer framebuffer)
 {
 	uint32_t numClears = 0;

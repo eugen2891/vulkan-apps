@@ -85,6 +85,7 @@ void imageMemoryBarrier(Image image, VkImageLayout fromLayout, VkAccessFlags fro
 void pipelineBarrier(VkPipelineStageFlags from, VkPipelineStageFlags to);
 void updateBuffer(Buffer buffer, const void* data, size_t dstOffset, size_t bytes);
 void updateImageMipLevel(Buffer src, Image dst, uint32_t mipLevel);
+void blit(Image src, Image dst, ImageSubset srcSubset, ImageSubset dstSubset);
 void beginRenderPass(RenderPass renderPass, Framebuffer framebuffer);
 void bindSamplerState(uint32_t binding, SamplerState sampler);
 void bindUniformBuffer(uint32_t binding, Buffer buffer);

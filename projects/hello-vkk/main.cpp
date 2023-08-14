@@ -136,11 +136,21 @@ int main(int argc, char** argv)
 		{
 			const ImageSubset subset = makeImageSubset(0, 1, 0, 1);
 			const VkExtent3D imageExt{ uint32_t(imageWidth), uint32_t(imageHeight), 1 };
-			textureImage = createSampledImage(VK_FORMAT_R8G8B8A8_UNORM, &imageExt, 1);
+			textureImage = createSampledImage(VK_FORMAT_R8G8B8A8_UNORM, &imageExt, 12);
 			imageMemoryBarrier(textureImage, VK_IMAGE_LAYOUT_UNDEFINED, VK_ACCESS_NONE, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_ACCESS_TRANSFER_WRITE_BIT, subset);
 			pipelineBarrier(VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT);
 			updateImageMipLevel(imageBuffer, textureImage, 0);
-			imageMemoryBarrier(textureImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_ACCESS_TRANSFER_WRITE_BIT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, subset);
+
+			imageMemoryBarrier(textureImage, VK_IMAGE_LAYOUT_UNDEFINED, VK_ACCESS_NONE, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_ACCESS_TRANSFER_WRITE_BIT, makeImageSubset(1, 11, 0, 1));
+			for (uint32_t i = 1; i <= 11; i++)
+			{
+				imageMemoryBarrier(textureImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_ACCESS_TRANSFER_WRITE_BIT, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_ACCESS_TRANSFER_READ_BIT, makeImageSubset(i - 1, 1, 0, 1));
+				pipelineBarrier(VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT);
+				blit(textureImage, textureImage, makeImageSubset(i - 1, 1, 0, 1), makeImageSubset(i, 1, 0, 1));
+			}
+
+			imageMemoryBarrier(textureImage, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_ACCESS_TRANSFER_READ_BIT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, makeImageSubset(0, 11, 0, 1));
+			imageMemoryBarrier(textureImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_ACCESS_TRANSFER_WRITE_BIT, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_ACCESS_SHADER_READ_BIT, makeImageSubset(11, 1, 0, 1));
 			pipelineBarrier(VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
 		}
 
