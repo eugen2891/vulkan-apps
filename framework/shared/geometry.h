@@ -4,11 +4,11 @@
 #include <vulkan/vulkan.h>
 
 #ifndef SPHERE_NUM_PARALLELS
-#define SPHERE_NUM_PARALLELS 32
+#define SPHERE_NUM_PARALLELS 64
 #endif
 
 #ifndef SPHERE_NUM_MERIDIANS
-#define SPHERE_NUM_MERIDIANS 32
+#define SPHERE_NUM_MERIDIANS 64
 #endif
 
 #ifdef __cplusplus
