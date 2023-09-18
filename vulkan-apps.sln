@@ -19,6 +19,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "shared", "framework\shared\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stb", "framework\stb\stb.vcxitems", "{F362438E-C179-46C6-8E08-2BB53FBC770B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sbrenderer", "projects\sbrenderer\sbrenderer.vcxproj", "{07652C24-B610-4EF5-94EF-12E8C5D77102}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -93,6 +95,26 @@ Global
 		{95DDFA46-DDAE-4229-B875-46971808A9C4}.Release|x64.Build.0 = Release|x64
 		{95DDFA46-DDAE-4229-B875-46971808A9C4}.Release|x86.ActiveCfg = Release|Win32
 		{95DDFA46-DDAE-4229-B875-46971808A9C4}.Release|x86.Build.0 = Release|Win32
+		{07652C24-B610-4EF5-94EF-12E8C5D77102}.Debug|ARM.ActiveCfg = Debug|x64
+		{07652C24-B610-4EF5-94EF-12E8C5D77102}.Debug|ARM.Build.0 = Debug|x64
+		{07652C24-B610-4EF5-94EF-12E8C5D77102}.Debug|ARM64.ActiveCfg = Debug|x64
+		{07652C24-B610-4EF5-94EF-12E8C5D77102}.Debug|ARM64.Build.0 = Debug|x64
+		{07652C24-B610-4EF5-94EF-12E8C5D77102}.Debug|ARM64EC.ActiveCfg = Debug|x64
+		{07652C24-B610-4EF5-94EF-12E8C5D77102}.Debug|ARM64EC.Build.0 = Debug|x64
+		{07652C24-B610-4EF5-94EF-12E8C5D77102}.Debug|x64.ActiveCfg = Debug|x64
+		{07652C24-B610-4EF5-94EF-12E8C5D77102}.Debug|x64.Build.0 = Debug|x64
+		{07652C24-B610-4EF5-94EF-12E8C5D77102}.Debug|x86.ActiveCfg = Debug|Win32
+		{07652C24-B610-4EF5-94EF-12E8C5D77102}.Debug|x86.Build.0 = Debug|Win32
+		{07652C24-B610-4EF5-94EF-12E8C5D77102}.Release|ARM.ActiveCfg = Release|x64
+		{07652C24-B610-4EF5-94EF-12E8C5D77102}.Release|ARM.Build.0 = Release|x64
+		{07652C24-B610-4EF5-94EF-12E8C5D77102}.Release|ARM64.ActiveCfg = Release|x64
+		{07652C24-B610-4EF5-94EF-12E8C5D77102}.Release|ARM64.Build.0 = Release|x64
+		{07652C24-B610-4EF5-94EF-12E8C5D77102}.Release|ARM64EC.ActiveCfg = Release|x64
+		{07652C24-B610-4EF5-94EF-12E8C5D77102}.Release|ARM64EC.Build.0 = Release|x64
+		{07652C24-B610-4EF5-94EF-12E8C5D77102}.Release|x64.ActiveCfg = Release|x64
+		{07652C24-B610-4EF5-94EF-12E8C5D77102}.Release|x64.Build.0 = Release|x64
+		{07652C24-B610-4EF5-94EF-12E8C5D77102}.Release|x86.ActiveCfg = Release|Win32
+		{07652C24-B610-4EF5-94EF-12E8C5D77102}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -104,11 +126,14 @@ Global
 		{95DDFA46-DDAE-4229-B875-46971808A9C4} = {66356330-75BA-4F0E-8701-B37EEA7CC749}
 		{95EA1CCF-5654-41B6-AEE2-6840A5D777B9} = {F613F88B-660F-4EBE-AB97-938EEB82909A}
 		{F362438E-C179-46C6-8E08-2BB53FBC770B} = {F613F88B-660F-4EBE-AB97-938EEB82909A}
+		{07652C24-B610-4EF5-94EF-12E8C5D77102} = {66356330-75BA-4F0E-8701-B37EEA7CC749}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {790A82C5-EABE-4A0A-9322-76C5F70082E4}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		framework\shared\shared.vcxitems*{07652c24-b610-4ef5-94ef-12e8c5d77102}*SharedItemsImports = 4
+		framework\vulkan-kit\vulkan-kit.vcxitems*{07652c24-b610-4ef5-94ef-12e8c5d77102}*SharedItemsImports = 4
 		framework\vulkan-kit\vulkan-kit.vcxitems*{415273ee-7835-40d8-957b-619fa600ccc2}*SharedItemsImports = 9
 		framework\shared\shared.vcxitems*{95ddfa46-ddae-4229-b875-46971808a9c4}*SharedItemsImports = 4
 		framework\vulkan-kit\vulkan-kit.vcxitems*{95ddfa46-ddae-4229-b875-46971808a9c4}*SharedItemsImports = 4
