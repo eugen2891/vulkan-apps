@@ -2,5 +2,14 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.c" />
+    <ClCompile Include="scene.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="scene.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{79f61c0b-1b05-4d64-809d-a573c880a8cf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

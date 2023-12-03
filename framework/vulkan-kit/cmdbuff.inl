@@ -2,36 +2,39 @@
 
 void beginCommandBuffer(DeviceQueue queue)
 {
-	struct DeviceQueueContext* queueContext = &QueueContext[queue];
-	const uint32_t index = queueContext->currentIndex;
-	if (!queueContext->cmdBuffer)
+	if (ActiveQueue != queue)
 	{
-		VkFence fence = queueContext->cbFence[index];
-		switch (vkGetFenceStatus(Device, fence))
+		struct DeviceQueueContext* queueContext = &QueueContext[queue];
+		const uint32_t index = queueContext->currentIndex;
+		if (!queueContext->cmdBuffer)
 		{
-		case VK_NOT_READY:
-			breakIfFailed(vkWaitForFences(Device, 1, &fence, VK_TRUE, UINT64_MAX));
-			break;
-		case VK_SUCCESS:
-			break;
-		default:
-			breakIfNot(0);
-			break;
+			VkFence fence = queueContext->cbFence[index];
+			switch (vkGetFenceStatus(Device, fence))
+			{
+			case VK_NOT_READY:
+				breakIfFailed(vkWaitForFences(Device, 1, &fence, VK_TRUE, UINT64_MAX));
+				break;
+			case VK_SUCCESS:
+				break;
+			default:
+				breakIfNot(0);
+				break;
+			}
+			breakIfFailed(vkResetFences(Device, 1, &fence));
+			VkCommandBuffer handle = queueContext->cbHandle[index];
+			breakIfFailed(vkResetCommandBuffer(handle, 0));
+			breakIfFailed(vkResetDescriptorPool(Device, queueContext->cbDesc[index], 0));
+			VkCommandBufferBeginInfo cbbi = {
+				.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+				.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT
+			};
+			breakIfFailed(vkBeginCommandBuffer(handle, &cbbi));
+			queueContext->cmdBuffer = handle;
 		}
-		breakIfFailed(vkResetFences(Device, 1, &fence));
-		VkCommandBuffer handle = queueContext->cbHandle[index];
-		breakIfFailed(vkResetCommandBuffer(handle, 0));
-		breakIfFailed(vkResetDescriptorPool(Device, queueContext->cbDesc[index], 0));
-		VkCommandBufferBeginInfo cbbi = { 
-			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-			.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT
-		};
-		breakIfFailed(vkBeginCommandBuffer(handle, &cbbi));
-		queueContext->cmdBuffer = handle;
+		CommandBuffer = queueContext->cbHandle[index];
+		DescriptorPool = queueContext->cbDesc[index];
+		ActiveQueue = queue;
 	}
-	CommandBuffer = queueContext->cbHandle[index];
-	DescriptorPool = queueContext->cbDesc[index];
-	ActiveQueue = queue;
 }
 
 void submitCommandBuffer(DeviceQueue queue, bool writeSwapchainImage)
@@ -112,6 +115,7 @@ void imageMemoryBarrier(Image image, VkImageLayout fromLayout, VkAccessFlags fro
 	barrier->dstAccessMask = toAccess;
 	barrier->oldLayout = fromLayout;
 	barrier->newLayout = toLayout;
+	//if owner is not current queue, perform ownership transfer
 	barrier->srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	barrier->dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	barrier->image = image->handle;

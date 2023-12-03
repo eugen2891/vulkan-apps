@@ -9,6 +9,7 @@ struct ImageT
 	VkExtent3D size;
 	uint32_t mips;
 	VkImageAspectFlags aspect;
+	//device queue owner
 };
 
 static void initImage(Image image, VkFormat format, const VkExtent3D* size, uint32_t numMips, bool isCube, bool alloc)
